@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler
 
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -11,6 +12,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.rivers.LoggRiver
 import org.slf4j.LoggerFactory
 import java.net.InetAddress
+import java.util.*
 
 private val log = LoggerFactory.getLogger("main")
 
@@ -44,9 +46,15 @@ fun main() {
     ).withKtorModule {
         routing {
             post("/push") {
+                val authHeader = call.request.header("AUTHORIZATION").toString()
+                if (!authHeader.startsWith("Bearer ") || authHeader.substring(7) != Configuration.application["OEBSTOKEN"]!!) {
+                    call.respond(HttpStatusCode.Unauthorized)
+                    call.respondText("Not authorized!")
+                    return@post
+                }
+
                 val rawJson: String = call.receiveText()
-                call.respondText("not implemented yet, request body was: $rawJson")
-                // rapidApp.publish(..., ...)
+                rapidApp!!.publish(UUID.randomUUID().toString(), rawJson)
             }
         }
     }.build().apply {
