@@ -12,6 +12,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.rivers.LoggRiver
 import org.slf4j.LoggerFactory
 import java.net.InetAddress
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
 
@@ -54,7 +55,7 @@ fun main() {
                 }
 
                 val uid = UUID.randomUUID()
-                val opprettet = LocalTime.now()
+                val opprettet = LocalDateTime.now()
 
                 val rawJson: String = call.receiveText()
                 rapidApp!!.publish(
