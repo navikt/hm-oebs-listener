@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "1.4.21"
 }
 val rapid_version: String by project
+val logging_version: String by project
 val konfig_version: String by project
 val brukernotifikasjon_schemas_version: String by project
 val kafka_version: String by project
@@ -23,6 +24,7 @@ repositories {
 
 dependencies {
     implementation("com.github.navikt:rapids-and-rivers:$rapid_version")
+    implementation("io.github.microutils:kotlin-logging:$logging_version")
     implementation("com.natpryce:konfig:$konfig_version")
     implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjon_schemas_version")
     implementation("org.apache.kafka:kafka-clients:$kafka_version")

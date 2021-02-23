@@ -5,18 +5,18 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.rivers.LoggRiver
-import org.slf4j.LoggerFactory
 import java.net.InetAddress
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.*
 
-private val log = LoggerFactory.getLogger("main")
+private val logg = KotlinLogging.logger {}
+private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 
 fun main() {
     var rapidApp: RapidsConnection? = null
@@ -71,7 +71,7 @@ fun main() {
     }
 
     // Run our rapid and rivers implementation facing hm-rapid
-    log.info("Starting Rapid & Rivers app towwards hm-rapid")
+    logg.info("Starting Rapid & Rivers app towards hm-rapid")
     rapidApp.start()
-    log.info("Application ending.")
+    logg.info("Application ending.")
 }
