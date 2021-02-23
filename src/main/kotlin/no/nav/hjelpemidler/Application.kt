@@ -12,6 +12,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.rivers.LoggRiver
 import org.slf4j.LoggerFactory
 import java.net.InetAddress
+import java.time.LocalTime
 import java.util.*
 
 private val log = LoggerFactory.getLogger("main")
@@ -46,15 +47,22 @@ fun main() {
     ).withKtorModule {
         routing {
             post("/push") {
-                val authHeader = call.request.header("AUTHORIZATION").toString()
+                val authHeader = call.request.header("Authorization").toString()
                 if (!authHeader.startsWith("Bearer ") || authHeader.substring(7) != Configuration.application["OEBSTOKEN"]!!) {
-                    call.respond(HttpStatusCode.Unauthorized)
-                    call.respondText("Not authorized!")
+                    call.respond(HttpStatusCode.Unauthorized, "unauthorized")
                     return@post
                 }
 
+                val uid = UUID.randomUUID()
+                val opprettet = LocalTime.now()
+
                 val rawJson: String = call.receiveText()
-                rapidApp!!.publish(UUID.randomUUID().toString(), rawJson)
+                rapidApp!!.publish(
+                    UUID.randomUUID().toString(),
+                    "{\"@id\": \"$uid\", \"@event_name\": \"oebs-listener-testevent\", \"@opprettet\": \"$opprettet\", \"data\": $rawJson}"
+                )
+
+                call.respond(HttpStatusCode.OK, "ok")
             }
         }
     }.build().apply {
