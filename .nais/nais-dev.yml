@@ -1,0 +1,26 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: hm-oebs-listener
+  namespace: teamdigihot
+  labels:
+    team: teamdigihot
+spec:
+  image: {{image}}
+  kafka:
+    pool: nav-dev
+  envFrom:
+    - secret: hm-oebs-listener-secret
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 3000Mi
+    requests:
+      cpu: 500m
+      memory: 600Mi
+  liveness:
+    path: /isalive
+  readiness:
+    path: /isready
+  secureLogs:
+    enabled: true
