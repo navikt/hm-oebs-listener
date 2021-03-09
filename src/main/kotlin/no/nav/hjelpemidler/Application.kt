@@ -1,11 +1,13 @@
 package no.nav.hjelpemidler
 
+import com.beust.klaxon.Klaxon
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import mu.KotlinLogging
+import mu.toKLogger
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -54,10 +56,25 @@ fun main() {
                     return@post
                 }
 
+                val rawJson: String = call.receiveText()
+                sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
+
+                // Check for valid json request
+                try {
+                    Klaxon().parse<Map<String, Any?>>(rawJson)
+                } catch (e: Exception) {
+                    // Deal with invalid json in request
+                    sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
+                    e.printStackTrace()
+
+                    call.respond(HttpStatusCode.BadRequest, "bad request: json not valid")
+                    return@post
+                }
+
                 val uid = UUID.randomUUID()
                 val opprettet = LocalDateTime.now()
 
-                val rawJson: String = call.receiveText()
+                // Publish the received json to our rapid
                 rapidApp!!.publish(
                     UUID.randomUUID().toString(),
                     "{\"@id\": \"$uid\", \"@event_name\": \"oebs-listener-testevent\", \"@opprettet\": \"$opprettet\", \"data\": $rawJson}"
