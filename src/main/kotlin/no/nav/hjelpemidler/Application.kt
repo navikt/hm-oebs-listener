@@ -115,7 +115,7 @@ data class Statusinfo(
     @Json(name = "OrdreNumber")
     val ordreNumber: Int,
     @Json(name = "LineNumber")
-    val lineNUmber: String,
+    val lineNUmber: Int,
     @Json(name = "Description")
     val description: String,
     @Json(name = "CategoryDescription")
