@@ -64,7 +64,7 @@ fun main() {
                 val validJson: Statusinfo?
                 try {
                     validJson = Klaxon().parse<Statusinfo>(rawJson)
-                    logg.info("Parsing incoming json request successful: ${Klaxon().toJsonString(validJson)}")
+                    sikkerlogg.info("Parsing incoming json request successful: ${Klaxon().toJsonString(validJson)}")
                 } catch (e: Exception) {
                     // Deal with invalid json in request
                     sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
