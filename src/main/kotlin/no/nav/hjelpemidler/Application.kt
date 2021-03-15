@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler
 
+import com.beust.klaxon.Json
 import com.beust.klaxon.Klaxon
 import io.ktor.application.*
 import io.ktor.http.*
@@ -7,11 +8,10 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import mu.KotlinLogging
-import mu.toKLogger
-import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.rivers.LoggRiver
 import java.net.InetAddress
 import java.time.LocalDateTime
@@ -50,6 +50,7 @@ fun main() {
     ).withKtorModule {
         routing {
             post("/push") {
+                logg.info("incoming push")
                 val authHeader = call.request.header("Authorization").toString()
                 if (!authHeader.startsWith("Bearer ") || authHeader.substring(7) != Configuration.application["OEBSTOKEN"]!!) {
                     call.respond(HttpStatusCode.Unauthorized, "unauthorized")
@@ -60,8 +61,10 @@ fun main() {
                 sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
 
                 // Check for valid json request
+                val validJson: Statusinfo?
                 try {
-                    Klaxon().parse<Map<String, Any?>>(rawJson)
+                    validJson = Klaxon().parse<Statusinfo>(rawJson)
+                    logg.info("Parsing incoming json request successful: ${Klaxon().toJsonString(validJson)}")
                 } catch (e: Exception) {
                     // Deal with invalid json in request
                     sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
@@ -77,7 +80,7 @@ fun main() {
                 // Publish the received json to our rapid
                 rapidApp!!.publish(
                     UUID.randomUUID().toString(),
-                    "{\"@id\": \"$uid\", \"@event_name\": \"oebs-listener-testevent\", \"@opprettet\": \"$opprettet\", \"data\": $rawJson}"
+                    "{\"@id\": \"$uid\", \"@event_name\": \"oebs-listener-testevent\", \"@opprettet\": \"$opprettet\", \"fnrBruker\": ${validJson?.accountNumber} \"data\": $rawJson}"
                 )
 
                 call.respond(HttpStatusCode.OK, "ok")
@@ -92,3 +95,40 @@ fun main() {
     rapidApp.start()
     logg.info("Application ending.")
 }
+
+data class Statusinfo(
+    @Json(name = "System")
+    val system: String,
+    @Json(name = "IncidentNummer")
+    val incidentNummer: Int,
+    @Json(name = "IncidentType")
+    val incidentType: String,
+    @Json(name = "IncidentSoknadType")
+    val incidentSoknadType: String,
+    @Json(name = "IncidentVedtakDato")
+    val incidentVedtakDato: String,
+    @Json(name = "IncidentSoknad")
+    val incidentSoknad: String,
+    @Json(name = "IncidentResultat")
+    val incidentResultat: String,
+    @Json(name = "IncidentRefGosys")
+    val incidentRefGosys: String,
+    @Json(name = "OrdreNumber")
+    val ordreNumber: Int,
+    @Json(name = "LineNumber")
+    val lineNUmber: String,
+    @Json(name = "Description")
+    val description: String,
+    @Json(name = "CategoryDescription")
+    val categoryDescription: String,
+    @Json(name = "OrderedItem")
+    val orderedItem: Int,
+    @Json(name = "UserItemType")
+    val userItemType: String,
+    @Json(name = "Quantity")
+    val quantity: Int,
+    @Json(name = "AccountNumber")
+    val accountNumber: String,
+    @Json(name = "LastUpdateDate")
+    val lastUpdateDate: String,
+)
