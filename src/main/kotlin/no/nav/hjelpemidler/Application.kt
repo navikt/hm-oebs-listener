@@ -97,7 +97,6 @@ fun main() {
 }
 
 data class Statusinfo(
-    @Json(name = "System")
     val system: String,
     @Json(name = "IncidentNummer")
     val incidentNummer: Int,
@@ -123,7 +122,7 @@ data class Statusinfo(
     val categoryDescription: String,
     @Json(name = "OrderedItem")
     val orderedItem: Int,
-    @Json(name = "UserItemType")
+    @Json(name = "User_ItemType")
     val userItemType: String,
     @Json(name = "Quantity")
     val quantity: Int,
