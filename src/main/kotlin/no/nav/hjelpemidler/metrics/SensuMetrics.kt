@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler.metrics
 
 import no.nav.hjelpemidler.configuration.Configuration
+import org.influxdb.dto.Point
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.http.HttpClient
@@ -9,7 +10,6 @@ import java.net.http.HttpResponse
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
-import org.influxdb.dto.Point
 
 class SensuMetrics {
     private val log = LoggerFactory.getLogger(SensuMetrics::class.java)
@@ -29,11 +29,18 @@ class SensuMetrics {
         registerPoint(MELDING_TIL_RAPID_FEILET, mapOf("counter" to 1L), emptyMap())
     }
 
+    fun meldingFraOebs() {
+        registerPoint(MELDING_FRA_OEBS, mapOf("counter" to 1L), emptyMap())
+    }
+
+    fun feilVedMeldingFraOebs() {
+        registerPoint(OEBS_MELDING_FEIL, mapOf("counter" to 1L), emptyMap())
+    }
+
     fun test() {
         println("writing to sensu")
         registerPoint("testing", mapOf("counter" to 1L), emptyMap())
     }
-
 
     private fun registerPoint(measurement: String, fields: Map<String, Any>, tags: Map<String, String>) {
         log.info("Posting point to Influx: measurment {} fields {} tags {} ", measurement, fields, tags)
@@ -66,12 +73,12 @@ class SensuMetrics {
 
     private class SensuEvent(sensuName: String, output: String) {
         val json: String = "{" +
-                "\"name\":\"" + sensuName + "\"," +
-                "\"type\":\"metric\"," +
-                "\"handlers\":[\"events_nano\"]," +
-                "\"output\":\"" + output.replace("\\", "\\\\", true) + "\"," +
-                "\"status\":0" +
-                "}"
+            "\"name\":\"" + sensuName + "\"," +
+            "\"type\":\"metric\"," +
+            "\"handlers\":[\"events_nano\"]," +
+            "\"output\":\"" + output.replace("\\", "\\\\", true) + "\"," +
+            "\"status\":0" +
+            "}"
     }
 
     companion object {
@@ -82,7 +89,9 @@ class SensuMetrics {
         )
 
         private const val SOKNADER = "hm-oebs-listener"
-        const val MELDING_TIL_RAPID_SUKSESS = "$SOKNADER.soknadmottatt.rapid.suksess"
-        const val MELDING_TIL_RAPID_FEILET = "$SOKNADER.soknadmottatt.rapid.feilet"
+        const val MELDING_TIL_RAPID_SUKSESS = "$SOKNADER.rapid.suksess"
+        const val MELDING_TIL_RAPID_FEILET = "$SOKNADER.rapid.feilet"
+        const val MELDING_FRA_OEBS = "$SOKNADER.oebs.melding"
+        const val OEBS_MELDING_FEIL = "$SOKNADER.oebs.feil"
     }
 }

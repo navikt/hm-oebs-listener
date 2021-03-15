@@ -12,6 +12,7 @@ import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.metrics.SensuMetrics
 import no.nav.hjelpemidler.rivers.LoggRiver
 import java.net.InetAddress
 import java.time.LocalDateTime
@@ -65,11 +66,12 @@ fun main() {
                 try {
                     validJson = Klaxon().parse<Statusinfo>(rawJson)
                     sikkerlogg.info("Parsing incoming json request successful: ${Klaxon().toJsonString(validJson)}")
+                    SensuMetrics().meldingFraOebs()
                 } catch (e: Exception) {
                     // Deal with invalid json in request
                     sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
                     e.printStackTrace()
-
+                    SensuMetrics().feilVedMeldingFraOebs()
                     call.respond(HttpStatusCode.BadRequest, "bad request: json not valid")
                     return@post
                 }
@@ -80,7 +82,11 @@ fun main() {
                 // Publish the received json to our rapid
                 rapidApp!!.publish(
                     UUID.randomUUID().toString(),
-                    "{\"@id\": \"$uid\", \"@event_name\": \"oebs-listener-testevent\", \"@opprettet\": \"$opprettet\", \"fnrBruker\": ${validJson?.accountNumber} \"data\": $rawJson}"
+                    "{\"@id\": \"$uid\", \"@event_name\": \"oebs-listener-testevent\", \"@opprettet\": \"$opprettet\", \"fnrBruker\": ${validJson?.accountNumber} \"data\": ${
+                    Klaxon().toJsonString(
+                        validJson
+                    )
+                    }}"
                 )
 
                 call.respond(HttpStatusCode.OK, "ok")
@@ -115,7 +121,7 @@ data class Statusinfo(
     @Json(name = "OrdreNumber")
     val ordreNumber: Int,
     @Json(name = "LineNumber")
-    val lineNUmber: Int,
+    val lineNumber: Int,
     @Json(name = "Description")
     val description: String,
     @Json(name = "CategoryDescription")
