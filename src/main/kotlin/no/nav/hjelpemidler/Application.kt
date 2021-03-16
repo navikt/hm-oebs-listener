@@ -70,26 +70,37 @@ fun main() {
                 } catch (e: Exception) {
                     // Deal with invalid json in request
                     sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
-                    e.printStackTrace()
                     SensuMetrics().feilVedMeldingFraOebs()
                     call.respond(HttpStatusCode.BadRequest, "bad request: json not valid")
                     return@post
                 }
 
-                val uid = UUID.randomUUID()
-                val opprettet = LocalDateTime.now()
+                if (validJson!!.incidentType != "Vedtak Infotrygd") {
+                    log.info("Mottok melding fra oebs av incidentType: ${validJson.incidentType}. Avbryter prosesseringen og returnerer")
+                    call.respond(HttpStatusCode.OK)
+                    return@post
+                }
 
-                // Publish the received json to our rapid
-                rapidApp!!.publish(
-                    UUID.randomUUID().toString(),
-                    "{\"@id\": \"$uid\", \"@event_name\": \"oebs-listener-testevent\", \"@opprettet\": \"$opprettet\", \"fnrBruker\": ${validJson?.accountNumber} \"data\": ${
-                    Klaxon().toJsonString(
-                        validJson
-                    )
-                    }}"
+                val melding = Message(
+                    UUID.randomUUID(),
+                    "hm-ordrelinje",
+                    LocalDateTime.now(),
+                    validJson.accountNumber,
+                    validJson
                 )
 
-                call.respond(HttpStatusCode.OK, "ok")
+                // Publish the received json to our rapid
+                try {
+                    rapidApp!!.publish(validJson.accountNumber, Klaxon().toJsonString(melding))
+                    SensuMetrics().meldingTilRapidSuksess()
+                } catch (e: Exception) {
+                    SensuMetrics().meldingTilRapidFeilet()
+                    sikkerlogg.error("Sending til rapid feilet, exception: $e")
+                    call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
+                    return@post
+                }
+
+                call.respond(HttpStatusCode.OK)
             }
         }
     }.build().apply {
@@ -101,6 +112,14 @@ fun main() {
     rapidApp.start()
     logg.info("Application ending.")
 }
+
+data class Message(
+    val eventId: UUID,
+    val eventName: String,
+    val opprettet: LocalDateTime,
+    val fnrBruker: String,
+    val data: Statusinfo,
+)
 
 data class Statusinfo(
     val system: String,

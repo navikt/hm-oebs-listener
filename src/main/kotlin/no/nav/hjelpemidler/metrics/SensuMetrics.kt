@@ -37,11 +37,6 @@ class SensuMetrics {
         registerPoint(OEBS_MELDING_FEIL, mapOf("counter" to 1L), emptyMap())
     }
 
-    fun test() {
-        println("writing to sensu")
-        registerPoint("testing", mapOf("counter" to 1L), emptyMap())
-    }
-
     private fun registerPoint(measurement: String, fields: Map<String, Any>, tags: Map<String, String>) {
         log.info("Posting point to Influx: measurment {} fields {} tags {} ", measurement, fields, tags)
         val point = Point.measurement(measurement)
@@ -51,7 +46,11 @@ class SensuMetrics {
             .fields(fields)
             .build()
 
-        sendEvent(SensuEvent(sensuName, point.lineProtocol()))
+        try {
+            sendEvent(SensuEvent(sensuName, point.lineProtocol()))
+        } catch (e: Exception) {
+            log.error("Feil ved sending til Sensu: eventname: $measurement")
+        }
     }
 
     private fun sendEvent(sensuEvent: SensuEvent) {
