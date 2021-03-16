@@ -82,11 +82,11 @@ fun main() {
                 }
 
                 val melding = Message(
-                    UUID.randomUUID(),
-                    "hm-ordrelinje",
-                    LocalDateTime.now(),
-                    validJson.accountNumber,
-                    validJson
+                    eventId = UUID.randomUUID(),
+                    eventName = "hm-nyOrdrelinje",
+                    opprettet = LocalDateTime.now(),
+                    fnrBruker = validJson.accountNumber,
+                    data = validJson
                 )
 
                 // Publish the received json to our rapid
