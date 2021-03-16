@@ -106,6 +106,8 @@ data class Statusinfo(
     val system: String,
     @Json(name = "IncidentNummer")
     val incidentNummer: Int,
+    @Json(name = "IncidentStatus")
+    val incidentStatus: String,
     @Json(name = "IncidentType")
     val incidentType: String,
     @Json(name = "IncidentSoknadType")
@@ -116,8 +118,8 @@ data class Statusinfo(
     val incidentSoknad: String,
     @Json(name = "IncidentResultat")
     val incidentResultat: String,
-    @Json(name = "IncidentRefGosys")
-    val incidentRefGosys: String,
+    @Json(name = "IncidentRef")
+    val incidentRef: String,
     @Json(name = "OrdreNumber")
     val ordreNumber: Int,
     @Json(name = "LineNumber")
