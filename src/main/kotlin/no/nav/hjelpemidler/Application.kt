@@ -13,7 +13,6 @@ import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.SensuMetrics
-import no.nav.hjelpemidler.rivers.LoggRiver
 import java.net.InetAddress
 import java.time.LocalDateTime
 import java.util.*
@@ -103,9 +102,7 @@ fun main() {
                 call.respond(HttpStatusCode.OK)
             }
         }
-    }.build().apply {
-        LoggRiver(this)
-    }
+    }.build()
 
     // Run our rapid and rivers implementation facing hm-rapid
     logg.info("Starting Rapid & Rivers app towards hm-rapid")
