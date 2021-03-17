@@ -61,10 +61,10 @@ fun main() {
                 sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
 
                 // Check for valid json request
-                val validJson: Statusinfo?
+                val ordrelinje: Ordrelinje?
                 try {
-                    validJson = Klaxon().parse<Statusinfo>(rawJson)
-                    sikkerlogg.info("Parsing incoming json request successful: ${Klaxon().toJsonString(validJson)}")
+                    ordrelinje = Klaxon().parse<Ordrelinje>(rawJson)
+                    sikkerlogg.info("Parsing incoming json request successful: ${Klaxon().toJsonString(ordrelinje)}")
                     SensuMetrics().meldingFraOebs()
                 } catch (e: Exception) {
                     // Deal with invalid json in request
@@ -74,8 +74,8 @@ fun main() {
                     return@post
                 }
 
-                if (validJson!!.incidentType != "Vedtak Infotrygd") {
-                    log.info("Mottok melding fra oebs av incidentType: ${validJson.incidentType}. Avbryter prosesseringen og returnerer")
+                if (ordrelinje!!.incidentType != "Vedtak Infotrygd") {
+                    log.info("Mottok melding fra oebs av incidentType: ${ordrelinje.incidentType}. Avbryter prosesseringen og returnerer")
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }
@@ -84,13 +84,13 @@ fun main() {
                     eventId = UUID.randomUUID(),
                     eventName = "hm-nyOrdrelinje",
                     opprettet = LocalDateTime.now(),
-                    fnrBruker = validJson.accountNumber,
-                    data = validJson
+                    fnrBruker = ordrelinje.accountNumber,
+                    data = ordrelinje
                 )
 
                 // Publish the received json to our rapid
                 try {
-                    rapidApp!!.publish(validJson.accountNumber, Klaxon().toJsonString(melding))
+                    rapidApp!!.publish(ordrelinje.accountNumber, Klaxon().toJsonString(melding))
                     SensuMetrics().meldingTilRapidSuksess()
                 } catch (e: Exception) {
                     SensuMetrics().meldingTilRapidFeilet()
@@ -115,10 +115,10 @@ data class Message(
     val eventName: String,
     val opprettet: LocalDateTime,
     val fnrBruker: String,
-    val data: Statusinfo,
+    val data: Ordrelinje,
 )
 
-data class Statusinfo(
+data class Ordrelinje(
     val system: String,
     @Json(name = "IncidentNummer")
     val incidentNummer: Int,
