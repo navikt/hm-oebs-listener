@@ -75,7 +75,8 @@ fun main() {
                 }
 
                 if (ordrelinje!!.serviceforespoerseltype != "Vedtak Infotrygd") {
-                    log.info("Mottok melding fra oebs av incidentType: ${ordrelinje.serviceforespoerseltype}. Avbryter prosesseringen og returnerer")
+                    log.info("Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespoerseltype} og sf-status ${ordrelinje.serviceforespoerselstatus}. " +
+                            "Avbryter prosesseringen og returnerer")
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }
@@ -124,7 +125,7 @@ data class Statusinfo(
     @Json(name = "IncidentNummer")
     val serviceforespoersel: Int,
     @Json(name = "IncidentStatus")
-    val incidentStatus: String,
+    val serviceforespoerselstatus: String,
     @Json(name = "IncidentType")
     val serviceforespoerseltype: String,
     @Json(name = "IncidentSoknadType")
