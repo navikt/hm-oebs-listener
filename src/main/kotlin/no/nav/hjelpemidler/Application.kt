@@ -61,9 +61,9 @@ fun main() {
                 sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
 
                 // Check for valid json request
-                val ordrelinje: Ordrelinje?
+                val ordrelinje: Statusinfo?
                 try {
-                    ordrelinje = Klaxon().parse<Ordrelinje>(rawJson)
+                    ordrelinje = Klaxon().parse<Statusinfo>(rawJson)
                     sikkerlogg.info("Parsing incoming json request successful: ${Klaxon().toJsonString(ordrelinje)}")
                     SensuMetrics().meldingFraOebs()
                 } catch (e: Exception) {
@@ -74,8 +74,8 @@ fun main() {
                     return@post
                 }
 
-                if (ordrelinje!!.incidentType != "Vedtak Infotrygd") {
-                    log.info("Mottok melding fra oebs av incidentType: ${ordrelinje.incidentType}. Avbryter prosesseringen og returnerer")
+                if (ordrelinje!!.serviceforespoerseltype != "Vedtak Infotrygd") {
+                    log.info("Mottok melding fra oebs av incidentType: ${ordrelinje.serviceforespoerseltype}. Avbryter prosesseringen og returnerer")
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }
@@ -84,13 +84,13 @@ fun main() {
                     eventId = UUID.randomUUID(),
                     eventName = "hm-nyOrdrelinje",
                     opprettet = LocalDateTime.now(),
-                    fnrBruker = ordrelinje.accountNumber,
+                    fnrBruker = ordrelinje.fnrBruker,
                     data = ordrelinje
                 )
 
                 // Publish the received json to our rapid
                 try {
-                    rapidApp!!.publish(ordrelinje.accountNumber, Klaxon().toJsonString(melding))
+                    rapidApp!!.publish(ordrelinje.fnrBruker, Klaxon().toJsonString(melding))
                     SensuMetrics().meldingTilRapidSuksess()
                 } catch (e: Exception) {
                     SensuMetrics().meldingTilRapidFeilet()
@@ -115,43 +115,44 @@ data class Message(
     val eventName: String,
     val opprettet: LocalDateTime,
     val fnrBruker: String,
-    val data: Ordrelinje,
+    val data: Statusinfo,
 )
 
-data class Ordrelinje(
-    val system: String,
+data class Statusinfo(
+    @Json(name = "System")
+    val mottakendeSystem: String,
     @Json(name = "IncidentNummer")
-    val incidentNummer: Int,
+    val serviceforespoersel: Int,
     @Json(name = "IncidentStatus")
     val incidentStatus: String,
     @Json(name = "IncidentType")
-    val incidentType: String,
+    val serviceforespoerseltype: String,
     @Json(name = "IncidentSoknadType")
-    val incidentSoknadType: String,
+    val soeknadstype: String,
     @Json(name = "IncidentVedtakDato")
-    val incidentVedtakDato: String,
+    val vedtaksdato: String,
     @Json(name = "IncidentSoknad")
-    val incidentSoknad: String,
+    val soeknad: String,
     @Json(name = "IncidentResultat")
-    val incidentResultat: String,
+    val resultat: String,
     @Json(name = "IncidentRef")
-    val incidentRef: String,
+    val saksblokkOgSaksnummer: String,
     @Json(name = "OrdreNumber")
-    val ordreNumber: Int,
+    val ordrenummer: Int,
     @Json(name = "LineNumber")
-    val lineNumber: Int,
+    val ordrelinjenummer: Int,
     @Json(name = "Description")
-    val description: String,
+    val artikkelbeskrivelse: String,
     @Json(name = "CategoryDescription")
-    val categoryDescription: String,
+    val kategorinavn: String,
     @Json(name = "OrderedItem")
-    val orderedItem: Int,
+    val artikkel: Int,
     @Json(name = "User_ItemType")
-    val userItemType: String,
+    val hjelpemiddeltype: String,
     @Json(name = "Quantity")
-    val quantity: Int,
+    val antall: Int,
     @Json(name = "AccountNumber")
-    val accountNumber: String,
+    val fnrBruker: String,
     @Json(name = "LastUpdateDate")
-    val lastUpdateDate: String,
+    val sistOppdatert: String,
 )
