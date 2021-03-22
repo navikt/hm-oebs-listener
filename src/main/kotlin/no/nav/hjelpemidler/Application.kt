@@ -2,11 +2,13 @@ package no.nav.hjelpemidler
 
 import com.beust.klaxon.Json
 import com.beust.klaxon.Klaxon
-import io.ktor.application.*
-import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.header
+import io.ktor.request.receiveText
+import io.ktor.response.respond
+import io.ktor.routing.post
+import io.ktor.routing.routing
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -15,7 +17,7 @@ import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.SensuMetrics
 import java.net.InetAddress
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -75,14 +77,16 @@ fun main() {
                 }
 
                 if (ordrelinje!!.serviceforespoerseltype != "Vedtak Infotrygd") {
-                    log.info("Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespoerseltype} og sf-status ${ordrelinje.serviceforespoerselstatus}. " +
-                            "Avbryter prosesseringen og returnerer")
+                    logg.info(
+                        "Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespoerseltype} og sf-status ${ordrelinje.serviceforespoerselstatus}. " +
+                            "Avbryter prosesseringen og returnerer"
+                    )
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }
 
                 if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel") {
-                    log.info("Mottok melding fra oebs med hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}.")
+                    logg.info("Mottok melding fra oebs med hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}.")
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }
@@ -153,7 +157,7 @@ data class Statusinfo(
     @Json(name = "Description")
     val artikkelbeskrivelse: String,
     @Json(name = "CategoryDescription")
-    val kategorinavn: String,
+    val produktgruppe: String,
     @Json(name = "OrderedItem")
     val artikkel: Int,
     @Json(name = "User_ItemType")
