@@ -81,9 +81,15 @@ fun main() {
                     return@post
                 }
 
+                if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel") {
+                    log.info("Mottok melding fra oebs med hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}.")
+                    call.respond(HttpStatusCode.OK)
+                    return@post
+                }
+
                 val melding = Message(
                     eventId = UUID.randomUUID(),
-                    eventName = "hm-nyOrdrelinje",
+                    eventName = "hm-NyOrdrelinje",
                     opprettet = LocalDateTime.now(),
                     fnrBruker = ordrelinje.fnrBruker,
                     data = ordrelinje
@@ -142,6 +148,8 @@ data class Statusinfo(
     val ordrenummer: Int,
     @Json(name = "LineNumber")
     val ordrelinjenummer: Int,
+    @Json(name = "ShipmentNumber")
+    val delordrelinjenummer: Int,
     @Json(name = "Description")
     val artikkelbeskrivelse: String,
     @Json(name = "CategoryDescription")
