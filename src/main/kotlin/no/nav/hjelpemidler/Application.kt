@@ -76,9 +76,9 @@ fun main() {
                     return@post
                 }
 
-                if (ordrelinje!!.serviceforespoerseltype != "Vedtak Infotrygd") {
+                if (ordrelinje!!.serviceforespørseltype != "Vedtak Infotrygd") {
                     logg.info(
-                        "Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespoerseltype} og sf-status ${ordrelinje.serviceforespoerselstatus}. " +
+                        "Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespørseltype} og sf-status ${ordrelinje.serviceforespørselstatus}. " +
                             "Avbryter prosesseringen og returnerer"
                     )
                     call.respond(HttpStatusCode.OK)
@@ -133,17 +133,17 @@ data class Statusinfo(
     @Json(name = "System")
     val mottakendeSystem: String,
     @Json(name = "IncidentNummer")
-    val serviceforespoersel: Int,
+    val serviceforespørsel: Int,
     @Json(name = "IncidentStatus")
-    val serviceforespoerselstatus: String,
+    val serviceforespørselstatus: String,
     @Json(name = "IncidentType")
-    val serviceforespoerseltype: String,
+    val serviceforespørseltype: String,
     @Json(name = "IncidentSoknadType")
-    val soeknadstype: String,
+    val søknadstype: String,
     @Json(name = "IncidentVedtakDato")
     val vedtaksdato: String,
     @Json(name = "IncidentSoknad")
-    val soeknad: String,
+    val søknad: String,
     @Json(name = "IncidentResultat")
     val resultat: String,
     @Json(name = "IncidentRef")
