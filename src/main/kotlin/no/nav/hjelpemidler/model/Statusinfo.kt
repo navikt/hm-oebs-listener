@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.model
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
@@ -19,6 +20,7 @@ data class Statusinfo(
     @JsonProperty("IncidentSoknadType")
     val søknadstype: String,
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("IncidentVedtakDato")
     val vedtaksdato: LocalDate,
 
@@ -58,6 +60,7 @@ data class Statusinfo(
     @JsonProperty("AccountNumber")
     val fnrBruker: String,
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("LastUpdateDate")
     val sistOppdatert: LocalDate,
 )
