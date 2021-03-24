@@ -1,7 +1,8 @@
 package no.nav.hjelpemidler
 
-import com.beust.klaxon.Json
-import com.beust.klaxon.Klaxon
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.header
@@ -15,14 +16,19 @@ import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.SensuMetrics
+import no.nav.hjelpemidler.model.Statusinfo
 import java.net.InetAddress
 import java.time.LocalDateTime
 import java.util.UUID
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
+private val mapper = ObjectMapper().registerModule(JavaTimeModule())
 
+// Unngå "inappropriate blocking method call" for objectmapper.writeValueAsString
+@Suppress("BlockingMethodInNonBlockingContext")
 fun main() {
+
     var rapidApp: RapidsConnection? = null
     rapidApp = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig(
@@ -65,8 +71,8 @@ fun main() {
                 // Check for valid json request
                 val ordrelinje: Statusinfo?
                 try {
-                    ordrelinje = Klaxon().parse<Statusinfo>(rawJson)
-                    sikkerlogg.info("Parsing incoming json request successful: ${Klaxon().toJsonString(ordrelinje)}")
+                    ordrelinje = mapper.readValue(rawJson)
+                    sikkerlogg.info("Parsing incoming json request successful: ${mapper.writeValueAsString(ordrelinje)}")
                     SensuMetrics().meldingFraOebs()
                 } catch (e: Exception) {
                     // Deal with invalid json in request
@@ -101,7 +107,7 @@ fun main() {
 
                 // Publish the received json to our rapid
                 try {
-                    rapidApp!!.publish(ordrelinje.fnrBruker, Klaxon().toJsonString(melding))
+                    rapidApp!!.publish(ordrelinje.fnrBruker, mapper.writeValueAsString(melding))
                     SensuMetrics().meldingTilRapidSuksess()
                 } catch (e: Exception) {
                     SensuMetrics().meldingTilRapidFeilet()
@@ -127,45 +133,4 @@ data class Message(
     val opprettet: LocalDateTime,
     val fnrBruker: String,
     val data: Statusinfo,
-)
-
-data class Statusinfo(
-    @Json(name = "System")
-    val mottakendeSystem: String,
-    @Json(name = "IncidentNummer")
-    val serviceforespørsel: Int,
-    @Json(name = "IncidentStatus")
-    val serviceforespørselstatus: String,
-    @Json(name = "IncidentType")
-    val serviceforespørseltype: String,
-    @Json(name = "IncidentSoknadType")
-    val søknadstype: String,
-    @Json(name = "IncidentVedtakDato")
-    val vedtaksdato: String,
-    @Json(name = "IncidentSoknad")
-    val søknad: String,
-    @Json(name = "IncidentResultat")
-    val resultat: String,
-    @Json(name = "IncidentRef")
-    val saksblokkOgSaksnummer: String,
-    @Json(name = "OrdreNumber")
-    val ordrenummer: Int,
-    @Json(name = "LineNumber")
-    val ordrelinjenummer: Int,
-    @Json(name = "ShipmentNumber")
-    val delordrelinjenummer: Int,
-    @Json(name = "Description")
-    val artikkelbeskrivelse: String,
-    @Json(name = "CategoryDescription")
-    val produktgruppe: String,
-    @Json(name = "OrderedItem")
-    val artikkel: Int,
-    @Json(name = "User_ItemType")
-    val hjelpemiddeltype: String,
-    @Json(name = "Quantity")
-    val antall: Int,
-    @Json(name = "AccountNumber")
-    val fnrBruker: String,
-    @Json(name = "LastUpdateDate")
-    val sistOppdatert: String,
 )
