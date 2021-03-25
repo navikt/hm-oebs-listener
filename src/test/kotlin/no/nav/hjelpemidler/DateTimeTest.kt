@@ -2,6 +2,7 @@ package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.time.LocalDate
 import kotlin.test.Test
@@ -14,7 +15,7 @@ internal class DateTimeTest {
     @ExperimentalTime
     @Test
     fun `Parse vedtaksdato to LocalDate`() {
-        val mapper = ObjectMapper()
+        val mapper = jacksonObjectMapper()
         mapper.registerModule(JavaTimeModule())
 
         val result: Statusinfo = mapper.readValue(

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
-data class Statusinfo(
+data class Statusinfo (
     @JsonProperty("System")
     val mottakendeSystem: String,
 
@@ -62,5 +62,5 @@ data class Statusinfo(
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("LastUpdateDate")
-    val sistOppdatert: LocalDate,
+    val sistOppdatert: LocalDate
 )
