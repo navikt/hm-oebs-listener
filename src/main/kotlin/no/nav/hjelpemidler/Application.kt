@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -23,7 +23,7 @@ import java.util.UUID
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-private val mapper = ObjectMapper().registerModule(JavaTimeModule())
+private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
 // Unngå "inappropriate blocking method call" for objectmapper.writeValueAsString
 @Suppress("BlockingMethodInNonBlockingContext")

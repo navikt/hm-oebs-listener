@@ -1,14 +1,13 @@
 package no.nav.hjelpemidler
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.hjelpemidler.model.Statusinfo
 import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.ExperimentalTime
-import no.nav.hjelpemidler.model.Statusinfo
 
 internal class DateTimeTest {
 
