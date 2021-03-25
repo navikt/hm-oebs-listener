@@ -48,4 +48,42 @@ internal class DateTimeTest {
         assertEquals(LocalDate.of(2021, 4, 5), result.sistOppdatert)
         println(mapper.writeValueAsString(result))
     }
+
+    @ExperimentalTime
+    @Test
+    fun `Parse tom dato-streng til LocalDate`() {
+        val mapper = jacksonObjectMapper()
+        mapper.registerModule(JavaTimeModule())
+
+        val result: Statusinfo = mapper.readValue(
+            """
+            {
+                "System": "DIGIHOT",
+                "IncidentNummer":21072339,
+                "IncidentStatus": "Open",
+                "IncidentType": "Vedtak Infotrygd",
+                "IncidentSoknadType": "HJDAAN",
+                "IncidentVedtakDato": "",
+                "IncidentSoknad": "S",
+                "IncidentResultat": "I",
+                "IncidentRef": "A01",
+                "OrdreNumber":7068818,
+                "LineNumber":1,
+                "ShipmentNumber":1,
+                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                "CategoryDescription": "",
+                "OrderedItem":149305,
+                "User_ItemType": "Hjelpemiddel",
+                "Quantity":1,
+                "AccountNumber": "XXXXXXXXXXX",
+                "LastUpdateDate": "2021-04-05"
+            }
+            """.trimIndent()
+        )
+
+        println(result.toString())
+        assertEquals(null, result.vedtaksdato)
+        assertEquals(LocalDate.of(2021, 4, 5), result.sistOppdatert)
+        println(mapper.writeValueAsString(result))
+    }
 }

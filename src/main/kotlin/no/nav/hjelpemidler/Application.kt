@@ -91,7 +91,9 @@ fun main() {
                     return@post
                 }
 
-                if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel") {
+                if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel" ||
+                    ordrelinje.hjelpemiddeltype != "Individstyrt hjelpemiddel"
+                ) {
                     logg.info("Mottok melding fra oebs med hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}.")
                     call.respond(HttpStatusCode.OK)
                     return@post

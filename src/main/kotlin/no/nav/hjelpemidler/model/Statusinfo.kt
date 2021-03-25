@@ -20,9 +20,10 @@ data class Statusinfo(
     @JsonProperty("IncidentSoknadType")
     val søknadstype: String,
 
+    // N.B.: Viss dato er "" i meldinga blir den til null under deserialisering og forblir null under serialisering (utgåande JSON)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("IncidentVedtakDato")
-    val vedtaksdato: LocalDate,
+    val vedtaksdato: LocalDate?,
 
     @JsonProperty("IncidentSoknad")
     val søknad: String,
