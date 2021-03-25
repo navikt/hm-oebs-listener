@@ -66,6 +66,7 @@ fun main() {
                 }
 
                 val rawJson: String = call.receiveText()
+                SensuMetrics().meldingFraOebs()
                 sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
 
                 // Check for valid json request
@@ -73,20 +74,29 @@ fun main() {
                 try {
                     ordrelinje = mapper.readValue(rawJson)
                     sikkerlogg.info("Parsing incoming json request successful: ${mapper.writeValueAsString(ordrelinje)}")
-                    SensuMetrics().meldingFraOebs()
+                    SensuMetrics().oebsParsingOk()
                 } catch (e: Exception) {
                     // Deal with invalid json in request
                     sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
-                    SensuMetrics().feilVedMeldingFraOebs()
+                    SensuMetrics().oebsParsingFeilet()
                     call.respond(HttpStatusCode.BadRequest, "bad request: json not valid")
                     return@post
                 }
 
                 if (ordrelinje!!.serviceforespørseltype != "Vedtak Infotrygd") {
-                    logg.info(
-                        "Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespørseltype} og sf-status ${ordrelinje.serviceforespørselstatus}. " +
-                            "Avbryter prosesseringen og returnerer"
-                    )
+                    if (ordrelinje.serviceforespørseltype == "") {
+                        logg.info(
+                            "Mottok melding fra oebs som ikke er en SF. Avbryter prosesseringen og returnerer"
+                        )
+                        SensuMetrics().sfTypeBlank()
+                    } else {
+                        logg.info(
+                            "Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespørseltype} og sf-status ${ordrelinje.serviceforespørselstatus}. " +
+                                "Avbryter prosesseringen og returnerer"
+                        )
+                        SensuMetrics().sfTypeUlikVedtakInfotrygd()
+                    }
+
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }
@@ -95,6 +105,7 @@ fun main() {
                     ordrelinje.hjelpemiddeltype != "Individstyrt hjelpemiddel"
                 ) {
                     logg.info("Mottok melding fra oebs med hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}.")
+                    SensuMetrics().irrelevantHjelpemiddeltype()
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }

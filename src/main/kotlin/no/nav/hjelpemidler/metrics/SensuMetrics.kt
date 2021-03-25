@@ -22,7 +22,7 @@ class SensuMetrics {
         .build()
 
     fun meldingTilRapidSuksess() {
-        registerPoint(MELDING_TIL_RAPID_SUKSESS, mapOf("counter" to 1L), emptyMap())
+        registerPoint(MELDING_TIL_RAPID_OK, mapOf("counter" to 1L), emptyMap())
     }
 
     fun meldingTilRapidFeilet() {
@@ -30,11 +30,27 @@ class SensuMetrics {
     }
 
     fun meldingFraOebs() {
-        registerPoint(MELDING_FRA_OEBS, mapOf("counter" to 1L), emptyMap())
+        registerPoint(OEBS_MELDING, mapOf("counter" to 1L), emptyMap())
     }
 
-    fun feilVedMeldingFraOebs() {
-        registerPoint(OEBS_MELDING_FEIL, mapOf("counter" to 1L), emptyMap())
+    fun oebsParsingOk() {
+        registerPoint(OEBS_PARSING_OK, mapOf("counter" to 1L), emptyMap())
+    }
+
+    fun oebsParsingFeilet() {
+        registerPoint(OEBS_PARSING_FEILET, mapOf("counter" to 1L), emptyMap())
+    }
+
+    fun sfTypeBlank() {
+        registerPoint(OEBS_MELDING_SF_TYPE_BLANK, mapOf("counter" to 1L), emptyMap())
+    }
+
+    fun sfTypeUlikVedtakInfotrygd() {
+        registerPoint(OEBS_MELDING_SF_TYPE_ULIK_VEDTAK_INFOTRYGD, mapOf("counter" to 1L), emptyMap())
+    }
+
+    fun irrelevantHjelpemiddeltype() {
+        registerPoint(OEBS_MELDING_IRRELEVANT_HJELPEMIDDELTYPE, mapOf("counter" to 1L), emptyMap())
     }
 
     private fun registerPoint(measurement: String, fields: Map<String, Any>, tags: Map<String, String>) {
@@ -88,9 +104,13 @@ class SensuMetrics {
         )
 
         private const val SOKNADER = "hm-oebs-listener"
-        const val MELDING_TIL_RAPID_SUKSESS = "$SOKNADER.rapid.suksess"
-        const val MELDING_TIL_RAPID_FEILET = "$SOKNADER.rapid.feilet"
-        const val MELDING_FRA_OEBS = "$SOKNADER.oebs.melding"
-        const val OEBS_MELDING_FEIL = "$SOKNADER.oebs.feil"
+        const val MELDING_TIL_RAPID_OK = "$SOKNADER.rapidOk"
+        const val MELDING_TIL_RAPID_FEILET = "$SOKNADER.rapidFeilet"
+        const val OEBS_MELDING = "$SOKNADER.oebs.melding"
+        const val OEBS_PARSING_OK = "$SOKNADER.oebs.parsingOk"
+        const val OEBS_PARSING_FEILET = "$SOKNADER.oebs.parsingFeilet"
+        const val OEBS_MELDING_SF_TYPE_BLANK = "$SOKNADER.oebs.sfTypeBlank"
+        const val OEBS_MELDING_SF_TYPE_ULIK_VEDTAK_INFOTRYGD = "$SOKNADER.oebs.sfTypeUlikVedtakInfotrygd"
+        const val OEBS_MELDING_IRRELEVANT_HJELPEMIDDELTYPE = "$SOKNADER.oebs.irrelevantHjelpemiddeltype"
     }
 }
