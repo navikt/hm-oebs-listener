@@ -50,7 +50,7 @@ data class Statusinfo(
     val produktgruppe: String,
 
     @JsonProperty("OrderedItem")
-    val artikkel: Int,
+    val artikkel: String,
 
     @JsonProperty("User_ItemType")
     val hjelpemiddeltype: String,
