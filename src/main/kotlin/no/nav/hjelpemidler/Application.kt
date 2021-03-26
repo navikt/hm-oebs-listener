@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -16,7 +17,9 @@ import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.SensuMetrics
-import no.nav.hjelpemidler.model.Statusinfo
+import no.nav.hjelpemidler.model.Ordrelinje
+import no.nav.hjelpemidler.model.OrdrelinjeOebs
+import no.nav.hjelpemidler.model.toOrdrelinje
 import java.net.InetAddress
 import java.time.LocalDateTime
 import java.util.UUID
@@ -53,7 +56,7 @@ fun main() {
                 null,
                 null,
             ),
-            8080,
+            Configuration.rapidConfig["HTTP_PORT"]!!.toInt(),
         )
     ).withKtorModule {
         routing {
@@ -70,7 +73,7 @@ fun main() {
                 sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
 
                 // Check for valid json request
-                val ordrelinje: Statusinfo?
+                val ordrelinje: OrdrelinjeOebs?
                 try {
                     ordrelinje = mapper.readValue(rawJson)
                     sikkerlogg.info("Parsing incoming json request successful: ${mapper.writeValueAsString(ordrelinje)}")
@@ -115,7 +118,7 @@ fun main() {
                     eventName = "hm-NyOrdrelinje",
                     opprettet = LocalDateTime.now(),
                     fnrBruker = ordrelinje.fnrBruker,
-                    data = ordrelinje
+                    data = ordrelinje.toOrdrelinje()
                 )
 
                 // Publish the received json to our rapid
@@ -143,7 +146,8 @@ fun main() {
 data class Message(
     val eventId: UUID,
     val eventName: String,
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     val opprettet: LocalDateTime,
     val fnrBruker: String,
-    val data: Statusinfo,
+    val data: Ordrelinje,
 )

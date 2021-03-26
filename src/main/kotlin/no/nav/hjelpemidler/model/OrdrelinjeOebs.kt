@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
-data class Statusinfo(
+data class OrdrelinjeOebs(
     @JsonProperty("System")
     val mottakendeSystem: String,
 
@@ -21,7 +21,7 @@ data class Statusinfo(
     val søknadstype: String,
 
     // N.B.: Viss dato er "" i meldinga blir den til null under deserialisering og forblir null under serialisering (utgåande JSON)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("IncidentVedtakDato")
     val vedtaksdato: LocalDate?,
 
@@ -32,16 +32,16 @@ data class Statusinfo(
     val resultat: String,
 
     @JsonProperty("IncidentRef")
-    val saksblokkOgSaksnummer: String,
+    val saksblokkOgSaksnr: String,
 
     @JsonProperty("OrdreNumber")
-    val ordrenummer: Int,
+    val ordrenr: Int,
 
     @JsonProperty("LineNumber")
-    val ordrelinjenummer: Int,
+    val ordrelinje: Int,
 
     @JsonProperty("ShipmentNumber")
-    val delordrelinjenummer: Int,
+    val delordrelinje: Int,
 
     @JsonProperty("Description")
     val artikkelbeskrivelse: String,
@@ -50,7 +50,7 @@ data class Statusinfo(
     val produktgruppe: String,
 
     @JsonProperty("OrderedItem")
-    val artikkel: String,
+    val artikkelnr: String,
 
     @JsonProperty("User_ItemType")
     val hjelpemiddeltype: String,
@@ -61,7 +61,31 @@ data class Statusinfo(
     @JsonProperty("AccountNumber")
     val fnrBruker: String,
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("LastUpdateDate")
     val sistOppdatert: LocalDate
 )
+
+fun OrdrelinjeOebs.toOrdrelinje(): Ordrelinje {
+    return Ordrelinje(
+        this.mottakendeSystem,
+        this.serviceforespørsel,
+        this.serviceforespørselstatus,
+        this.serviceforespørseltype,
+        this.søknadstype,
+        this.vedtaksdato,
+        this.søknad,
+        this.resultat,
+        this.saksblokkOgSaksnr,
+        this.ordrenr,
+        this.ordrelinje,
+        this.delordrelinje,
+        this.artikkelbeskrivelse,
+        this.produktgruppe,
+        this.artikkelnr,
+        this.hjelpemiddeltype,
+        this.antall,
+        this.fnrBruker,
+        this.sistOppdatert
+    )
+}

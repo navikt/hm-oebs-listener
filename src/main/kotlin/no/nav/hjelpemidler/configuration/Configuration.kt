@@ -1,6 +1,11 @@
 package no.nav.hjelpemidler.configuration
 
-import com.natpryce.konfig.*
+import com.natpryce.konfig.ConfigurationMap
+import com.natpryce.konfig.ConfigurationProperties
+import com.natpryce.konfig.EnvironmentVariables
+import com.natpryce.konfig.Key
+import com.natpryce.konfig.overriding
+import com.natpryce.konfig.stringType
 
 internal object Configuration {
 
@@ -14,6 +19,8 @@ internal object Configuration {
 
     private val prodProperties = ConfigurationMap(
         mapOf(
+            "HTTP_PORT" to "8080",
+
             "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
             "kafka.reset.policy" to "latest",
             "kafka.client.id" to "hm-oebs-listener-prod",
@@ -25,6 +32,8 @@ internal object Configuration {
 
     private val devProperties = ConfigurationMap(
         mapOf(
+            "HTTP_PORT" to "8080",
+
             "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
             "kafka.reset.policy" to "latest",
             "kafka.client.id" to "hm-oebs-listener-dev",
@@ -37,9 +46,9 @@ internal object Configuration {
     private val localProperties = ConfigurationMap(
         mapOf(
             "HTTP_PORT" to "8085",
+            "OEBSTOKEN" to "abc",
 
             "kafka.reset.policy" to "earliest",
-            "application.httpPort" to "8082",
             "application.profile" to "LOCAL",
             "KAFKA_TRUSTSTORE_PATH" to "",
             "KAFKA_CREDSTORE_PASSWORD" to "",
@@ -47,7 +56,7 @@ internal object Configuration {
             "kafka.brokers" to "host.docker.internal:9092",
             "kafka.client.id" to "hm-oebs-listener-local",
             "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
-
+            "kafka.reset.policy" to "earliest",
             "application.profile" to "local",
             "SENSU_URL" to "https://test",
         )
@@ -64,7 +73,7 @@ internal object Configuration {
         "KAFKA_TRUSTSTORE_PASSWORD" to config()[Key("KAFKA_CREDSTORE_PASSWORD", stringType)],
         "KAFKA_KEYSTORE_PATH" to config()[Key("KAFKA_KEYSTORE_PATH", stringType)],
         "KAFKA_KEYSTORE_PASSWORD" to config()[Key("KAFKA_CREDSTORE_PASSWORD", stringType)],
-        "HTTP_PORT" to "8080",
+        "HTTP_PORT" to config()[Key("HTTP_PORT", stringType)],
         "KAFKA_CLIENT_ID" to config()[Key("kafka.client.id", stringType)],
     ) + System.getenv().filter { it.key.startsWith("NAIS_") }
 
@@ -73,5 +82,4 @@ internal object Configuration {
         "SENSU_URL" to config()[Key("SENSU_URL", stringType)],
         "OEBSTOKEN" to config()[Key("OEBSTOKEN", stringType)],
     ) + System.getenv().filter { it.key.startsWith("NAIS_") }
-
 }
