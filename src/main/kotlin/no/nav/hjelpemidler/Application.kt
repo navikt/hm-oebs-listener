@@ -70,17 +70,36 @@ fun main() {
 
                 val rawJson: String = call.receiveText()
                 SensuMetrics().meldingFraOebs()
-                sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
+                if (Configuration.application["APP_PROFILE"] != "prod") {
+                    sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
+                }
 
                 // Check for valid json request
                 val ordrelinje: OrdrelinjeOebs?
                 try {
                     ordrelinje = mapper.readValue(rawJson)
-                    sikkerlogg.info("Parsing incoming json request successful: ${mapper.writeValueAsString(ordrelinje)}")
+                    if (Configuration.application["APP_PROFILE"] != "prod") {
+                        sikkerlogg.info(
+                            "Parsing incoming json request successful: ${
+                            mapper.writeValueAsString(
+                                ordrelinje
+                            )
+                            }"
+                        )
+                    }
                     SensuMetrics().oebsParsingOk()
                 } catch (e: Exception) {
                     // Deal with invalid json in request
                     sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
+                    if (Configuration.application["APP_PROFILE"] != "prod") {
+                        sikkerlogg.info(
+                            "JSON in failed parsing: ${
+                                mapper.writeValueAsString(
+                                    rawJson
+                                )
+                            }"
+                        )
+                    }
                     SensuMetrics().oebsParsingFeilet()
                     call.respond(HttpStatusCode.BadRequest, "bad request: json not valid")
                     return@post
