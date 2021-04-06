@@ -123,10 +123,18 @@ fun main() {
 
                 // Publish the received json to our rapid
                 try {
-                    rapidApp!!.publish(ordrelinje.fnrBruker, mapper.writeValueAsString(melding))
-                    SensuMetrics().meldingTilRapidSuksess()
+                    if (Configuration.application["APP_PROFILE"] != "prod") {
+                        logg.info { "Publiserer ordrelinje til rapid i miljø ${Configuration.application["APP_PROFILE"]}" }
+                        rapidApp!!.publish(ordrelinje.fnrBruker, mapper.writeValueAsString(melding))
+                        SensuMetrics().meldingTilRapidSuksess()
+                    } else {
+                        ordrelinje.fnrBruker = "MASKERT"
+                        sikkerlogg.info { "Ordrelinje mottatt i prod som ikkje blir sendt til rapid: ${mapper.writeValueAsString(ordrelinje)}" }
+                    }
                 } catch (e: Exception) {
-                    SensuMetrics().meldingTilRapidFeilet()
+                    if (Configuration.application["APP_PROFILE"] != "prod") {
+                        SensuMetrics().meldingTilRapidFeilet()
+                    }
                     sikkerlogg.error("Sending til rapid feilet, exception: $e")
                     call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
                     return@post

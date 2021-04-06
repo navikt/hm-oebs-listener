@@ -59,7 +59,8 @@ data class OrdrelinjeOebs(
     val antall: Int,
 
     @JsonProperty("AccountNumber")
-    val fnrBruker: String,
+    // FIXME: Skift til var for testing
+    var fnrBruker: String,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("LastUpdateDate")

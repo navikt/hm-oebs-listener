@@ -49,7 +49,6 @@ internal object Configuration {
             "OEBSTOKEN" to "abc",
 
             "kafka.reset.policy" to "earliest",
-            "application.profile" to "LOCAL",
             "KAFKA_TRUSTSTORE_PATH" to "",
             "KAFKA_CREDSTORE_PASSWORD" to "",
             "KAFKA_KEYSTORE_PATH" to "",
