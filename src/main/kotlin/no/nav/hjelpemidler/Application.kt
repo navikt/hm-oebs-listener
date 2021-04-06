@@ -93,11 +93,7 @@ fun main() {
                     sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
                     if (Configuration.application["APP_PROFILE"] != "prod") {
                         sikkerlogg.info(
-                            "JSON in failed parsing: ${
-                                mapper.writeValueAsString(
-                                    rawJson
-                                )
-                            }"
+                            "JSON in failed parsing: ${mapper.writeValueAsString(rawJson)}"
                         )
                     }
                     SensuMetrics().oebsParsingFeilet()
