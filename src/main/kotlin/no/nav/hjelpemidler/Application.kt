@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -26,7 +27,8 @@ import java.util.UUID
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
+private val mapperXml = XmlMapper().registerModule(JavaTimeModule())
 
 // Unngå "inappropriate blocking method call" for objectmapper.writeValueAsString
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -68,20 +70,29 @@ fun main() {
                     return@post
                 }
 
-                val rawJson: String = call.receiveText()
+                var incomingFormatType = "JSON"
+                if (call.request.header("Content-Type").toString().contains("application/xml")) {
+                    incomingFormatType = "XML"
+                }
+
+                val requestBody: String = call.receiveText()
                 SensuMetrics().meldingFraOebs()
                 if (Configuration.application["APP_PROFILE"] != "prod") {
-                    sikkerlogg.info("Received JSON push request from OEBS: $rawJson")
+                    sikkerlogg.info("Received $incomingFormatType push request from OEBS: $requestBody")
                 }
 
                 // Check for valid json request
                 val ordrelinje: OrdrelinjeOebs?
                 try {
-                    ordrelinje = mapper.readValue(rawJson)
+                    if (incomingFormatType == "XML"){
+                        ordrelinje = mapperXml.readValue(requestBody)
+                    } else {
+                        ordrelinje = mapperJson.readValue(requestBody)
+                    }
                     if (Configuration.application["APP_PROFILE"] != "prod") {
                         sikkerlogg.info(
-                            "Parsing incoming json request successful: ${
-                            mapper.writeValueAsString(
+                            "Parsing incoming $incomingFormatType request successful: ${
+                            mapperJson.writeValueAsString(
                                 ordrelinje
                             )
                             }"
@@ -89,15 +100,15 @@ fun main() {
                     }
                     SensuMetrics().oebsParsingOk()
                 } catch (e: Exception) {
-                    // Deal with invalid json in request
-                    sikkerlogg.info("Parsing incoming json request failed with exception (responding 4xx): $e")
+                    // Deal with invalid json/xml in request
+                    sikkerlogg.info("Parsing incoming $incomingFormatType request failed with exception (responding 4xx): $e")
                     if (Configuration.application["APP_PROFILE"] != "prod") {
                         sikkerlogg.info(
-                            "JSON in failed parsing: ${mapper.writeValueAsString(rawJson)}"
+                            "$incomingFormatType in failed parsing: ${mapperJson.writeValueAsString(requestBody)}"
                         )
                     }
                     SensuMetrics().oebsParsingFeilet()
-                    call.respond(HttpStatusCode.BadRequest, "bad request: json not valid")
+                    call.respond(HttpStatusCode.BadRequest, "bad request: $incomingFormatType not valid")
                     return@post
                 }
 
@@ -136,15 +147,15 @@ fun main() {
                     data = ordrelinje.toOrdrelinje()
                 )
 
-                // Publish the received json to our rapid
+                // Publish the received json/xml to our rapid as json
                 try {
                     if (Configuration.application["APP_PROFILE"] != "prod") {
                         logg.info { "Publiserer ordrelinje til rapid i miljø ${Configuration.application["APP_PROFILE"]}" }
-                        rapidApp!!.publish(ordrelinje.fnrBruker, mapper.writeValueAsString(melding))
+                        rapidApp!!.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
                         SensuMetrics().meldingTilRapidSuksess()
                     } else {
                         ordrelinje.fnrBruker = "MASKERT"
-                        sikkerlogg.info { "Ordrelinje mottatt i prod som ikkje blir sendt til rapid: ${mapper.writeValueAsString(ordrelinje)}" }
+                        sikkerlogg.info { "Ordrelinje mottatt i prod som ikkje blir sendt til rapid: ${mapperJson.writeValueAsString(ordrelinje)}" }
                     }
                 } catch (e: Exception) {
                     if (Configuration.application["APP_PROFILE"] != "prod") {

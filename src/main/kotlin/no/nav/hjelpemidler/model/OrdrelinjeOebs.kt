@@ -1,9 +1,11 @@
 package no.nav.hjelpemidler.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class OrdrelinjeOebs(
     @JsonProperty("System")
     val mottakendeSystem: String,

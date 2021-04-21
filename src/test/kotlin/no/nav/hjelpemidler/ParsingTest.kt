@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -116,6 +117,43 @@ internal class ParsingTest {
                 "AccountNumber": "XXXXXXXXXXX",
                 "LastUpdateDate": "2021-04-05"
             }
+            """.trimIndent()
+        )
+
+        println(result.toString())
+        assertEquals("012345", result.artikkelnr)
+        println(mapper.writeValueAsString(result))
+    }
+
+    @Test
+    fun `Parse XML`() {
+        val mapper = XmlMapper()
+        mapper.registerModule(JavaTimeModule())
+
+        val result: OrdrelinjeOebs = mapper.readValue(
+            """
+                <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
+                    <ki:System>DIGIHOT</ki:System>
+                    <ki:IncidentNummer/>
+                    <ki:IncidentStatus/>
+                    <ki:IncidentType/>
+                    <ki:IncidentSoknadType/>
+                    <ki:IncidentVedtakDato/>
+                    <ki:IncidentSoknad/>
+                    <ki:IncidentResultat/>
+                    <ki:IncidentRef/>
+                    <ki:OrdreNumber>0178581</ki:OrdreNumber>
+                    <ki:LineNumber>6</ki:LineNumber>
+                    <ki:ShipmentNumber>2</ki:ShipmentNumber>
+                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
+                    <ki:CategoryDescription/>
+                    <ki:OrderedItem>012345</ki:OrderedItem>
+                    <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
+                    <ki:Quantity>3</ki:Quantity>
+                    <ki:AccountNumber>01127622634</ki:AccountNumber>
+                    <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
+                    <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
+                </ki:StatusInfo>
             """.trimIndent()
         )
 

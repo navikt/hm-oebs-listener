@@ -10,6 +10,7 @@ val brukernotifikasjon_schemas_version: String by project
 val kafka_version: String by project
 val kafka_avro_version: String by project
 val influxdb_version: String by project
+val jackson_version: String by project
 
 group = "no.nav.hjelpemidler"
 version = "1.0-SNAPSHOT"
@@ -31,6 +32,8 @@ dependencies {
     implementation("org.apache.kafka:kafka-clients:$kafka_version")
     implementation("io.confluent:kafka-avro-serializer:$kafka_avro_version")
     implementation("org.influxdb:influxdb-java:$influxdb_version")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
 }
 
 tasks.withType<KotlinCompile>() {
