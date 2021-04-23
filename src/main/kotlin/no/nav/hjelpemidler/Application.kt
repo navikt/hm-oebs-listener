@@ -154,6 +154,7 @@ fun main() {
                         rapidApp!!.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
                         SensuMetrics().meldingTilRapidSuksess()
                     } else {
+                        // TODO: Reaktiver prod. videresending av OEBS data.
                         ordrelinje.fnrBruker = "MASKERT"
                         sikkerlogg.info { "Ordrelinje mottatt i prod som ikkje blir sendt til rapid: ${mapperJson.writeValueAsString(ordrelinje)}" }
                     }
