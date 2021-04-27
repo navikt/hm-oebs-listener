@@ -128,6 +128,8 @@ fun main() {
 
                     call.respond(HttpStatusCode.OK)
                     return@post
+                } else {
+                    SensuMetrics().sfTypeVedtakInfotrygd()
                 }
 
                 if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel" &&
@@ -137,6 +139,8 @@ fun main() {
                     SensuMetrics().irrelevantHjelpemiddeltype()
                     call.respond(HttpStatusCode.OK)
                     return@post
+                } else {
+                    SensuMetrics().rettHjelpemiddeltype()
                 }
 
                 val melding = Message(

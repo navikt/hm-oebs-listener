@@ -41,12 +41,20 @@ class SensuMetrics {
         registerPoint(OEBS_PARSING_FEILET, mapOf("counter" to 1L), emptyMap())
     }
 
+    fun sfTypeVedtakInfotrygd() {
+        registerPoint(OEBS_MELDING_SF_TYPE_VEDTAK_INFOTRYGD, mapOf("counter" to 1L), emptyMap())
+    }
+
     fun sfTypeBlank() {
         registerPoint(OEBS_MELDING_SF_TYPE_BLANK, mapOf("counter" to 1L), emptyMap())
     }
 
     fun sfTypeUlikVedtakInfotrygd() {
         registerPoint(OEBS_MELDING_SF_TYPE_ULIK_VEDTAK_INFOTRYGD, mapOf("counter" to 1L), emptyMap())
+    }
+
+    fun rettHjelpemiddeltype() {
+        registerPoint(OEBS_MELDING_RETT_HJELPEMIDDELTYPE, mapOf("counter" to 1L), emptyMap())
     }
 
     fun irrelevantHjelpemiddeltype() {
@@ -109,8 +117,10 @@ class SensuMetrics {
         const val OEBS_MELDING = "$SOKNADER.oebs.melding"
         const val OEBS_PARSING_OK = "$SOKNADER.oebs.parsingOk"
         const val OEBS_PARSING_FEILET = "$SOKNADER.oebs.parsingFeilet"
+        const val OEBS_MELDING_SF_TYPE_VEDTAK_INFOTRYGD = "$SOKNADER.oebs.sfTypeVedtakInfotrygd"
         const val OEBS_MELDING_SF_TYPE_BLANK = "$SOKNADER.oebs.sfTypeBlank"
         const val OEBS_MELDING_SF_TYPE_ULIK_VEDTAK_INFOTRYGD = "$SOKNADER.oebs.sfTypeUlikVedtakInfotrygd"
+        const val OEBS_MELDING_RETT_HJELPEMIDDELTYPE = "$SOKNADER.oebs.rettHjelpemiddeltype"
         const val OEBS_MELDING_IRRELEVANT_HJELPEMIDDELTYPE = "$SOKNADER.oebs.irrelevantHjelpemiddeltype"
     }
 }
