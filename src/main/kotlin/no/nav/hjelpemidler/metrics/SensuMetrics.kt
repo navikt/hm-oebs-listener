@@ -63,13 +63,13 @@ class SensuMetrics {
 
     private fun registerPoint(measurement: String, fields: Map<String, Any>, tags: Map<String, String>) {
         log.info("Posting point to Influx: measurment {} fields {} tags {} ", measurement, fields, tags)
+        counter = ((counter + 1) % 1000000)
         val point = Point.measurement(measurement)
-            .time(TimeUnit.MILLISECONDS.toNanos(System.currentTimeMillis()), TimeUnit.NANOSECONDS)
+            .time(TimeUnit.MILLISECONDS.toNanos(System.currentTimeMillis()) + counter, TimeUnit.NANOSECONDS)
             .tag(tags)
             .tag(DEFAULT_TAGS)
             .fields(fields)
             .build()
-
         try {
             sendEvent(SensuEvent(sensuName, point.lineProtocol()))
         } catch (e: Exception) {
@@ -122,5 +122,10 @@ class SensuMetrics {
         const val OEBS_MELDING_SF_TYPE_ULIK_VEDTAK_INFOTRYGD = "$SOKNADER.oebs.sfTypeUlikVedtakInfotrygd"
         const val OEBS_MELDING_RETT_HJELPEMIDDELTYPE = "$SOKNADER.oebs.rettHjelpemiddeltype"
         const val OEBS_MELDING_IRRELEVANT_HJELPEMIDDELTYPE = "$SOKNADER.oebs.irrelevantHjelpemiddeltype"
+
+        // For å unngå problem med at to eventar blir logga på samme millisekund til InfluxDb, legg vi til ein aukande
+        // counter som "fakar" auka oppløysing i nanosekund. Det blir lagt til eit tal modulo 1000000 for at det skal
+        // bli eit tal mellom 0 og 999999
+        var counter: Long = 0
     }
 }
