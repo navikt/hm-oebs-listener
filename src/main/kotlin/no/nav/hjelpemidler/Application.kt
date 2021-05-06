@@ -84,7 +84,7 @@ fun main() {
                 // Check for valid json request
                 val ordrelinje: OrdrelinjeOebs?
                 try {
-                    if (incomingFormatType == "XML"){
+                    if (incomingFormatType == "XML") {
                         ordrelinje = mapperXml.readValue(requestBody)
                     } else {
                         ordrelinje = mapperJson.readValue(requestBody)

@@ -161,4 +161,144 @@ internal class ParsingTest {
         assertEquals("012345", result.artikkelnr)
         println(mapper.writeValueAsString(result))
     }
+
+    @ExperimentalTime
+    @Test
+    fun `Parse int til double`() {
+        val mapper = jacksonObjectMapper()
+        mapper.registerModule(JavaTimeModule())
+
+        val result: OrdrelinjeOebs = mapper.readValue(
+            """
+            {
+                "System": "DIGIHOT",
+                "IncidentNummer":21072339,
+                "IncidentStatus": "Open",
+                "IncidentType": "Vedtak Infotrygd",
+                "IncidentSoknadType": "HJDAAN",
+                "IncidentVedtakDato": "",
+                "IncidentSoknad": "S",
+                "IncidentResultat": "I",
+                "IncidentRef": "A01",
+                "OrdreNumber":7068818,
+                "LineNumber":1,
+                "ShipmentNumber":1,
+                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                "CategoryDescription": "",
+                "OrderedItem": "012345",
+                "User_ItemType": "Hjelpemiddel",
+                "Quantity":2,
+                "AccountNumber": "XXXXXXXXXXX",
+                "LastUpdateDate": "2021-04-05"
+            }
+            """.trimIndent()
+        )
+
+        assertEquals(2.0, result.antall)
+    }
+
+    @Test
+    fun `Parse int til double for XML`() {
+        val mapper = XmlMapper()
+        mapper.registerModule(JavaTimeModule())
+
+        val result: OrdrelinjeOebs = mapper.readValue(
+            """
+                <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
+                    <ki:System>DIGIHOT</ki:System>
+                    <ki:IncidentNummer/>
+                    <ki:IncidentStatus/>
+                    <ki:IncidentType/>
+                    <ki:IncidentSoknadType/>
+                    <ki:IncidentVedtakDato/>
+                    <ki:IncidentSoknad/>
+                    <ki:IncidentResultat/>
+                    <ki:IncidentRef/>
+                    <ki:OrdreNumber>0178581</ki:OrdreNumber>
+                    <ki:LineNumber>6</ki:LineNumber>
+                    <ki:ShipmentNumber>2</ki:ShipmentNumber>
+                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
+                    <ki:CategoryDescription/>
+                    <ki:OrderedItem>012345</ki:OrderedItem>
+                    <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
+                    <ki:Quantity>3</ki:Quantity>
+                    <ki:AccountNumber>01127622634</ki:AccountNumber>
+                    <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
+                    <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
+                </ki:StatusInfo>
+            """.trimIndent()
+        )
+
+        assertEquals(3.0, result.antall)
+    }
+
+    @ExperimentalTime
+    @Test
+    fun `Parse desimaltal til double`() {
+        val mapper = jacksonObjectMapper()
+        mapper.registerModule(JavaTimeModule())
+
+        val result: OrdrelinjeOebs = mapper.readValue(
+            """
+            {
+                "System": "DIGIHOT",
+                "IncidentNummer":21072339,
+                "IncidentStatus": "Open",
+                "IncidentType": "Vedtak Infotrygd",
+                "IncidentSoknadType": "HJDAAN",
+                "IncidentVedtakDato": "",
+                "IncidentSoknad": "S",
+                "IncidentResultat": "I",
+                "IncidentRef": "A01",
+                "OrdreNumber":7068818,
+                "LineNumber":1,
+                "ShipmentNumber":1,
+                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                "CategoryDescription": "",
+                "OrderedItem": "012345",
+                "User_ItemType": "Hjelpemiddel",
+                "Quantity":2.999,
+                "AccountNumber": "XXXXXXXXXXX",
+                "LastUpdateDate": "2021-04-05"
+            }
+            """.trimIndent()
+        )
+
+        assertEquals(2.999, result.antall)
+    }
+
+    @Test
+    fun `Parse desimaltal til double for XML`() {
+        val mapper = XmlMapper()
+        mapper.registerModule(JavaTimeModule())
+
+        val result: OrdrelinjeOebs = mapper.readValue(
+            """
+                <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
+                    <ki:System>DIGIHOT</ki:System>
+                    <ki:IncidentNummer/>
+                    <ki:IncidentStatus/>
+                    <ki:IncidentType/>
+                    <ki:IncidentSoknadType/>
+                    <ki:IncidentVedtakDato/>
+                    <ki:IncidentSoknad/>
+                    <ki:IncidentResultat/>
+                    <ki:IncidentRef/>
+                    <ki:OrdreNumber>0178581</ki:OrdreNumber>
+                    <ki:LineNumber>6</ki:LineNumber>
+                    <ki:ShipmentNumber>2</ki:ShipmentNumber>
+                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
+                    <ki:CategoryDescription/>
+                    <ki:OrderedItem>012345</ki:OrderedItem>
+                    <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
+                    <ki:Quantity>3.999</ki:Quantity>
+                    <ki:AccountNumber>01127622634</ki:AccountNumber>
+                    <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
+                    <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
+                </ki:StatusInfo>
+            """.trimIndent()
+        )
+
+        assertEquals(3.999, result.antall)
+    }
 }

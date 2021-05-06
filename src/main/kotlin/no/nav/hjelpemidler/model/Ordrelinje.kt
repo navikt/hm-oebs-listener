@@ -24,7 +24,7 @@ data class Ordrelinje(
     val produktgruppe: String,
     val artikkelnr: String,
     val hjelpemiddeltype: String,
-    val antall: Int,
+    val antall: Double,
     val fnrBruker: String,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)

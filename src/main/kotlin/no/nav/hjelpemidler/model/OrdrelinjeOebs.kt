@@ -58,7 +58,7 @@ data class OrdrelinjeOebs(
     val hjelpemiddeltype: String,
 
     @JsonProperty("Quantity")
-    val antall: Int,
+    val antall: Double,
 
     @JsonProperty("AccountNumber")
     // FIXME: Skift til var for testing
