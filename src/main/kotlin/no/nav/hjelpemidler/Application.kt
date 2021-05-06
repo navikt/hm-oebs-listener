@@ -153,19 +153,16 @@ fun main() {
 
                 // Publish the received json/xml to our rapid as json
                 try {
-                    if (Configuration.application["APP_PROFILE"] != "prod") {
-                        logg.info { "Publiserer ordrelinje til rapid i miljø ${Configuration.application["APP_PROFILE"]}" }
-                        rapidApp!!.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
-                        SensuMetrics().meldingTilRapidSuksess()
-                    } else {
-                        // TODO: Reaktiver prod. videresending av OEBS data.
-                        ordrelinje.fnrBruker = "MASKERT"
-                        sikkerlogg.info { "Ordrelinje mottatt i prod som ikkje blir sendt til rapid: ${mapperJson.writeValueAsString(ordrelinje)}" }
-                    }
+                    logg.info("Publiserer ordrelinje til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
+                    rapidApp!!.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
+                    SensuMetrics().meldingTilRapidSuksess()
+
+                    // TODO: Remove logging when interface stabilizes
+                    ordrelinje.fnrBruker = "MASKERT"
+                    sikkerlogg.info("Ordrelinje mottatt og sendt til rapid: ${mapperJson.writeValueAsString(ordrelinje)}")
+
                 } catch (e: Exception) {
-                    if (Configuration.application["APP_PROFILE"] != "prod") {
-                        SensuMetrics().meldingTilRapidFeilet()
-                    }
+                    SensuMetrics().meldingTilRapidFeilet()
                     sikkerlogg.error("Sending til rapid feilet, exception: $e")
                     call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
                     return@post

@@ -61,7 +61,7 @@ data class OrdrelinjeOebs(
     val antall: Double,
 
     @JsonProperty("AccountNumber")
-    // FIXME: Skift til var for testing
+    // TODO: Skift tilbake til val når ting stabiliserer seg
     var fnrBruker: String,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
