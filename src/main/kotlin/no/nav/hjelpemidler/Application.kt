@@ -21,6 +21,7 @@ import no.nav.hjelpemidler.metrics.SensuMetrics
 import no.nav.hjelpemidler.model.Ordrelinje
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.toOrdrelinje
+import no.nav.hjelpemidler.slack.PostToSlack
 import java.net.InetAddress
 import java.time.LocalDateTime
 import java.util.UUID
@@ -148,6 +149,13 @@ fun main() {
                     ordrelinje.fnrBruker = "MASKERT"
                     sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: ${mapperJson.writeValueAsString(ordrelinje)}")
                     SensuMetrics().manglendeFeltForVedtakInfotrygd()
+
+                    PostToSlack().post(
+                        "https://hooks.slack.com/services/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",
+                        "Manglande felt i Vedtak Infotrygd-melding",
+                        "#digihot-brukers-hjelpemiddelside-dev"
+                    )
+
                     return@post
                 }
 
@@ -168,7 +176,6 @@ fun main() {
                     // TODO: Remove logging when interface stabilizes
                     ordrelinje.fnrBruker = "MASKERT"
                     sikkerlogg.info("Ordrelinje mottatt og sendt til rapid: ${mapperJson.writeValueAsString(ordrelinje)}")
-
                 } catch (e: Exception) {
                     SensuMetrics().meldingTilRapidFeilet()
                     sikkerlogg.error("Sending til rapid feilet, exception: $e")
