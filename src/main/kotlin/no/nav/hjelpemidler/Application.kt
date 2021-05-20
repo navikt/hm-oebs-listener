@@ -147,7 +147,7 @@ fun main() {
                 if (ordrelinje.saksblokkOgSaksnr.isBlank() || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
                     logg.warn("Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!")
                     ordrelinje.fnrBruker = "MASKERT"
-                    val message = mapperJson.writeValueAsString(ordrelinje)
+                    val message = mapperJson.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
                     sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: $message")
                     SensuMetrics().manglendeFeltForVedtakInfotrygd()
 
