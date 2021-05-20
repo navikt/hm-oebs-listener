@@ -79,5 +79,6 @@ internal object Configuration {
         "APP_PROFILE" to config()[Key("application.profile", stringType)],
         "SENSU_URL" to config()[Key("SENSU_URL", stringType)],
         "OEBSTOKEN" to config()[Key("OEBSTOKEN", stringType)],
+        "SLACK_HOOK" to config()[Key("SLACK_HOOK", stringType)],
     ) + System.getenv().filter { it.key.startsWith("NAIS_") }
 }

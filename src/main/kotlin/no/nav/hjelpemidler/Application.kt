@@ -151,7 +151,7 @@ fun main() {
                     SensuMetrics().manglendeFeltForVedtakInfotrygd()
 
                     PostToSlack().post(
-                        "https://hooks.slack.com/services/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",
+                        Configuration.application["SLACK_HOOK"]!!,
                         "Manglande felt i Vedtak Infotrygd-melding",
                         "#digihot-brukers-hjelpemiddelside-dev"
                     )
