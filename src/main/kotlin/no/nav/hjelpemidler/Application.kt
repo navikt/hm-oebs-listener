@@ -147,12 +147,13 @@ fun main() {
                 if (ordrelinje.saksblokkOgSaksnr.isBlank() || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
                     logg.warn("Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!")
                     ordrelinje.fnrBruker = "MASKERT"
-                    sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: ${mapperJson.writeValueAsString(ordrelinje)}")
+                    val message = mapperJson.writeValueAsString(ordrelinje)
+                    sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: $message")
                     SensuMetrics().manglendeFeltForVedtakInfotrygd()
 
                     PostToSlack().post(
                         Configuration.application["SLACK_HOOK"]!!,
-                        "Manglande felt i Vedtak Infotrygd-melding",
+                        "Manglande felt i Vedtak Infotrygd-melding: ```$message```",
                         "#digihot-brukers-hjelpemiddelside-dev"
                     )
                     call.respond(HttpStatusCode.OK)
