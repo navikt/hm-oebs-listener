@@ -14,7 +14,7 @@ class PostToSlack {
     fun post(hookUrl: String, alertText: String, channel: String) {
 
         val values = mapOf(
-            "alertText" to alertText,
+            "text" to alertText,
             "channel" to channel,
             "username" to username,
             "icon_emoji" to icon_emoji
