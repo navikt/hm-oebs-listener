@@ -153,7 +153,7 @@ fun main() {
 
                     PostToSlack().post(
                         Configuration.application["SLACK_HOOK"]!!,
-                        "${Configuration.application["APP_PROFILE"]!!.toUpperCase()}: Manglande felt i Vedtak Infotrygd-melding: ```$message```",
+                        "*${Configuration.application["APP_PROFILE"]!!.toUpperCase()}*: Manglande felt i Vedtak Infotrygd-melding: ```$message```",
                         "#digihot-brukers-hjelpemiddelside-dev"
                     )
                     call.respond(HttpStatusCode.OK)
