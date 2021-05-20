@@ -155,7 +155,7 @@ fun main() {
                         "Manglande felt i Vedtak Infotrygd-melding",
                         "#digihot-brukers-hjelpemiddelside-dev"
                     )
-
+                    call.respond(HttpStatusCode.OK)
                     return@post
                 }
 
