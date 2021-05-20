@@ -143,6 +143,14 @@ fun main() {
                     SensuMetrics().rettHjelpemiddeltype()
                 }
 
+                if (ordrelinje.saksblokkOgSaksnr.isBlank() || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
+                    logg.warn("Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!")
+                    ordrelinje.fnrBruker = "MASKERT"
+                    sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: ${mapperJson.writeValueAsString(ordrelinje)}")
+                    SensuMetrics().manglendeFeltForVedtakInfotrygd()
+                    return@post
+                }
+
                 val melding = Message(
                     eventId = UUID.randomUUID(),
                     eventName = "hm-NyOrdrelinje",
