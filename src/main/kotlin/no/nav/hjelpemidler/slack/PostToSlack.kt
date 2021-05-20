@@ -21,8 +21,7 @@ class PostToSlack {
         )
 
         val objectMapper = ObjectMapper()
-        val requestBody: String = objectMapper
-            .writerWithDefaultPrettyPrinter().writeValueAsString(values)
+        val requestBody: String = objectMapper.writeValueAsString(values)
 
         val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
