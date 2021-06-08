@@ -58,6 +58,7 @@ internal object Configuration {
             "kafka.reset.policy" to "earliest",
             "application.profile" to "local",
             "SENSU_URL" to "https://test",
+            "SLACK_HOOK" to "https://test/slack"
         )
     )
 

@@ -10,6 +10,9 @@ data class OrdrelinjeOebs(
     @JsonProperty("System")
     val mottakendeSystem: String,
 
+    @JsonProperty("Id")
+    val oebsId: Int,
+
     @JsonProperty("IncidentNummer")
     val serviceforespørsel: Int,
 
@@ -51,6 +54,9 @@ data class OrdrelinjeOebs(
     @JsonProperty("CategoryDescription")
     val produktgruppe: String,
 
+    @JsonProperty("CategoryNum")
+    val produktgruppeNr: String,
+
     @JsonProperty("OrderedItem")
     val artikkelnr: String,
 
@@ -59,6 +65,9 @@ data class OrdrelinjeOebs(
 
     @JsonProperty("Quantity")
     val antall: Double,
+
+    @JsonProperty("ShippingQuantityUom")
+    val enhet: String,
 
     @JsonProperty("AccountNumber")
     // TODO: Skift tilbake til val når ting stabiliserer seg
@@ -72,6 +81,7 @@ data class OrdrelinjeOebs(
 fun OrdrelinjeOebs.toOrdrelinje(): Ordrelinje {
     return Ordrelinje(
         this.mottakendeSystem,
+        this.oebsId,
         this.serviceforespørsel,
         this.serviceforespørselstatus,
         this.serviceforespørseltype,
@@ -85,9 +95,11 @@ fun OrdrelinjeOebs.toOrdrelinje(): Ordrelinje {
         this.delordrelinje,
         this.artikkelbeskrivelse,
         this.produktgruppe,
+        this.produktgruppeNr,
         this.artikkelnr,
         this.hjelpemiddeltype,
         this.antall,
+        this.enhet,
         this.fnrBruker,
         this.sistOppdatert
     )

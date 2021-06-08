@@ -5,6 +5,7 @@ import java.time.LocalDate
 
 data class Ordrelinje(
     val mottakendeSystem: String,
+    val oebsId: Int,
     val serviceforespørsel: Int,
     val serviceforespørselstatus: String,
     val serviceforespørseltype: String,
@@ -22,9 +23,11 @@ data class Ordrelinje(
     val delordrelinje: Int,
     val artikkelbeskrivelse: String,
     val produktgruppe: String,
+    val produktgruppeNr: String,
     val artikkelnr: String,
     val hjelpemiddeltype: String,
     val antall: Double,
+    val enhet: String,
     val fnrBruker: String,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
