@@ -22,6 +22,7 @@ internal class ParsingTest {
             """
             {
                 "System": "DIGIHOT",
+                "Id":585,
                 "IncidentNummer":21072339,
                 "IncidentStatus": "Open",
                 "IncidentType": "Vedtak Infotrygd",
@@ -36,8 +37,10 @@ internal class ParsingTest {
                 "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
                 "CategoryDescription": "",
                 "OrderedItem":149305,
+                "CategoryNum": "122291",
                 "User_ItemType": "Hjelpemiddel",
                 "Quantity":1,
+                "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
                 "LastUpdateDate": "2021-04-05"
             }
@@ -60,6 +63,7 @@ internal class ParsingTest {
             """
             {
                 "System": "DIGIHOT",
+                "Id":585,
                 "IncidentNummer":21072339,
                 "IncidentStatus": "Open",
                 "IncidentType": "Vedtak Infotrygd",
@@ -74,8 +78,10 @@ internal class ParsingTest {
                 "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
                 "CategoryDescription": "",
                 "OrderedItem":149305,
+                "CategoryNum": "122291",
                 "User_ItemType": "Hjelpemiddel",
                 "Quantity":1,
+                "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
                 "LastUpdateDate": "2021-04-05"
             }
@@ -98,6 +104,7 @@ internal class ParsingTest {
             """
             {
                 "System": "DIGIHOT",
+                "Id":585,
                 "IncidentNummer":21072339,
                 "IncidentStatus": "Open",
                 "IncidentType": "Vedtak Infotrygd",
@@ -112,8 +119,10 @@ internal class ParsingTest {
                 "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
                 "CategoryDescription": "",
                 "OrderedItem": "012345",
+                "CategoryNum": "122291",
                 "User_ItemType": "Hjelpemiddel",
                 "Quantity":1,
+                "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
                 "LastUpdateDate": "2021-04-05"
             }
@@ -134,6 +143,7 @@ internal class ParsingTest {
             """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
+                    <ki:Id>645</ki:Id>
                     <ki:IncidentNummer/>
                     <ki:IncidentStatus/>
                     <ki:IncidentType/>
@@ -148,8 +158,10 @@ internal class ParsingTest {
                     <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
                     <ki:CategoryDescription/>
                     <ki:OrderedItem>012345</ki:OrderedItem>
+                    <ki:CategoryNum>012345</ki:CategoryNum>
                     <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
                     <ki:Quantity>3</ki:Quantity>
+                    <ki:ShippingQuantityUom>STK</ki:ShippingQuantityUom>
                     <ki:AccountNumber>01127622634</ki:AccountNumber>
                     <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
@@ -172,6 +184,7 @@ internal class ParsingTest {
             """
             {
                 "System": "DIGIHOT",
+                "Id":585,
                 "IncidentNummer":21072339,
                 "IncidentStatus": "Open",
                 "IncidentType": "Vedtak Infotrygd",
@@ -186,8 +199,10 @@ internal class ParsingTest {
                 "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
                 "CategoryDescription": "",
                 "OrderedItem": "012345",
+                "CategoryNum": "122291",
                 "User_ItemType": "Hjelpemiddel",
                 "Quantity":2,
+                "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
                 "LastUpdateDate": "2021-04-05"
             }
@@ -206,6 +221,7 @@ internal class ParsingTest {
             """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
+                    <ki:Id>123</ki:Id>
                     <ki:IncidentNummer/>
                     <ki:IncidentStatus/>
                     <ki:IncidentType/>
@@ -220,8 +236,10 @@ internal class ParsingTest {
                     <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
                     <ki:CategoryDescription/>
                     <ki:OrderedItem>012345</ki:OrderedItem>
+                    <ki:CategoryNum>012345</ki:CategoryNum>
                     <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
                     <ki:Quantity>3</ki:Quantity>
+                    <ki:ShippingQuantityUom>STK</ki:ShippingQuantityUom>
                     <ki:AccountNumber>01127622634</ki:AccountNumber>
                     <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
@@ -242,6 +260,7 @@ internal class ParsingTest {
             """
             {
                 "System": "DIGIHOT",
+                "Id":234,
                 "IncidentNummer":21072339,
                 "IncidentStatus": "Open",
                 "IncidentType": "Vedtak Infotrygd",
@@ -256,8 +275,10 @@ internal class ParsingTest {
                 "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
                 "CategoryDescription": "",
                 "OrderedItem": "012345",
+                "CategoryNum": "122291",
                 "User_ItemType": "Hjelpemiddel",
                 "Quantity":2.999,
+                "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
                 "LastUpdateDate": "2021-04-05"
             }
@@ -276,6 +297,7 @@ internal class ParsingTest {
             """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
+                    <ki:Id>565</ki:Id>
                     <ki:IncidentNummer/>
                     <ki:IncidentStatus/>
                     <ki:IncidentType/>
@@ -290,8 +312,10 @@ internal class ParsingTest {
                     <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
                     <ki:CategoryDescription/>
                     <ki:OrderedItem>012345</ki:OrderedItem>
+                    <ki:CategoryNum>012345</ki:CategoryNum>
                     <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
                     <ki:Quantity>3.999</ki:Quantity>
+                    <ki:ShippingQuantityUom>STK</ki:ShippingQuantityUom>
                     <ki:AccountNumber>01127622634</ki:AccountNumber>
                     <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
