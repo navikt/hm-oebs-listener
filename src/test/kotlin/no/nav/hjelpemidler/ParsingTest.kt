@@ -42,6 +42,7 @@ internal class ParsingTest {
                 "Quantity":1,
                 "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
+                "EgenAnsatt": "Y",
                 "LastUpdateDate": "2021-04-05"
             }
             """.trimIndent()
@@ -83,6 +84,7 @@ internal class ParsingTest {
                 "Quantity":1,
                 "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
+                "EgenAnsatt": "N",
                 "LastUpdateDate": "2021-04-05"
             }
             """.trimIndent()
@@ -124,6 +126,7 @@ internal class ParsingTest {
                 "Quantity":1,
                 "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
+                "EgenAnsatt": "Y",
                 "LastUpdateDate": "2021-04-05"
             }
             """.trimIndent()
@@ -163,7 +166,7 @@ internal class ParsingTest {
                     <ki:Quantity>3</ki:Quantity>
                     <ki:ShippingQuantityUom>STK</ki:ShippingQuantityUom>
                     <ki:AccountNumber>01127622634</ki:AccountNumber>
-                    <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
+                    <ki:EgenAnsatt>N</ki:EgenAnsatt>
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
                 </ki:StatusInfo>
             """.trimIndent()
@@ -204,6 +207,7 @@ internal class ParsingTest {
                 "Quantity":2,
                 "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
+                "EgenAnsatt": "N",
                 "LastUpdateDate": "2021-04-05"
             }
             """.trimIndent()
@@ -241,7 +245,7 @@ internal class ParsingTest {
                     <ki:Quantity>3</ki:Quantity>
                     <ki:ShippingQuantityUom>STK</ki:ShippingQuantityUom>
                     <ki:AccountNumber>01127622634</ki:AccountNumber>
-                    <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
+                    <ki:EgenAnsatt>N</ki:EgenAnsatt>
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
                 </ki:StatusInfo>
             """.trimIndent()
@@ -280,6 +284,7 @@ internal class ParsingTest {
                 "Quantity":2.999,
                 "ShippingQuantityUom": "STK",
                 "AccountNumber": "XXXXXXXXXXX",
+                "EgenAnsatt": "Y",
                 "LastUpdateDate": "2021-04-05"
             }
             """.trimIndent()
@@ -317,7 +322,7 @@ internal class ParsingTest {
                     <ki:Quantity>3.999</ki:Quantity>
                     <ki:ShippingQuantityUom>STK</ki:ShippingQuantityUom>
                     <ki:AccountNumber>01127622634</ki:AccountNumber>
-                    <ki:OeBSInternFnr>01127622634</ki:OeBSInternFnr>
+                    <ki:EgenAnsatt>N</ki:EgenAnsatt>
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
                 </ki:StatusInfo>
             """.trimIndent()

@@ -73,6 +73,11 @@ data class OrdrelinjeOebs(
     // TODO: Skift tilbake til val når ting stabiliserer seg
     var fnrBruker: String,
 
+    // Sidan dette feltet har informasjon som kan bli utdatert blir ikkje dette brukt.
+    // Uansett skal ein NAV-ansatt også få sjå hjelpemidla som er på veg til dei.
+    @JsonProperty("EgenAnsatt")
+    val egenAnsatt: String,
+
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("LastUpdateDate")
     val sistOppdatert: LocalDate
@@ -101,6 +106,7 @@ fun OrdrelinjeOebs.toOrdrelinje(): Ordrelinje {
         this.antall,
         this.enhet,
         this.fnrBruker,
+        this.egenAnsatt,
         this.sistOppdatert
     )
 }

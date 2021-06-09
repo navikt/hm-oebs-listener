@@ -170,13 +170,13 @@ fun main() {
 
                 // Publish the received json/xml to our rapid as json
                 try {
-                    logg.info("Publiserer ordrelinje til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
+                    logg.info("Publiserer ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
                     rapidApp!!.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
                     SensuMetrics().meldingTilRapidSuksess()
 
                     // TODO: Remove logging when interface stabilizes
                     ordrelinje.fnrBruker = "MASKERT"
-                    sikkerlogg.info("Ordrelinje mottatt og sendt til rapid: ${mapperJson.writeValueAsString(ordrelinje)}")
+                    sikkerlogg.info("Ordrelinje med OebsId ${ordrelinje.oebsId} mottatt og sendt til rapid: ${mapperJson.writeValueAsString(ordrelinje)}")
                 } catch (e: Exception) {
                     SensuMetrics().meldingTilRapidFeilet()
                     sikkerlogg.error("Sending til rapid feilet, exception: $e")

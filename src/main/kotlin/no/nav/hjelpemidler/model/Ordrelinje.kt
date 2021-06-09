@@ -29,6 +29,7 @@ data class Ordrelinje(
     val antall: Double,
     val enhet: String,
     val fnrBruker: String,
+    val egenAnsatt: String,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val sistOppdatert: LocalDate
