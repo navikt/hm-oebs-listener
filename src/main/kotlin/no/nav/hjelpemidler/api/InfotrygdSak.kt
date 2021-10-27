@@ -16,7 +16,7 @@ private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
 fun parseInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs) {
 
-    if (ordrelinje.saksblokkOgSaksnr.isBlank() || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
+    if (ordrelinje.saksblokkOgSaksnr?.isBlank() == true || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
         logg.warn("Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!")
         ordrelinje.fnrBruker = "MASKERT"
         val message = mapperJson.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)

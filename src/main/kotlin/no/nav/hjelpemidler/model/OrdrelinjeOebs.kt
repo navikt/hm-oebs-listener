@@ -46,7 +46,7 @@ data class OrdrelinjeOebs(
     val resultat: String,
 
     @JsonProperty("IncidentRef")
-    val saksblokkOgSaksnr: String,
+    val saksblokkOgSaksnr: String?,
 
     @JsonProperty("OrdreNumber")
     val ordrenr: Int,
@@ -134,7 +134,7 @@ fun OrdrelinjeOebs.toOrdrelinje(): InfotrygdOrdrelinje {
         this.vedtaksdato,
         this.søknad,
         this.resultat,
-        this.saksblokkOgSaksnr,
+        this.saksblokkOgSaksnr ?: "",
         this.ordrenr,
         this.ordrelinje,
         this.delordrelinje,
