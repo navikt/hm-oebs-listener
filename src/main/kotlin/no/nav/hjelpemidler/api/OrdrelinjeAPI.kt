@@ -130,7 +130,7 @@ private fun validerOrdrelinje(ordrelinje: OrdrelinjeOebs) {
     if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel" &&
         ordrelinje.hjelpemiddeltype != "Individstyrt hjelpemiddel"
     ) {
-        logg.info("Mottok melding fra oebs med hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}.")
+        logg.info("Mottok melding fra oebs med irrelevant hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering")
         SensuMetrics().irrelevantHjelpemiddeltype()
         throw RuntimeException("Ugyldig ordrelinje")
     } else {
