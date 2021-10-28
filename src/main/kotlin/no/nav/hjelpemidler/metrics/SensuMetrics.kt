@@ -66,7 +66,7 @@ class SensuMetrics {
     }
 
     fun manglendeFeltForVedtakHOTSAK() {
-        registerPoint(OEBS_MELDING_MANGLENDE_FELT_INFOTRYGD, mapOf("counter" to 1L), emptyMap())
+        registerPoint(OEBS_MELDING_MANGLENDE_FELT_HOTSAK, mapOf("counter" to 1L), emptyMap())
     }
 
     private fun registerPoint(measurement: String, fields: Map<String, Any>, tags: Map<String, String>) {
