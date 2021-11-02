@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
+const val HOTSAK = "HOTSAK"
+const val INFOTRYGD = "INFOTRYGD"
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class OrdrelinjeOebs(
     @JsonProperty("System")
@@ -33,11 +36,17 @@ data class OrdrelinjeOebs(
     @JsonProperty("IncidentSoknad")
     val søknad: String,
 
+    @JsonProperty("ReferanseNummer")
+    val hotSakSaksnummer: String?,
+
+    @JsonProperty("Kilde")
+    val kilde: String?,
+
     @JsonProperty("IncidentResultat")
     val resultat: String,
 
     @JsonProperty("IncidentRef")
-    val saksblokkOgSaksnr: String,
+    val saksblokkOgSaksnr: String?,
 
     @JsonProperty("OrdreNumber")
     val ordrenr: Int,
@@ -83,8 +92,39 @@ data class OrdrelinjeOebs(
     val sistOppdatert: LocalDate
 )
 
-fun OrdrelinjeOebs.toOrdrelinje(): Ordrelinje {
-    return Ordrelinje(
+fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
+
+fun OrdrelinjeOebs.toHotsakOrdrelinje(): HotsakOrdrelinje {
+    return HotsakOrdrelinje(
+        mottakendeSystem = this.mottakendeSystem,
+        oebsId= this.oebsId,
+        serviceforespørsel = this.serviceforespørsel,
+        serviceforespørselstatus = this.serviceforespørselstatus,
+        serviceforespørseltype = this.serviceforespørseltype,
+        søknadstype = this.søknadstype,
+        vedtaksdato = this.vedtaksdato,
+        søknad = this.søknad,
+        resultat = this.resultat,
+        saksnummer = this.hotSakSaksnummer ?: "",
+        ordrenr = this.ordrenr,
+        ordrelinje = this.ordrelinje,
+        delordrelinje = this.delordrelinje,
+        artikkelbeskrivelse = this.artikkelbeskrivelse,
+        produktgruppe = this.produktgruppe,
+        produktgruppeNr = this.produktgruppeNr,
+        artikkelnr = this.artikkelnr,
+        hjelpemiddeltype = this.hjelpemiddeltype,
+        antall = this.antall,
+        enhet = this.enhet,
+        fnrBruker = this.fnrBruker,
+        egenAnsatt = this.egenAnsatt,
+        sistOppdatert = this.sistOppdatert
+    )
+
+}
+
+fun OrdrelinjeOebs.toOrdrelinje(): InfotrygdOrdrelinje {
+    return InfotrygdOrdrelinje(
         this.mottakendeSystem,
         this.oebsId,
         this.serviceforespørsel,
@@ -94,7 +134,7 @@ fun OrdrelinjeOebs.toOrdrelinje(): Ordrelinje {
         this.vedtaksdato,
         this.søknad,
         this.resultat,
-        this.saksblokkOgSaksnr,
+        this.saksblokkOgSaksnr ?: "",
         this.ordrenr,
         this.ordrelinje,
         this.delordrelinje,
