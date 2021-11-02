@@ -69,6 +69,14 @@ class SensuMetrics {
         registerPoint(OEBS_MELDING_MANGLENDE_FELT_HOTSAK, mapOf("counter" to 1L), emptyMap())
     }
 
+    fun hotsakSF() {
+        registerPoint(HOTSAK_SF, mapOf("counter" to 1L), emptyMap())
+    }
+
+    fun infotrygdSF() {
+        registerPoint(INFOTRYGD_SF, mapOf("counter" to 1L), emptyMap())
+    }
+
     private fun registerPoint(measurement: String, fields: Map<String, Any>, tags: Map<String, String>) {
         log.info("Posting point to Influx: measurment {} fields {} tags {} ", measurement, fields, tags)
         counter = ((counter + 1) % 1000000)
@@ -104,12 +112,12 @@ class SensuMetrics {
 
     private class SensuEvent(sensuName: String, output: String) {
         val json: String = "{" +
-            "\"name\":\"" + sensuName + "\"," +
-            "\"type\":\"metric\"," +
-            "\"handlers\":[\"events_nano\"]," +
-            "\"output\":\"" + output.replace("\\", "\\\\", true) + "\"," +
-            "\"status\":0" +
-            "}"
+                "\"name\":\"" + sensuName + "\"," +
+                "\"type\":\"metric\"," +
+                "\"handlers\":[\"events_nano\"]," +
+                "\"output\":\"" + output.replace("\\", "\\\\", true) + "\"," +
+                "\"status\":0" +
+                "}"
     }
 
     companion object {
@@ -124,6 +132,8 @@ class SensuMetrics {
         const val MELDING_TIL_RAPID_FEILET = "$SOKNADER.rapidFeilet"
         const val OEBS_MELDING = "$SOKNADER.oebs.melding"
         const val OEBS_PARSING_OK = "$SOKNADER.oebs.parsingOk"
+        const val HOTSAK_SF = "$SOKNADER.hotsak.sf"
+        const val INFOTRYGD_SF = "$SOKNADER.infotrygd.sf"
         const val OEBS_PARSING_FEILET = "$SOKNADER.oebs.parsingFeilet"
         const val OEBS_MELDING_SF_TYPE_VEDTAK_INFOTRYGD = "$SOKNADER.oebs.sfTypeVedtakInfotrygd"
         const val OEBS_MELDING_SF_TYPE_BLANK = "$SOKNADER.oebs.sfTypeBlank"

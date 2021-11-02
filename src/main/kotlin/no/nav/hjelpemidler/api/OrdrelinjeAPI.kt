@@ -22,7 +22,7 @@ import no.nav.hjelpemidler.model.erOpprettetFraHOTSAK
 import opprettHotsakOrdrelinje
 import opprettInfotrygdOrdrelinje
 import parseInfotrygdOrdrelinje
-import parseOebsOrdrelinje
+import parseHotsakOrdrelinje
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -42,10 +42,12 @@ internal fun Route.OrdrelinjeAPI(rapidApp: RapidsConnection?) {
             val ordrelinje = parseOrdrelinje(call) ?: return@post
             validerOrdrelinje(ordrelinje)
             val melding = if (ordrelinje.erOpprettetFraHOTSAK()) {
-                parseOebsOrdrelinje(ordrelinje)
+                parseHotsakOrdrelinje(ordrelinje)
+                SensuMetrics().hotsakSF()
                 opprettHotsakOrdrelinje(ordrelinje)
             } else {
                 parseInfotrygdOrdrelinje(ordrelinje)
+                SensuMetrics().infotrygdSF()
                 opprettInfotrygdOrdrelinje(ordrelinje)
             }
 

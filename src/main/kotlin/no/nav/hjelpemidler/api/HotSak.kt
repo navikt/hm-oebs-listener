@@ -14,7 +14,7 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-fun parseOebsOrdrelinje(ordrelinje: OrdrelinjeOebs) {
+fun parseHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs) {
 
     if (ordrelinje.hotSakSaksnummer == null || ordrelinje.hotSakSaksnummer.isBlank() ) {
         logg.warn("Melding frå OEBS manglar HOTSAK saksnummer")
