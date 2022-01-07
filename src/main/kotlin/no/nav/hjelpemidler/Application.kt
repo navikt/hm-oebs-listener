@@ -9,6 +9,7 @@ import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.api.OrdrelinjeAPI
+import no.nav.hjelpemidler.api.ServiceforespørselApi
 import no.nav.hjelpemidler.configuration.Configuration
 import java.net.InetAddress
 
@@ -50,6 +51,7 @@ fun main() {
     ).withKtorModule {
         routing {
             OrdrelinjeAPI(rapidApp)
+            ServiceforespørselApi(rapidApp)
         }
     }.build()
 
