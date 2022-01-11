@@ -16,13 +16,13 @@ import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.SensuMetrics
-import no.nav.hjelpemidler.model.Message
+import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.erOpprettetFraHOTSAK
 import opprettHotsakOrdrelinje
 import opprettInfotrygdOrdrelinje
-import parseInfotrygdOrdrelinje
 import parseHotsakOrdrelinje
+import parseInfotrygdOrdrelinje
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -143,7 +143,7 @@ private fun validerOrdrelinje(ordrelinje: OrdrelinjeOebs) {
 private fun publiserMelding(
     ordrelinje: OrdrelinjeOebs,
     rapidApp: RapidsConnection?,
-    melding: Message
+    melding: OrdrelinjeMessage
 ) {
     try {
         logg.info("Publiserer ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.application["APP_PROFILE"]}")

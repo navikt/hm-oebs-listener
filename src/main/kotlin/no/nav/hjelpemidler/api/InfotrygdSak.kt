@@ -3,7 +3,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.SensuMetrics
-import no.nav.hjelpemidler.model.Message
+import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.toOrdrelinje
 import no.nav.hjelpemidler.slack.PostToSlack
@@ -32,7 +32,7 @@ fun parseInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs) {
     }
 }
 
-fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs) = Message(
+fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs) = OrdrelinjeMessage(
     eventId = UUID.randomUUID(),
     eventName = "hm-NyOrdrelinje",
     opprettet = LocalDateTime.now(),

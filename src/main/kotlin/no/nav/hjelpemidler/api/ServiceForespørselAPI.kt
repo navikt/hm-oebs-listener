@@ -13,6 +13,9 @@ import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.SensuMetrics
+import no.nav.hjelpemidler.model.SfMessage
+import java.time.LocalDateTime
+import java.util.UUID
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -29,7 +32,13 @@ internal fun Route.ServiceforespørselApi(rapidApp: RapidsConnection?) {
 
         try {
             val serviceForespørselEndring = call.receive<ServiceForespørselEndring>()
-            publiserMelding(serviceForespørselEndring, rapidApp)
+            val sfMessage = SfMessage(
+                eventId = UUID.randomUUID(),
+                eventName = "hm-EndretSF-oebs",
+                opprettet = LocalDateTime.now(),
+                data = serviceForespørselEndring
+            )
+            publiserMelding(serviceForespørselEndring, rapidApp, sfMessage)
             call.respond(HttpStatusCode.OK)
 
         } catch (e: RapidsAndRiverException) {
@@ -57,7 +66,8 @@ data class ServiceForespørselOrdre(
 
 private fun publiserMelding(
     serviceForespørselEndring: ServiceForespørselEndring,
-    rapidApp: RapidsConnection?
+    rapidApp: RapidsConnection?,
+    sfMessage: SfMessage
 ) {
     try {
         logg.info(
@@ -66,7 +76,7 @@ private fun publiserMelding(
         )
         rapidApp!!.publish(
             serviceForespørselEndring.saknummer,
-            mapperJson.writeValueAsString(serviceForespørselEndring)
+            mapperJson.writeValueAsString(sfMessage)
         )
         SensuMetrics().meldingTilRapidSuksess()
     } catch (e: Exception) {

@@ -3,7 +3,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.metrics.SensuMetrics
-import no.nav.hjelpemidler.model.Message
+import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.toHotsakOrdrelinje
 import no.nav.hjelpemidler.slack.PostToSlack
@@ -32,7 +32,7 @@ fun parseHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs) {
     }
 }
 
-fun opprettHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs) = Message(
+fun opprettHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs) = OrdrelinjeMessage(
     eventId = UUID.randomUUID(),
     eventName = "hm-NyOrdrelinje-hotsak",
     opprettet = LocalDateTime.now(),
