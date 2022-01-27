@@ -33,8 +33,7 @@ internal fun Route.ServiceforespørselApi(rapidApp: RapidsConnection?) {
         }
 
         try {
-            val requestBody: String = call.receiveText()
-            val serviceForespørselEndring = mapperJson.readValue<ServiceForespørselEndring>(requestBody)
+            val serviceForespørselEndring = call.receive<ServiceForespørselEndring>()
             val sfMessage = SfMessage(
                 eventId = UUID.randomUUID(),
                 eventName = "hm-EndretSF-oebs",

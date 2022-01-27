@@ -59,6 +59,13 @@ fun main() {
             OrdrelinjeAPI(rapidApp)
         }
     }.withKtorModule {
+        install(ContentNegotiation) {
+            jackson(
+                contentType = ContentType.Application.Json,
+            ) {
+                jacksonObjectMapper().registerModule(JavaTimeModule())
+            }
+        }
         routing {
             ServiceforespørselApi(rapidApp)
         }
