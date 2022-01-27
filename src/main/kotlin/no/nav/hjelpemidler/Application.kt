@@ -1,8 +1,13 @@
 package no.nav.hjelpemidler
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
+import io.ktor.http.ContentType
+import io.ktor.jackson.jackson
 import io.ktor.routing.routing
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.KafkaConfig
@@ -12,6 +17,7 @@ import no.nav.hjelpemidler.api.OrdrelinjeAPI
 import no.nav.hjelpemidler.api.ServiceforespørselApi
 import no.nav.hjelpemidler.configuration.Configuration
 import java.net.InetAddress
+import java.text.DateFormat
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -51,9 +57,13 @@ fun main() {
     ).withKtorModule {
         routing {
             OrdrelinjeAPI(rapidApp)
+        }
+    }.withKtorModule {
+        routing {
             ServiceforespørselApi(rapidApp)
         }
-    }.build()
+    }
+        .build()
 
     // Run our rapid and rivers implementation facing hm-rapid
     logg.info("Starting Rapid & Rivers app towards hm-rapid")

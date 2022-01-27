@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm") version "1.6.10"
 }
 val rapid_version: String by project
 val logging_version: String by project
@@ -22,6 +22,8 @@ repositories {
     jcenter()
 }
 
+fun ktor(name: String) = "io.ktor:ktor-$name:1.6.7"
+
 dependencies {
     testImplementation(kotlin("test-junit"))
 
@@ -34,14 +36,16 @@ dependencies {
     implementation("org.influxdb:influxdb-java:$influxdb_version")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
+    implementation(ktor("jackson"))
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "15"
+    kotlinOptions.jvmTarget = "17"
 }
 
 val fatJar = task("fatJar", type = org.gradle.jvm.tasks.Jar::class) {
     baseName = "${project.name}-fat"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes["Main-Class"] = "no.nav.hjelpemidler.ApplicationKt"
     }

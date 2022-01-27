@@ -2,10 +2,12 @@ package no.nav.hjelpemidler.api
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.header
 import io.ktor.request.receive
+import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
@@ -31,7 +33,8 @@ internal fun Route.ServiceforespørselApi(rapidApp: RapidsConnection?) {
         }
 
         try {
-            val serviceForespørselEndring = call.receive<ServiceForespørselEndring>()
+            val requestBody: String = call.receiveText()
+            val serviceForespørselEndring = mapperJson.readValue<ServiceForespørselEndring>(requestBody)
             val sfMessage = SfMessage(
                 eventId = UUID.randomUUID(),
                 eventName = "hm-EndretSF-oebs",
@@ -54,9 +57,10 @@ internal fun Route.ServiceforespørselApi(rapidApp: RapidsConnection?) {
 data class ServiceForespørselEndring(
     val system: String,
     val id: String,
-    val sfNummer: String,
+    val sfnummer: String,
     val saknummer: String,
     val ordre: List<ServiceForespørselOrdre>? = null,
+    val status: String?
 )
 
 data class ServiceForespørselOrdre(
@@ -72,7 +76,7 @@ private fun publiserMelding(
     try {
         logg.info(
             "Publiserer oppdatering for SF fra OEBS med id ${serviceForespørselEndring.id}, " +
-                "sfNummer: ${serviceForespørselEndring.sfNummer}, saknr: ${serviceForespørselEndring.saknummer}"
+                "sfNummer: ${serviceForespørselEndring.sfnummer}, saknr: ${serviceForespørselEndring.saknummer}"
         )
         rapidApp!!.publish(
             serviceForespørselEndring.saknummer,
