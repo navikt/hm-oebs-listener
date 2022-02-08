@@ -2,12 +2,10 @@ package no.nav.hjelpemidler.api
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.header
 import io.ktor.request.receive
-import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
@@ -75,7 +73,8 @@ private fun publiserMelding(
     try {
         logg.info(
             "Publiserer oppdatering for SF fra OEBS med id ${serviceForespørselEndring.id}, " +
-                "sfNummer: ${serviceForespørselEndring.sfnummer}, saknr: ${serviceForespørselEndring.saknummer}"
+                "sfNummer: ${serviceForespørselEndring.sfnummer}, saknr: ${serviceForespørselEndring.saknummer}" +
+                "status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}"
         )
         rapidApp!!.publish(
             serviceForespørselEndring.saknummer,
