@@ -1,18 +1,17 @@
 package no.nav.hjelpemidler.slack
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 class PostToSlack {
-
-    val username = "hm-oebs-listener"
-    val icon_emoji = ":this-is-fine-fire:"
+    private val username = "hm-oebs-listener"
+    private val icon_emoji = ":this-is-fine-fire:"
+    private val objectMapper = jacksonObjectMapper()
 
     fun post(hookUrl: String, alertText: String, channel: String) {
-
         val values = mapOf(
             "text" to alertText,
             "channel" to channel,
@@ -20,9 +19,7 @@ class PostToSlack {
             "icon_emoji" to icon_emoji
         )
 
-        val objectMapper = ObjectMapper()
         val requestBody: String = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(values)
-
         val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
             .uri(URI.create(hookUrl))

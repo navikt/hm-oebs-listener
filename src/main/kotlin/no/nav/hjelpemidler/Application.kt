@@ -1,34 +1,24 @@
 package no.nav.hjelpemidler
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
-import io.ktor.http.ContentType
 import io.ktor.jackson.jackson
 import io.ktor.routing.routing
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.hjelpemidler.api.OrdrelinjeAPI
-import no.nav.hjelpemidler.api.ServiceforespørselApi
+import no.nav.hjelpemidler.api.ordrelinjeAPI
+import no.nav.hjelpemidler.api.serviceforespørselAPI
 import no.nav.hjelpemidler.configuration.Configuration
 import java.net.InetAddress
-import java.text.DateFormat
 
 private val logg = KotlinLogging.logger {}
-private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
-private val mapperXml = XmlMapper().registerModule(JavaTimeModule())
 
-// Unngå "inappropriate blocking method call" for objectmapper.writeValueAsString
-@Suppress("BlockingMethodInNonBlockingContext")
 fun main() {
-
-    var rapidApp: RapidsConnection? = null
+    lateinit var rapidApp: RapidsConnection
     rapidApp = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig(
             Configuration.rapidConfig["RAPID_APP_NAME"],
@@ -55,28 +45,22 @@ fun main() {
             Configuration.rapidConfig["HTTP_PORT"]!!.toInt(),
         )
     ).withKtorModule {
-        routing {
-            OrdrelinjeAPI(rapidApp)
-        }
-    }.withKtorModule {
         install(ContentNegotiation) {
-            jackson(
-                contentType = ContentType.Application.Json,
-            ) {
-                jacksonObjectMapper().registerModule(JavaTimeModule())
+            jackson {
+                jacksonMapperBuilder()
+                    .addModule(JavaTimeModule())
+                    .build()
             }
         }
+        val context = Context(rapidApp)
         routing {
-            ServiceforespørselApi(rapidApp)
+            ordrelinjeAPI(context)
+            serviceforespørselAPI(context)
         }
-    }
-        .build()
+    }.build()
 
     // Run our rapid and rivers implementation facing hm-rapid
     logg.info("Starting Rapid & Rivers app towards hm-rapid")
     rapidApp.start()
     logg.info("Application ending.")
 }
-
-
-

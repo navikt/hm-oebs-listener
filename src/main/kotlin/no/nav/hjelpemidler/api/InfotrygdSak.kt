@@ -1,8 +1,8 @@
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
+import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.metrics.SensuMetrics
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.toOrdrelinje
@@ -14,21 +14,20 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-fun parseInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs) {
-
+fun parseInfotrygdOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
     if (ordrelinje.saksblokkOgSaksnr?.isBlank() == true || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
         logg.warn("Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!")
         ordrelinje.fnrBruker = "MASKERT"
         val message = mapperJson.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
         sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: $message")
-        SensuMetrics().manglendeFeltForVedtakInfotrygd()
+        context.metrics.manglendeFeltForVedtakInfotrygd()
 
         PostToSlack().post(
             Configuration.application["SLACK_HOOK"]!!,
-            "*${Configuration.application["APP_PROFILE"]!!.toUpperCase()}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
+            "*${Configuration.application["APP_PROFILE"]!!.uppercase()}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
             "#digihot-brukers-hjelpemiddelside-dev"
         )
-       throw RuntimeException("Ugyldig Infotrygd ordelinje")
+        throw RuntimeException("Ugyldig Infotrygd ordelinje")
     }
 }
 

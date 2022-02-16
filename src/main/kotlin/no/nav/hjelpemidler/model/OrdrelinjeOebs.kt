@@ -89,7 +89,7 @@ data class OrdrelinjeOebs(
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("LastUpdateDate")
-    val sistOppdatert: LocalDate
+    val sistOppdatert: LocalDate,
 )
 
 fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
@@ -97,7 +97,7 @@ fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
 fun OrdrelinjeOebs.toHotsakOrdrelinje(): HotsakOrdrelinje {
     return HotsakOrdrelinje(
         mottakendeSystem = this.mottakendeSystem,
-        oebsId= this.oebsId,
+        oebsId = this.oebsId,
         serviceforespørsel = this.serviceforespørsel,
         serviceforespørselstatus = this.serviceforespørselstatus,
         serviceforespørseltype = this.serviceforespørseltype,
@@ -120,7 +120,6 @@ fun OrdrelinjeOebs.toHotsakOrdrelinje(): HotsakOrdrelinje {
         egenAnsatt = this.egenAnsatt,
         sistOppdatert = this.sistOppdatert
     )
-
 }
 
 fun OrdrelinjeOebs.toOrdrelinje(): InfotrygdOrdrelinje {

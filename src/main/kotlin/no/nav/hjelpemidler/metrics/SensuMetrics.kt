@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.metrics
 
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.hjelpemidler.configuration.Configuration
 import org.influxdb.dto.Point
 import org.slf4j.LoggerFactory
@@ -8,10 +9,12 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Duration
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-class SensuMetrics {
+class SensuMetrics(messageContext: MessageContext) {
+    private val kafkaMetrics = KafkaMetrics(messageContext)
+
     private val log = LoggerFactory.getLogger(SensuMetrics::class.java)
     private val sensuURL = Configuration.application["SENSU_URL"] ?: "http://localhost/unconfigured"
     private val sensuName = "hm-oebs-listener-events"
@@ -91,6 +94,7 @@ class SensuMetrics {
         } catch (e: Exception) {
             log.error("Feil ved sending til Sensu: eventname: $measurement")
         }
+        kafkaMetrics.registerPoint(measurement, fields, tags)
     }
 
     private fun sendEvent(sensuEvent: SensuEvent) {

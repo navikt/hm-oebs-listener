@@ -13,9 +13,8 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import mu.KotlinLogging
-import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.metrics.SensuMetrics
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.erOpprettetFraHOTSAK
@@ -29,7 +28,7 @@ private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 private val mapperXml = XmlMapper().registerModule(JavaTimeModule())
 
-internal fun Route.OrdrelinjeAPI(rapidApp: RapidsConnection?) {
+internal fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
         logg.info("incoming push")
         val authHeader = call.request.header("Authorization").toString()
@@ -39,21 +38,20 @@ internal fun Route.OrdrelinjeAPI(rapidApp: RapidsConnection?) {
         }
 
         try {
-            val ordrelinje = parseOrdrelinje(call) ?: return@post
-            validerOrdrelinje(ordrelinje)
+            val ordrelinje = parseOrdrelinje(context, call) ?: return@post
+            validerOrdrelinje(context, ordrelinje)
             val melding = if (ordrelinje.erOpprettetFraHOTSAK()) {
-                parseHotsakOrdrelinje(ordrelinje)
-                SensuMetrics().hotsakSF()
+                parseHotsakOrdrelinje(context, ordrelinje)
+                context.metrics.hotsakSF()
                 opprettHotsakOrdrelinje(ordrelinje)
             } else {
-                parseInfotrygdOrdrelinje(ordrelinje)
-                SensuMetrics().infotrygdSF()
+                parseInfotrygdOrdrelinje(context, ordrelinje)
+                context.metrics.infotrygdSF()
                 opprettInfotrygdOrdrelinje(ordrelinje)
             }
 
-            publiserMelding(ordrelinje, rapidApp, melding)
+            publiserMelding(context, ordrelinje, melding)
             call.respond(HttpStatusCode.OK)
-
         } catch (e: RapidsAndRiverException) {
             call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
             return@post
@@ -64,14 +62,14 @@ internal fun Route.OrdrelinjeAPI(rapidApp: RapidsConnection?) {
     }
 }
 
-private suspend fun parseOrdrelinje(call: ApplicationCall): OrdrelinjeOebs? {
+private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): OrdrelinjeOebs? {
     var incomingFormatType = "JSON"
     if (call.request.header("Content-Type").toString().contains("application/xml")) {
         incomingFormatType = "XML"
     }
 
     val requestBody: String = call.receiveText()
-    SensuMetrics().meldingFraOebs()
+    context.metrics.meldingFraOebs()
     if (Configuration.application["APP_PROFILE"] != "prod") {
         sikkerlogg.info("Received $incomingFormatType push request from OEBS: $requestBody")
     }
@@ -93,7 +91,7 @@ private suspend fun parseOrdrelinje(call: ApplicationCall): OrdrelinjeOebs? {
                 }"
             )
         }
-        SensuMetrics().oebsParsingOk()
+        context.metrics.oebsParsingOk()
         return ordrelinje
     } catch (e: Exception) {
         // Deal with invalid json/xml in request
@@ -103,30 +101,29 @@ private suspend fun parseOrdrelinje(call: ApplicationCall): OrdrelinjeOebs? {
                 "$incomingFormatType in failed parsing: ${mapperJson.writeValueAsString(requestBody)}"
             )
         }
-        SensuMetrics().oebsParsingFeilet()
+        context.metrics.oebsParsingFeilet()
         call.respond(HttpStatusCode.BadRequest, "bad request: $incomingFormatType not valid")
         return null
     }
 }
 
-
-private fun validerOrdrelinje(ordrelinje: OrdrelinjeOebs) {
+private fun validerOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
     if (ordrelinje.serviceforespørseltype != "Vedtak Infotrygd") {
         if (ordrelinje.serviceforespørseltype == "") {
             logg.info(
                 "Mottok melding fra oebs som ikke er en SF. Avbryter prosesseringen og returnerer"
             )
-            SensuMetrics().sfTypeBlank()
+            context.metrics.sfTypeBlank()
         } else {
             logg.info(
                 "Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespørseltype} og sf-status ${ordrelinje.serviceforespørselstatus}. " +
                         "Avbryter prosesseringen og returnerer"
             )
-            SensuMetrics().sfTypeUlikVedtakInfotrygd()
+            context.metrics.sfTypeUlikVedtakInfotrygd()
         }
         throw RuntimeException("Ugyldig ordrelinje")
     } else {
-        SensuMetrics().sfTypeVedtakInfotrygd()
+        context.metrics.sfTypeVedtakInfotrygd()
     }
 
     if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel" &&
@@ -134,22 +131,22 @@ private fun validerOrdrelinje(ordrelinje: OrdrelinjeOebs) {
         ordrelinje.hjelpemiddeltype != "Del"
     ) {
         logg.info("Mottok melding fra oebs med irrelevant hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering")
-        SensuMetrics().irrelevantHjelpemiddeltype()
+        context.metrics.irrelevantHjelpemiddeltype()
         throw RuntimeException("Ugyldig ordrelinje")
     } else {
-        SensuMetrics().rettHjelpemiddeltype()
+        context.metrics.rettHjelpemiddeltype()
     }
 }
 
 private fun publiserMelding(
+    context: Context,
     ordrelinje: OrdrelinjeOebs,
-    rapidApp: RapidsConnection?,
-    melding: OrdrelinjeMessage
+    melding: OrdrelinjeMessage,
 ) {
     try {
         logg.info("Publiserer ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
-        rapidApp!!.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
-        SensuMetrics().meldingTilRapidSuksess()
+        context.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
+        context.metrics.meldingTilRapidSuksess()
 
         // TODO: Remove logging when interface stabilizes
         ordrelinje.fnrBruker = "MASKERT"
@@ -161,7 +158,7 @@ private fun publiserMelding(
             }"
         )
     } catch (e: Exception) {
-        SensuMetrics().meldingTilRapidFeilet()
+        context.metrics.meldingTilRapidFeilet()
         sikkerlogg.error("Sending til rapid feilet, exception: $e")
         throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
     }

@@ -10,9 +10,8 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import mu.KotlinLogging
-import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.metrics.SensuMetrics
 import no.nav.hjelpemidler.model.SfMessage
 import java.time.LocalDateTime
 import java.util.UUID
@@ -21,7 +20,7 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-internal fun Route.ServiceforespørselApi(rapidApp: RapidsConnection?) {
+internal fun Route.serviceforespørselAPI(context: Context) {
     post("/sf") {
         logg.info("incoming sf-oppdatering")
         val authHeader = call.request.header("Authorization").toString()
@@ -38,7 +37,7 @@ internal fun Route.ServiceforespørselApi(rapidApp: RapidsConnection?) {
                 opprettet = LocalDateTime.now(),
                 data = serviceForespørselEndring
             )
-            publiserMelding(serviceForespørselEndring, rapidApp, sfMessage)
+            publiserMelding(context, serviceForespørselEndring, sfMessage)
             call.respond(HttpStatusCode.OK)
 
         } catch (e: RapidsAndRiverException) {
@@ -57,32 +56,32 @@ data class ServiceForespørselEndring(
     val sfnummer: String,
     val saknummer: String,
     val ordre: List<ServiceForespørselOrdre>? = null,
-    val status: String?
+    val status: String?,
 )
 
 data class ServiceForespørselOrdre(
     val ordrenummer: String,
-    val status: String
+    val status: String,
 )
 
 private fun publiserMelding(
+    context: Context,
     serviceForespørselEndring: ServiceForespørselEndring,
-    rapidApp: RapidsConnection?,
-    sfMessage: SfMessage
+    sfMessage: SfMessage,
 ) {
     try {
         logg.info(
             "Publiserer oppdatering for SF fra OEBS med id ${serviceForespørselEndring.id}, " +
-                "sfNummer: ${serviceForespørselEndring.sfnummer}, saknr: ${serviceForespørselEndring.saknummer}" +
-                "status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}"
+                    "sfNummer: ${serviceForespørselEndring.sfnummer}, saknr: ${serviceForespørselEndring.saknummer}" +
+                    "status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}"
         )
-        rapidApp!!.publish(
+        context.publish(
             serviceForespørselEndring.saknummer,
             mapperJson.writeValueAsString(sfMessage)
         )
-        SensuMetrics().meldingTilRapidSuksess()
+        context.metrics.meldingTilRapidSuksess()
     } catch (e: Exception) {
-        SensuMetrics().meldingTilRapidFeilet()
+        context.metrics.meldingTilRapidFeilet()
         sikkerlogg.error("Sending til rapid feilet, exception: $e")
         throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
     }

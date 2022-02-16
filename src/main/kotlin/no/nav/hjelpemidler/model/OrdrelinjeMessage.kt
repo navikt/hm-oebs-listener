@@ -21,5 +21,3 @@ data class SfMessage(
     val opprettet: LocalDateTime,
     val data: ServiceForespørselEndring,
 )
-
-
