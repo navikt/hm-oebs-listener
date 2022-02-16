@@ -127,7 +127,8 @@ private fun validerOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
     }
 
     if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel" &&
-        ordrelinje.hjelpemiddeltype != "Individstyrt hjelpemiddel"
+        ordrelinje.hjelpemiddeltype != "Individstyrt hjelpemiddel" &&
+        ordrelinje.hjelpemiddeltype != "Del"
     ) {
         logg.info("Mottok melding fra oebs med irrelevant hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering")
         context.metrics.irrelevantHjelpemiddeltype()
