@@ -1,8 +1,8 @@
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
+import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Configuration
-import no.nav.hjelpemidler.metrics.SensuMetrics
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.toHotsakOrdrelinje
@@ -14,18 +14,17 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-fun parseHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs) {
-
-    if (ordrelinje.hotSakSaksnummer == null || ordrelinje.hotSakSaksnummer.isBlank() ) {
+fun parseHotsakOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
+    if (ordrelinje.hotSakSaksnummer == null || ordrelinje.hotSakSaksnummer.isBlank()) {
         logg.warn("Melding frå OEBS manglar HOTSAK saksnummer")
         ordrelinje.fnrBruker = "MASKERT"
         val message = mapperJson.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
         sikkerlogg.warn("Vedtak HOTSAK-melding med manglende informasjon: $message")
-        SensuMetrics().manglendeFeltForVedtakHOTSAK()
+        context.metrics.manglendeFeltForVedtakHOTSAK()
 
         PostToSlack().post(
             Configuration.application["SLACK_HOOK"]!!,
-            "*${Configuration.application["APP_PROFILE"]!!.toUpperCase()}* - Manglende felt i Hotsak Oebs ordrelinje: ```$message```",
+            "*${Configuration.application["APP_PROFILE"]!!.uppercase()}* - Manglende felt i Hotsak Oebs ordrelinje: ```$message```",
             "#digihot-hotsak-varslinger-dev"
         )
         throw RuntimeException("Ugyldig Hotsak ordrelinje")
