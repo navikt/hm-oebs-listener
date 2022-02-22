@@ -12,7 +12,7 @@ class KafkaMetrics(private val context: MessageContext) {
         val message = JsonMessage.newMessage(mapOf(
             "eventId" to UUID.randomUUID(),
             "eventName" to "hm-bigquery-sink-hendelse",
-            "schemaId" to "hendelse_v1",
+            "schemaId" to "hendelse_v2",
             "payload" to mapOf(
                 "opprettet" to opprettet,
                 "navn" to measurement,
