@@ -33,4 +33,6 @@ data class HotsakOrdrelinje(
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val sistOppdatert: LocalDate,
+
+    val sendtTilAdresse: String,
 ) : Ordrelinje
