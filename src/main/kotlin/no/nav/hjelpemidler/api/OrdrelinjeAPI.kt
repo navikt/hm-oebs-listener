@@ -150,6 +150,10 @@ private fun publiserMelding(
 
         // TODO: Remove logging when interface stabilizes
         ordrelinje.fnrBruker = "MASKERT"
+        if (ordrelinje.sendtTilAdresse.take(4).toIntOrNull() == null) {
+            // If address is not municipality-intake we mask it in logging.
+            ordrelinje.sendtTilAdresse = "MASKERT"
+        }
         sikkerlogg.info(
             "Ordrelinje med OebsId ${ordrelinje.oebsId} mottatt og sendt til rapid: ${
                 mapperJson.writeValueAsString(

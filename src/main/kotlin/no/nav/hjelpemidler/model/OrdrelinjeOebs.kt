@@ -92,7 +92,7 @@ data class OrdrelinjeOebs(
     val sistOppdatert: LocalDate,
 
     @JsonProperty("SendTilAddresse1")
-    val sendtTilAdresse: String,
+    var sendtTilAdresse: String,
 )
 
 fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
