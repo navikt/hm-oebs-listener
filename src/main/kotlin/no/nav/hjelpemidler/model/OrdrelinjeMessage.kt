@@ -21,3 +21,11 @@ data class SfMessage(
     val opprettet: LocalDateTime,
     val data: ServiceForespørselEndring,
 )
+
+data class UvalidertOrdrelinjeMessage(
+    val eventId: UUID,
+    val eventName: String,
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    val eventCreated: LocalDateTime,
+    val orderLine: OrdrelinjeOebs,
+)

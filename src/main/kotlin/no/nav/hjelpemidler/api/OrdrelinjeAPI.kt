@@ -17,11 +17,14 @@ import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
+import no.nav.hjelpemidler.model.UvalidertOrdrelinjeMessage
 import no.nav.hjelpemidler.model.erOpprettetFraHOTSAK
 import opprettHotsakOrdrelinje
 import opprettInfotrygdOrdrelinje
 import parseHotsakOrdrelinje
 import parseInfotrygdOrdrelinje
+import java.time.LocalDateTime
+import java.util.UUID
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -39,6 +42,7 @@ internal fun Route.ordrelinjeAPI(context: Context) {
 
         try {
             val ordrelinje = parseOrdrelinje(context, call) ?: return@post
+            sendUvalidertOrdrelinjeTilRapid(context, ordrelinje)
             validerOrdrelinje(context, ordrelinje)
             val melding = if (ordrelinje.erOpprettetFraHOTSAK()) {
                 parseHotsakOrdrelinje(context, ordrelinje)
@@ -104,6 +108,23 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
         context.metrics.oebsParsingFeilet()
         call.respond(HttpStatusCode.BadRequest, "bad request: $incomingFormatType not valid")
         return null
+    }
+}
+
+private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: OrdrelinjeOebs) {
+    try {
+        logg.info("Publiserer uvalidert ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
+        context.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(UvalidertOrdrelinjeMessage(
+            eventId = UUID.randomUUID(),
+            eventName = "hm-uvalidert-ordrelinje",
+            eventCreated = LocalDateTime.now(),
+            orderLine = ordrelinje,
+        )))
+        context.metrics.meldingTilRapidSuksess()
+    } catch (e: Exception) {
+        context.metrics.meldingTilRapidFeilet()
+        sikkerlogg.error("Sending av uvalidert ordrelinje til rapid feilet, exception: $e\n\n${e.printStackTrace()}")
+        throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
     }
 }
 
