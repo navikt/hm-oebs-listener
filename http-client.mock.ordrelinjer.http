@@ -6,7 +6,7 @@ Authorization: Bearer {{oebstoken}}
 
 {
   "System": "DIGIHOT",
-  "Id": 1,
+  "Id": 8,
   "IncidentNummer": 1,
   "IncidentStatus": "Closed",
   "IncidentType": "Vedtak Infotrygd",
@@ -18,10 +18,9 @@ Authorization: Bearer {{oebstoken}}
   "ReferanseNummer": "",
   "Kilde": "",
   "OrdreNumber": 1,
-  "LineNumber": 1,
+  "LineNumber": 2,
   "ShipmentNumber": 1,
   "CategoryDescription": "Rollatorer, 4 hjul utebruk",
-  "SendTilAddresse1": "1234 LEKE KOMMUNE 1234 Leke",
   "OrderedItem": "286589",
   "CategoryNum": "1",
   "User_ItemType": "Hjelpemiddel",
@@ -30,7 +29,8 @@ Authorization: Bearer {{oebstoken}}
   "AccountNumber": "{{fnr}}",
   "EgenAnsatt": "N",
   "LastUpdateDate": "{{vedtaksDato}}",
-  "Description": "Topro Olympos ATR M"
+  "Description": "Topro Olympos ATR M",
+  "SendTilAddresse1": "{{sendtTilAdresse}}"
 }
 
 ### Ordrelinje med vedtak infotrygd og hjelpemiddeltype="Del"
@@ -55,7 +55,6 @@ Authorization: Bearer {{oebstoken}}
   "LineNumber": 2,
   "ShipmentNumber": 1,
   "CategoryDescription": "Tilbehør Rollatorer",
-  "SendTilAddresse1": "1234 LEKE KOMMUNE 1234 Leke",
   "OrderedItem": "286593",
   "CategoryNum": "1",
   "User_ItemType": "Del",
@@ -64,7 +63,8 @@ Authorization: Bearer {{oebstoken}}
   "AccountNumber": "{{fnr}}",
   "EgenAnsatt": "N",
   "LastUpdateDate": "{{vedtaksDato}}",
-  "Description": "Offroad-hjul rullator 4hjul Topro Olympos ATR sett á fire hjul"
+  "Description": "Offroad-hjul rullator 4hjul Topro Olympos ATR sett á fire hjul",
+  "SendTilAddresse1": "{{sendtTilAdresse}}"
 }
 
 ### Ordrelinje med vedtak hotsak og hjelpemiddeltype="Hjelpemiddel"
@@ -89,7 +89,6 @@ Authorization: Bearer {{oebstoken}}
   "LineNumber": 1,
   "ShipmentNumber": 1,
   "CategoryDescription": "Rollatorer, 4 hjul utebruk",
-  "SendTilAddresse1": "1234 LEKE KOMMUNE 1234 Leke",
   "OrderedItem": "286589",
   "CategoryNum": "1",
   "User_ItemType": "Hjelpemiddel",
@@ -98,7 +97,8 @@ Authorization: Bearer {{oebstoken}}
   "AccountNumber": "{{fnr}}",
   "EgenAnsatt": "N",
   "LastUpdateDate": "{{vedtaksDato}}",
-  "Description": "Topro Olympos ATR M"
+  "Description": "Topro Olympos ATR M",
+  "SendTilAddresse1": "{{sendtTilAdresse}}"
 }
 
 ### Ordrelinje med vedtak hotsak og hjelpemiddeltype="Del"
@@ -123,7 +123,6 @@ Authorization: Bearer {{oebstoken}}
   "LineNumber": 2,
   "ShipmentNumber": 1,
   "CategoryDescription": "Tilbehør Rollatorer",
-  "SendTilAddresse1": "1234 LEKE KOMMUNE 1234 Leke",
   "OrderedItem": "286593",
   "CategoryNum": "1",
   "User_ItemType": "Del",
@@ -132,7 +131,8 @@ Authorization: Bearer {{oebstoken}}
   "AccountNumber": "{{fnr}}",
   "EgenAnsatt": "N",
   "LastUpdateDate": "{{vedtaksDato}}",
-  "Description": "Offroad-hjul rullator 4hjul Topro Olympos ATR sett á fire hjul"
+  "Description": "Offroad-hjul rullator 4hjul Topro Olympos ATR sett á fire hjul",
+  "SendTilAddresse1": "{{sendtTilAdresse}}"
 }
 
 ###
