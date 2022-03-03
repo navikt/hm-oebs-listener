@@ -17,8 +17,10 @@ import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
+import no.nav.hjelpemidler.model.RåOrdrelinje
 import no.nav.hjelpemidler.model.UvalidertOrdrelinjeMessage
 import no.nav.hjelpemidler.model.erOpprettetFraHOTSAK
+import no.nav.hjelpemidler.model.toRåOrdrelinje
 import opprettHotsakOrdrelinje
 import opprettInfotrygdOrdrelinje
 import parseHotsakOrdrelinje
@@ -42,7 +44,7 @@ internal fun Route.ordrelinjeAPI(context: Context) {
 
         try {
             val ordrelinje = parseOrdrelinje(context, call) ?: return@post
-            sendUvalidertOrdrelinjeTilRapid(context, ordrelinje)
+            sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
             validerOrdrelinje(context, ordrelinje)
             val melding = if (ordrelinje.erOpprettetFraHOTSAK()) {
                 parseHotsakOrdrelinje(context, ordrelinje)
@@ -111,7 +113,7 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
     }
 }
 
-private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: OrdrelinjeOebs) {
+private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: RåOrdrelinje) {
     try {
         logg.info("Publiserer uvalidert ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
         context.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(UvalidertOrdrelinjeMessage(

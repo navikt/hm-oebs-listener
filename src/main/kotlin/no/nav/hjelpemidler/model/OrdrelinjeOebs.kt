@@ -97,6 +97,37 @@ data class OrdrelinjeOebs(
 
 fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
 
+fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje {
+    return RåOrdrelinje(
+        mottakendeSystem = this.mottakendeSystem,
+        oebsId = this.oebsId,
+        serviceforespørsel = this.serviceforespørsel,
+        serviceforespørselstatus = this.serviceforespørselstatus,
+        serviceforespørseltype = this.serviceforespørseltype,
+        søknadstype = this.søknadstype,
+        vedtaksdato = this.vedtaksdato,
+        søknad = this.søknad,
+        hotSakSaksnummer = this.hotSakSaksnummer,
+        kilde = this.kilde,
+        resultat = this.resultat,
+        saksblokkOgSaksnr = this.saksblokkOgSaksnr,
+        ordrenr = this.ordrenr,
+        ordrelinje = this.ordrelinje,
+        delordrelinje = this.delordrelinje,
+        artikkelbeskrivelse = this.artikkelbeskrivelse,
+        produktgruppe = this.produktgruppe,
+        produktgruppeNr = this.produktgruppeNr,
+        artikkelnr = this.artikkelnr,
+        hjelpemiddeltype = this.hjelpemiddeltype,
+        antall = this.antall,
+        enhet = this.enhet,
+        fnrBruker = this.fnrBruker,
+        egenAnsatt = this.egenAnsatt,
+        sistOppdatert = this.sistOppdatert,
+        sendtTilAdresse = this.sendtTilAdresse,
+    )
+}
+
 fun OrdrelinjeOebs.toHotsakOrdrelinje(): HotsakOrdrelinje {
     return HotsakOrdrelinje(
         mottakendeSystem = this.mottakendeSystem,

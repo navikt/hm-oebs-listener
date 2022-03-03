@@ -27,5 +27,5 @@ data class UvalidertOrdrelinjeMessage(
     val eventName: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val eventCreated: LocalDateTime,
-    val orderLine: OrdrelinjeOebs,
+    val orderLine: RåOrdrelinje,
 )
