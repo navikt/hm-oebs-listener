@@ -1,5 +1,7 @@
 package no.nav.hjelpemidler.api
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.call
@@ -33,13 +35,12 @@ internal fun Route.serviceforespørselAPI(context: Context) {
             val serviceForespørselEndring = call.receive<ServiceForespørselEndring>()
             val sfMessage = SfMessage(
                 eventId = UUID.randomUUID(),
-                eventName = "hm-EndretSF-oebs",
+                eventName = "hm-EndretSF-oebs-v2",
                 opprettet = LocalDateTime.now(),
                 data = serviceForespørselEndring
             )
             publiserMelding(context, serviceForespørselEndring, sfMessage)
             call.respond(HttpStatusCode.OK)
-
         } catch (e: RapidsAndRiverException) {
             call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
             return@post
@@ -56,13 +57,24 @@ data class ServiceForespørselEndring(
     val sfnummer: String,
     val saknummer: String,
     val ordre: List<ServiceForespørselOrdre>? = null,
-    val status: String?,
+    @JsonProperty("status")
+    val status: SFEndringType,
 )
 
 data class ServiceForespørselOrdre(
     val ordrenummer: String,
     val status: String,
 )
+
+enum class SFEndringType(value: String) {
+    OPPRETTET("opprettet"), LUKKET("Lukket"), TILORDNET("Tilordnet");
+
+    companion object {
+        @JvmStatic
+        @JsonCreator
+        fun fromString(value: String) = valueOf(value.uppercase())
+    }
+}
 
 private fun publiserMelding(
     context: Context,
@@ -72,8 +84,8 @@ private fun publiserMelding(
     try {
         logg.info(
             "Publiserer oppdatering for SF fra OEBS med id ${serviceForespørselEndring.id}, " +
-                    "sfNummer: ${serviceForespørselEndring.sfnummer}, saknr: ${serviceForespørselEndring.saknummer}" +
-                    "status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}"
+                "sfNummer: ${serviceForespørselEndring.sfnummer}, saknr: ${serviceForespørselEndring.saknummer}" +
+                "status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}"
         )
         context.publish(
             serviceForespørselEndring.saknummer,
