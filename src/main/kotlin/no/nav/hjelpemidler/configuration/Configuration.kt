@@ -23,7 +23,6 @@ internal object Configuration {
 
             "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
             "kafka.reset.policy" to "latest",
-            "kafka.client.id" to "hm-oebs-listener-prod",
 
             "application.profile" to "prod",
             "SENSU_URL" to "https://digihot-proxy.prod-fss-pub.nais.io/sensu",
@@ -36,7 +35,6 @@ internal object Configuration {
 
             "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
             "kafka.reset.policy" to "latest",
-            "kafka.client.id" to "hm-oebs-listener-dev",
 
             "application.profile" to "dev",
             "SENSU_URL" to "https://digihot-proxy.dev-fss-pub.nais.io/sensu",
@@ -53,7 +51,6 @@ internal object Configuration {
             "KAFKA_CREDSTORE_PASSWORD" to "",
             "KAFKA_KEYSTORE_PATH" to "",
             "kafka.brokers" to "host.docker.internal:9092",
-            "kafka.client.id" to "hm-oebs-listener-local",
             "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
             "kafka.reset.policy" to "earliest",
             "application.profile" to "local",
@@ -73,7 +70,6 @@ internal object Configuration {
         "KAFKA_KEYSTORE_PATH" to config()[Key("KAFKA_KEYSTORE_PATH", stringType)],
         "KAFKA_CREDSTORE_PASSWORD" to config()[Key("KAFKA_CREDSTORE_PASSWORD", stringType)],
         "HTTP_PORT" to config()[Key("HTTP_PORT", stringType)],
-        "KAFKA_CLIENT_ID" to config()[Key("kafka.client.id", stringType)],
     ) + System.getenv().filter { it.key.startsWith("NAIS_") }
 
     val application: Map<String, String> = mapOf(

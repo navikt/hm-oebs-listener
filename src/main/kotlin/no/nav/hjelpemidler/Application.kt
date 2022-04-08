@@ -18,17 +18,19 @@ import java.net.InetAddress
 private val logg = KotlinLogging.logger {}
 
 fun main() {
+    val instanceId = InetAddress.getLocalHost().hostName
+
     lateinit var rapidApp: RapidsConnection
     rapidApp = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig(
             Configuration.rapidConfig["RAPID_APP_NAME"],
-            InetAddress.getLocalHost().hostName,
+            instanceId,
             Configuration.rapidConfig["KAFKA_RAPID_TOPIC"]!!,
             emptyList(),
             KafkaConfig(
                 Configuration.rapidConfig["KAFKA_BROKERS"]!!,
                 Configuration.rapidConfig["KAFKA_CONSUMER_GROUP_ID"]!!,
-                Configuration.rapidConfig["KAFKA_CLIENT_ID"]!!,
+                instanceId,
                 null,
                 null,
                 Configuration.rapidConfig["KAFKA_TRUSTSTORE_PATH"]!!,
