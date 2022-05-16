@@ -3,6 +3,8 @@ package no.nav.hjelpemidler
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
 import mu.KotlinLogging
@@ -51,10 +53,19 @@ fun main() {
                 registerModule(JavaTimeModule())
             }
         }
+        install(Authentication) {
+            token("oebsToken") {
+                validate(requireNotNull(Configuration.application["OEBSTOKEN"]) {
+                    "OEBSTOKEN mangler"
+                })
+            }
+        }
         val context = Context(rapidApp)
         routing {
-            ordrelinjeAPI(context)
-            serviceforespørselAPI(context)
+            authenticate("oebsToken") {
+                ordrelinjeAPI(context)
+                serviceforespørselAPI(context)
+            }
         }
     }.build()
 

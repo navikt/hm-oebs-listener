@@ -31,15 +31,21 @@ dependencies {
 
     // Ktor
     val ktorVersion = "2.0.1"
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
     // Testing
     testImplementation(kotlin("test"))
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.withType<Jar> {

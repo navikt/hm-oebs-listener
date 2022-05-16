@@ -6,14 +6,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
-import io.ktor.server.request.header
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.Context
-import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.model.SfMessage
 import java.time.LocalDateTime
 import java.util.UUID
@@ -25,12 +23,6 @@ private val mapperJson = jacksonMapperBuilder().addModule(JavaTimeModule()).buil
 internal fun Route.serviceforespørselAPI(context: Context) {
     post("/sf") {
         logg.info("incoming sf-oppdatering")
-        val authHeader = call.request.header("Authorization").toString()
-        if (!authHeader.startsWith("Bearer ") || authHeader.substring(7) != Configuration.application["OEBSTOKEN"]!!) {
-            call.respond(HttpStatusCode.Unauthorized, "unauthorized")
-            return@post
-        }
-
         try {
             val serviceForespørselEndring = call.receive<ServiceForespørselEndring>()
             val sfMessage = SfMessage(

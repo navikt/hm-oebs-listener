@@ -36,12 +36,6 @@ private val mapperXml = XmlMapper().registerModule(JavaTimeModule())
 internal fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
         logg.info("incoming push")
-        val authHeader = call.request.header("Authorization").toString()
-        if (!authHeader.startsWith("Bearer ") || authHeader.substring(7) != Configuration.application["OEBSTOKEN"]!!) {
-            call.respond(HttpStatusCode.Unauthorized, "unauthorized")
-            return@post
-        }
-
         try {
             val ordrelinje = parseOrdrelinje(context, call) ?: return@post
             sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
