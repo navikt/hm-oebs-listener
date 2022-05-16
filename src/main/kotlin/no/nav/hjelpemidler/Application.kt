@@ -12,7 +12,7 @@ import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.api.ordrelinjeAPI
-import no.nav.hjelpemidler.api.rekvisisjonAPI
+import no.nav.hjelpemidler.api.ordreAPI
 import no.nav.hjelpemidler.api.serviceforespørselAPI
 import no.nav.hjelpemidler.configuration.Configuration
 import java.net.InetAddress
@@ -66,7 +66,7 @@ fun main() {
             authenticate("oebsToken") {
                 ordrelinjeAPI(context)
                 serviceforespørselAPI(context)
-                rekvisisjonAPI(context)
+                ordreAPI(context)
             }
         }
     }.build()
