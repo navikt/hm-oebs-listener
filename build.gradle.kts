@@ -1,16 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val rapids_and_rivers_version: String by project
-val kotlin_logging_version: String by project
-val konfig_version: String by project
-val brukernotifikasjon_schemas_version: String by project
-val kafka_version: String by project
-val kafka_avro_version: String by project
-val influxdb_version: String by project
-val jackson_version: String by project
-
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.21"
 }
 
 group = "no.nav.hjelpemidler"
@@ -18,43 +9,47 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io") // Rapids and Rivers
-    maven("https://packages.confluent.io/maven/") // Kafka Avro
+    maven("https://jitpack.io") // rapids-and-rivers
 }
 
-fun ktor(name: String) = "io.ktor:ktor-$name:1.6.7"
-
 dependencies {
-    testImplementation(kotlin("test-junit"))
+    implementation("com.natpryce:konfig:1.6.10.0")
+    implementation("org.influxdb:influxdb-java:2.22")
+    implementation("com.github.navikt:rapids-and-rivers:2022.05.11-08.56.814d601f572e") {
+        exclude(group = "ch.qos.logback")
+    }
 
-    implementation("com.github.navikt:rapids-and-rivers:$rapids_and_rivers_version")
-    implementation("io.github.microutils:kotlin-logging:$kotlin_logging_version")
-    implementation("com.natpryce:konfig:$konfig_version")
-    implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjon_schemas_version")
-    implementation("org.apache.kafka:kafka-clients:$kafka_version")
-    implementation("io.confluent:kafka-avro-serializer:$kafka_avro_version")
-    implementation("org.influxdb:influxdb-java:$influxdb_version")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jackson_version")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version")
-    implementation(ktor("jackson"))
+    // Logging
+    implementation("io.github.microutils:kotlin-logging:2.1.21")
+    runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.1.1")
+
+    // Jackson
+    val jacksonVersion = "2.13.3"
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+
+    // Ktor
+    val ktorVersion = "2.0.1"
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+
+    // Testing
+    testImplementation(kotlin("test"))
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
 
-val fatJar = task("fatJar", type = org.gradle.jvm.tasks.Jar::class) {
-    archiveBaseName.set("${project.name}-fat")
+tasks.withType<Jar> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes["Main-Class"] = "no.nav.hjelpemidler.ApplicationKt"
     }
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    with(tasks.jar.get() as CopySpec)
-}
-
-tasks {
-    "build" {
-        dependsOn(fatJar)
-    }
+    from(
+        configurations.runtimeClasspath.get().map {
+            if (it.isDirectory) it else zipTree(it)
+        }
+    )
 }

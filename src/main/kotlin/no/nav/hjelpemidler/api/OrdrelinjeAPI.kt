@@ -4,14 +4,14 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.header
-import io.ktor.request.receiveText
-import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.post
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.request.header
+import io.ktor.server.request.receiveText
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Configuration
@@ -116,12 +116,16 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
 private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: RåOrdrelinje) {
     try {
         logg.info("Publiserer uvalidert ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
-        context.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(UvalidertOrdrelinjeMessage(
-            eventId = UUID.randomUUID(),
-            eventName = "hm-uvalidert-ordrelinje",
-            eventCreated = LocalDateTime.now(),
-            orderLine = ordrelinje,
-        )))
+        context.publish(
+            ordrelinje.fnrBruker, mapperJson.writeValueAsString(
+                UvalidertOrdrelinjeMessage(
+                    eventId = UUID.randomUUID(),
+                    eventName = "hm-uvalidert-ordrelinje",
+                    eventCreated = LocalDateTime.now(),
+                    orderLine = ordrelinje,
+                )
+            )
+        )
         context.metrics.meldingTilRapidSuksess()
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()

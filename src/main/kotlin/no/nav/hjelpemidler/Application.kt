@@ -1,11 +1,10 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
-import io.ktor.application.install
-import io.ktor.features.ContentNegotiation
-import io.ktor.jackson.jackson
-import io.ktor.routing.routing
+import io.ktor.serialization.jackson.jackson
+import io.ktor.server.application.install
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.routing.routing
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -49,9 +48,7 @@ fun main() {
     ).withKtorModule {
         install(ContentNegotiation) {
             jackson {
-                jacksonMapperBuilder()
-                    .addModule(JavaTimeModule())
-                    .build()
+                registerModule(JavaTimeModule())
             }
         }
         val context = Context(rapidApp)
