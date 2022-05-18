@@ -34,9 +34,11 @@ internal fun Route.serviceforespørselAPI(context: Context) {
             publiserMelding(context, serviceForespørselEndring, sfMessage)
             call.respond(HttpStatusCode.OK)
         } catch (e: RapidsAndRiverException) {
+            logg.error(e) { "Feil under prosessering" }
             call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
             return@post
         } catch (e: RuntimeException) {
+            logg.error(e) { "Feil under prosessering" }
             call.respond(HttpStatusCode.OK)
             return@post
         }

@@ -53,9 +53,11 @@ internal fun Route.ordrelinjeAPI(context: Context) {
             publiserMelding(context, ordrelinje, melding)
             call.respond(HttpStatusCode.OK)
         } catch (e: RapidsAndRiverException) {
+            logg.error(e) { "Feil under prosessering" }
             call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
             return@post
         } catch (e: RuntimeException) {
+            logg.error(e) { "Feil under prosessering" }
             call.respond(HttpStatusCode.OK)
             return@post
         }
