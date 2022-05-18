@@ -77,9 +77,9 @@ private fun publiserMelding(
 ) {
     try {
         logg.info(
-            "Publiserer oppdatering for SF fra OEBS med id ${serviceForespørselEndring.id}, " +
-                    "sfNummer: ${serviceForespørselEndring.sfnummer}, saknr: ${serviceForespørselEndring.saknummer}" +
-                    "status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}"
+            "Publiserer oppdatering for SF fra OEBS med id: ${serviceForespørselEndring.id}, " +
+                    "sfnummer: ${serviceForespørselEndring.sfnummer}, saknummer: ${serviceForespørselEndring.saknummer}" +
+                    ", status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}"
         )
         context.publish(
             serviceForespørselEndring.saknummer,
