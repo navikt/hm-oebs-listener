@@ -186,7 +186,7 @@ private fun publiserMelding(
         )
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()
-        sikkerlogg.error("Sending til rapid feilet, exception: $e")
+        sikkerlogg.error("Sending til rapid feilet", e)
         throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
     }
 }
