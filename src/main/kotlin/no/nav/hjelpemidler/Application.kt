@@ -5,16 +5,18 @@ import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.KafkaConfig
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.hjelpemidler.api.ordrelinjeAPI
 import no.nav.hjelpemidler.api.ordreAPI
+import no.nav.hjelpemidler.api.ordrelinjeAPI
 import no.nav.hjelpemidler.api.serviceforespørselAPI
 import no.nav.hjelpemidler.configuration.Configuration
+import org.slf4j.event.Level
 import java.net.InetAddress
 
 private val logg = KotlinLogging.logger {}
@@ -49,6 +51,9 @@ fun main() {
             Configuration.rapidConfig["HTTP_PORT"]!!.toInt(),
         )
     ).withKtorModule {
+        install(CallLogging) {
+            level = Level.DEBUG
+        }
         install(ContentNegotiation) {
             jackson {
                 registerModule(JavaTimeModule())
@@ -72,7 +77,7 @@ fun main() {
     }.build()
 
     // Run our rapid and rivers implementation facing hm-rapid
-    logg.info("Starting Rapid & Rivers app towards hm-rapid")
+    logg.info("hm-oebs-listener with profile: ${Configuration.profile} starting...")
     rapidApp.start()
-    logg.info("Application ending.")
+    logg.info("Application stopping...")
 }

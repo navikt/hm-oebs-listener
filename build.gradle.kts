@@ -33,6 +33,7 @@ dependencies {
     val ktorVersion = "2.0.1"
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
     // Testing

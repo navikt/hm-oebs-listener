@@ -24,7 +24,7 @@ fun parseHotsakOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
 
         PostToSlack().post(
             Configuration.application["SLACK_HOOK"]!!,
-            "*${Configuration.application["APP_PROFILE"]!!.uppercase()}* - Manglende felt i Hotsak Oebs ordrelinje: ```$message```",
+            "*${Configuration.profile}* - Manglende felt i Hotsak Oebs ordrelinje: ```$message```",
             "#digihot-hotsak-varslinger-dev"
         )
         throw RuntimeException("Ugyldig Hotsak ordrelinje")

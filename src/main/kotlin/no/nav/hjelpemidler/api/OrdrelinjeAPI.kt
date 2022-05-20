@@ -72,7 +72,7 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
 
     val requestBody: String = call.receiveText()
     context.metrics.meldingFraOebs()
-    if (Configuration.application["APP_PROFILE"] != "prod") {
+    if (Configuration.profile != Configuration.Profile.PROD) {
         sikkerlogg.info("Received $incomingFormatType push request from OEBS: $requestBody")
     }
 
@@ -84,7 +84,7 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
         } else {
             mapperJson.readValue(requestBody)
         }
-        if (Configuration.application["APP_PROFILE"] != "prod") {
+        if (Configuration.profile != Configuration.Profile.PROD) {
             sikkerlogg.info(
                 "Parsing incoming $incomingFormatType request successful: ${
                     mapperJson.writeValueAsString(
@@ -98,7 +98,7 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
     } catch (e: Exception) {
         // Deal with invalid json/xml in request
         sikkerlogg.info("Parsing incoming $incomingFormatType request failed with exception (responding 4xx): $e")
-        if (Configuration.application["APP_PROFILE"] != "prod") {
+        if (Configuration.profile != Configuration.Profile.PROD) {
             sikkerlogg.info(
                 "$incomingFormatType in failed parsing: ${mapperJson.writeValueAsString(requestBody)}"
             )
@@ -111,7 +111,7 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
 
 private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: RåOrdrelinje) {
     try {
-        logg.info("Publiserer uvalidert ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
+        logg.info("Publiserer uvalidert ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.profile}")
         context.publish(
             ordrelinje.fnrBruker, mapperJson.writeValueAsString(
                 UvalidertOrdrelinjeMessage(
@@ -167,7 +167,7 @@ private fun publiserMelding(
     melding: OrdrelinjeMessage,
 ) {
     try {
-        logg.info("Publiserer ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.application["APP_PROFILE"]}")
+        logg.info("Publiserer ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.profile}")
         context.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
         context.metrics.meldingTilRapidSuksess()
 

@@ -24,7 +24,7 @@ fun parseInfotrygdOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
 
         PostToSlack().post(
             Configuration.application["SLACK_HOOK"]!!,
-            "*${Configuration.application["APP_PROFILE"]!!.uppercase()}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
+            "*${Configuration.profile}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
             "#digihot-brukers-hjelpemiddelside-dev"
         )
         throw RuntimeException("Ugyldig Infotrygd ordelinje")
