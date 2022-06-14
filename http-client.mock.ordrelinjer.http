@@ -89,7 +89,7 @@ Authorization: Bearer {{oebstoken}}
   "LineNumber": 1,
   "ShipmentNumber": 1,
   "CategoryDescription": "Rollatorer, 4 hjul utebruk",
-  "OrderedItem": "286589",
+  "OrderedItem": "014112",
   "CategoryNum": "1",
   "User_ItemType": "Hjelpemiddel",
   "Quantity": 1,
@@ -97,7 +97,7 @@ Authorization: Bearer {{oebstoken}}
   "AccountNumber": "{{fnr}}",
   "EgenAnsatt": "N",
   "LastUpdateDate": "{{vedtaksDato}}",
-  "Description": "Topro Olympos ATR M",
+  "Description": "Topro Terskeleliminator",
   "SendTilAddresse1": "{{sendtTilAdresse}}"
 }
 
