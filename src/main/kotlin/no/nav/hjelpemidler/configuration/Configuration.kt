@@ -13,7 +13,7 @@ internal object Configuration {
         Profile.PROD.pair(),
 
         "HTTP_PORT" to "8080",
-
+        "kafka.aiven.consumer" to "hm-oebs-listener-v1",
         "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
         "kafka.reset.policy" to "latest",
 
@@ -22,12 +22,10 @@ internal object Configuration {
 
     private val devProperties = ConfigurationMap(
         Profile.DEV.pair(),
-
         "HTTP_PORT" to "8080",
-
+        "kafka.aiven.consumer" to "hm-oebs-listener-v2",
         "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
         "kafka.reset.policy" to "latest",
-
         "SENSU_URL" to "https://digihot-proxy.dev-fss-pub.nais.io/sensu",
     )
 
@@ -37,6 +35,7 @@ internal object Configuration {
         "HTTP_PORT" to "8085",
         "OEBSTOKEN" to "abc",
 
+        "kafka.aiven.consumer" to "hm-oebs-listener-v1",
         "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
         "kafka.reset.policy" to "earliest",
         "kafka.brokers" to "host.docker.internal:9092",
@@ -61,7 +60,7 @@ internal object Configuration {
         "RAPID_KAFKA_CLUSTER" to "gcp",
         "RAPID_APP_NAME" to "hm-oebs-listener",
         "KAFKA_BROKERS" to get("kafka.brokers"),
-        "KAFKA_CONSUMER_GROUP_ID" to "hm-oebs-listener-v1",
+        "KAFKA_CONSUMER_GROUP_ID" to get("kafka.aiven.consumer"),
         "KAFKA_RAPID_TOPIC" to get("kafka.aiven.topic"),
         "KAFKA_RESET_POLICY" to get("kafka.reset.policy"),
         "KAFKA_KEYSTORE_PATH" to get("KAFKA_KEYSTORE_PATH"),
