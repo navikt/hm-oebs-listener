@@ -1,11 +1,14 @@
 package no.nav.hjelpemidler
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
+import no.nav.hjelpemidler.model.RåOrdrelinje
 import java.time.LocalDate
+import kotlin.math.exp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.ExperimentalTime
@@ -17,6 +20,7 @@ internal class ParsingTest {
     fun `Parse vedtaksdato to LocalDate`() {
         val mapper = jacksonObjectMapper()
         mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
         val result: OrdrelinjeOebs = mapper.readValue(
             """
@@ -57,9 +61,56 @@ internal class ParsingTest {
 
     @ExperimentalTime
     @Test
+    fun `Parse serienumre`() {
+        val mapper = jacksonObjectMapper()
+        mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+
+        val result: OrdrelinjeOebs = mapper.readValue(
+            """
+            {
+                "System": "DIGIHOT",
+                "Id":585,
+                "IncidentNummer":21072339,
+                "IncidentStatus": "Open",
+                "IncidentType": "Vedtak Infotrygd",
+                "IncidentSoknadType": "HJDAAN",
+                "IncidentVedtakDato": "2021-04-04",
+                "IncidentSoknad": "S",
+                "IncidentResultat": "I",
+                "IncidentRef": "A01",
+                "OrdreNumber":7068818,
+                "LineNumber":1,
+                "ShipmentNumber":1,
+                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                "CategoryDescription": "",
+                "OrderedItem":149305,
+                "CategoryNum": "122291",
+                "User_ItemType": "Hjelpemiddel",
+                "Quantity":1,
+                "ShippingQuantityUom": "STK",
+                "AccountNumber": "XXXXXXXXXXX",
+                "EgenAnsatt": "Y",
+                "LastUpdateDate": "2021-04-05",
+                "SendTilAddresse1": "1234 Oslo, bla bla bla",
+                "SerieNummerListe":"660383, 693065, 726136, 733046"
+            }
+            """.trimIndent()
+        )
+
+        println(result.toString())
+        val expected = listOf("660383", "693065", "726136", "733046")
+        for (serienr in RåOrdrelinje.serienumreListeFraRå(result.serienumreRå!!)) {
+            assert(expected.contains(serienr)) { "Expected to find only the serial numbers in the raw example" }
+        }
+    }
+
+    @ExperimentalTime
+    @Test
     fun `Parse tom dato-streng til LocalDate`() {
         val mapper = jacksonObjectMapper()
         mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
         val result: OrdrelinjeOebs = mapper.readValue(
             """
@@ -103,6 +154,7 @@ internal class ParsingTest {
     fun `Parse artikkelnr med leading zero`() {
         val mapper = jacksonObjectMapper()
         mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
         val result: OrdrelinjeOebs = mapper.readValue(
             """
@@ -144,6 +196,7 @@ internal class ParsingTest {
     fun `Parse XML`() {
         val mapper = XmlMapper()
         mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
         val result: OrdrelinjeOebs = mapper.readValue(
             """
@@ -186,6 +239,7 @@ internal class ParsingTest {
     fun `Parse int til double`() {
         val mapper = jacksonObjectMapper()
         mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
         val result: OrdrelinjeOebs = mapper.readValue(
             """
@@ -225,6 +279,7 @@ internal class ParsingTest {
     fun `Parse int til double for XML`() {
         val mapper = XmlMapper()
         mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
         val result: OrdrelinjeOebs = mapper.readValue(
             """
@@ -265,6 +320,7 @@ internal class ParsingTest {
     fun `Parse desimaltal til double`() {
         val mapper = jacksonObjectMapper()
         mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
         val result: OrdrelinjeOebs = mapper.readValue(
             """
@@ -304,6 +360,7 @@ internal class ParsingTest {
     fun `Parse desimaltal til double for XML`() {
         val mapper = XmlMapper()
         mapper.registerModule(JavaTimeModule())
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
         val result: OrdrelinjeOebs = mapper.readValue(
             """

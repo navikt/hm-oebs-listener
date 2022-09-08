@@ -36,4 +36,12 @@ data class RåOrdrelinje(
     val sistOppdatert: LocalDate,
 
     val sendtTilAdresse: String,
-)
+
+    var serienumre: List<String> = listOf(),
+) {
+    companion object {
+        fun serienumreListeFraRå(rå: String): List<String> {
+            return rå.split(",").map { it.trim() }
+        }
+    }
+}

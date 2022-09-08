@@ -93,6 +93,9 @@ data class OrdrelinjeOebs(
 
     @JsonProperty("SendTilAddresse1")
     var sendtTilAdresse: String,
+
+    @JsonProperty("SerieNummerListe")
+    val serienumreRå: String?,
 )
 
 fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
@@ -125,6 +128,7 @@ fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje {
         egenAnsatt = this.egenAnsatt,
         sistOppdatert = this.sistOppdatert,
         sendtTilAdresse = this.sendtTilAdresse,
+        serienumre = this.serienumreRå?.let { RåOrdrelinje.serienumreListeFraRå(this.serienumreRå) } ?: listOf(),
     )
 }
 

@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.api
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -30,8 +31,8 @@ import java.util.UUID
 
 private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
-private val mapperXml = XmlMapper().registerModule(JavaTimeModule())
+private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule()).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+private val mapperXml = XmlMapper().registerModule(JavaTimeModule()).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
 internal fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
