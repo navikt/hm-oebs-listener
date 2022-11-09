@@ -7,6 +7,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ import no.nav.hjelpemidler.configuration.Configuration
 object Slack {
     private val log = KotlinLogging.logger {}
     private val client = HttpClient(CIO) {
+        expectSuccess = false
         install(ContentNegotiation) {
             jackson()
         }
@@ -36,6 +38,9 @@ object Slack {
                         )
                     )
                 }
-            log.info(response.body<String>())
+            when (response.status) {
+                HttpStatusCode.OK -> Unit
+                else -> log.info(response.body<String>())
+            }
         }
 }

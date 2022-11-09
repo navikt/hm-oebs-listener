@@ -7,6 +7,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.Context
+import no.nav.hjelpemidler.Ntfy
 import no.nav.hjelpemidler.Slack
 import no.nav.hjelpemidler.configuration.Configuration
 import java.time.LocalDateTime
@@ -38,6 +39,21 @@ fun Route.ordreAPI(context: Context) {
         Slack.post(
             text = "*${Configuration.profile}* - $feilmelding",
             channel = "#papaya-alerts"
+        )
+        Ntfy.publish(
+            Ntfy.Notification(
+                title = "Mottok ordrefeilmelding",
+                message = "Status: ${feilmelding.status}",
+                priority = Ntfy.Priority.HIGH,
+                actions = setOf(
+                    Ntfy.Action(
+                        action = Ntfy.ActionType.VIEW,
+                        label = "Se detaljer i Slack",
+                        clear = true,
+                        url = "https://nav-it.slack.com/archives/C02LS2W05E1"
+                    )
+                )
+            )
         )
         call.response.status(HttpStatusCode.OK)
     }
