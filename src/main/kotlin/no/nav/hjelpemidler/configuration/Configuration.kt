@@ -10,9 +10,10 @@ import com.natpryce.konfig.stringType
 internal object Configuration {
 
     private val prodProperties = ConfigurationMap(
-        Profile.PROD.pair(),
+        Profile.PROD.entry(),
 
         "HTTP_PORT" to "8080",
+
         "kafka.aiven.consumer" to "hm-oebs-listener-v1",
         "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
         "kafka.reset.policy" to "latest",
@@ -21,16 +22,19 @@ internal object Configuration {
     )
 
     private val devProperties = ConfigurationMap(
-        Profile.DEV.pair(),
+        Profile.DEV.entry(),
+
         "HTTP_PORT" to "8080",
+
         "kafka.aiven.consumer" to "hm-oebs-listener-v2",
         "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
         "kafka.reset.policy" to "latest",
+
         "SENSU_URL" to "https://digihot-proxy.dev-fss-pub.nais.io/sensu",
     )
 
     private val localProperties = ConfigurationMap(
-        Profile.LOCAL.pair(),
+        Profile.LOCAL.entry(),
 
         "HTTP_PORT" to "8085",
         "OEBSTOKEN" to "abc",
@@ -81,6 +85,6 @@ internal object Configuration {
     enum class Profile {
         PROD, DEV, LOCAL;
 
-        fun pair(): Pair<String, String> = "application.profile" to name
+        fun entry(): Pair<String, String> = "application.profile" to name
     }
 }

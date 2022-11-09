@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.21"
 }
 
 group = "no.nav.hjelpemidler"
@@ -15,22 +15,22 @@ repositories {
 dependencies {
     implementation("com.natpryce:konfig:1.6.10.0")
     implementation("org.influxdb:influxdb-java:2.22")
-    implementation("com.github.navikt:rapids-and-rivers:2022.05.11-08.56.814d601f572e") {
+    implementation("com.github.navikt:rapids-and-rivers:2022110411121667556720.8a951a765583") {
         exclude(group = "ch.qos.logback")
     }
 
     // Logging
-    implementation("io.github.microutils:kotlin-logging:2.1.21")
-    runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
-    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.1.1")
+    implementation("io.github.microutils:kotlin-logging:3.0.4")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.4")
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.2")
 
     // Jackson
-    val jacksonVersion = "2.13.3"
+    val jacksonVersion = "2.14.0"
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     // Ktor
-    val ktorVersion = "2.0.1"
+    val ktorVersion = "2.1.3"
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
@@ -39,7 +39,7 @@ dependencies {
     // Testing
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
-    testImplementation("io.mockk:mockk:1.12.4")
+    testImplementation("io.mockk:mockk:1.13.2")
 }
 
 tasks.withType<KotlinCompile> {

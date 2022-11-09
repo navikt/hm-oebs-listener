@@ -22,7 +22,7 @@ fun parseHotsakOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
         sikkerlogg.warn("Vedtak HOTSAK-melding med manglende informasjon: $message")
         context.metrics.manglendeFeltForVedtakHOTSAK()
 
-        PostToSlack().post(
+        PostToSlack.post(
             Configuration.application["SLACK_HOOK"]!!,
             "*${Configuration.profile}* - Manglende felt i Hotsak Oebs ordrelinje: ```$message```",
             "#digihot-hotsak-varslinger-dev"

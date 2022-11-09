@@ -6,7 +6,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-class PostToSlack {
+object PostToSlack {
     private val username = "hm-oebs-listener"
     private val icon_emoji = ":this-is-fine-fire:"
     private val objectMapper = jacksonObjectMapper()

@@ -22,7 +22,7 @@ fun parseInfotrygdOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
         sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: $message")
         context.metrics.manglendeFeltForVedtakInfotrygd()
 
-        PostToSlack().post(
+        PostToSlack.post(
             Configuration.application["SLACK_HOOK"]!!,
             "*${Configuration.profile}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
             "#digihot-brukers-hjelpemiddelside-dev"

@@ -7,6 +7,7 @@ import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.path
 import io.ktor.server.routing.routing
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.KafkaConfig
@@ -52,7 +53,15 @@ fun main() {
         )
     ).withKtorModule {
         install(CallLogging) {
+            disableDefaultColors()
             level = Level.DEBUG
+            filter {
+                when (it.request.path()) {
+                    "/isalive" -> false
+                    "/isready" -> false
+                    else -> true
+                }
+            }
         }
         install(ContentNegotiation) {
             jackson {
