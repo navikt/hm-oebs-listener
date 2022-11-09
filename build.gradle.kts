@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     implementation("com.natpryce:konfig:1.6.10.0")
-    implementation("org.influxdb:influxdb-java:2.22")
+    implementation("org.influxdb:influxdb-java:2.23")
     implementation("com.github.navikt:rapids-and-rivers:2022110411121667556720.8a951a765583") {
         exclude(group = "ch.qos.logback")
     }
@@ -30,15 +30,18 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     // Ktor
-    val ktorVersion = "2.1.3"
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    fun ktor(name: String) = "io.ktor:ktor-$name:2.1.3"
+    implementation(ktor("serialization-jackson"))
+    implementation(ktor("server-auth"))
+    implementation(ktor("server-content-negotiation"))
+    implementation(ktor("server-call-logging"))
+    implementation(ktor("client-core"))
+    implementation(ktor("client-cio"))
+    implementation(ktor("client-content-negotiation"))
 
     // Testing
     testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation(ktor("server-test-host"))
     testImplementation("io.mockk:mockk:1.13.2")
 }
 

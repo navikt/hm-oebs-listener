@@ -7,6 +7,8 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.Context
+import no.nav.hjelpemidler.Slack
+import no.nav.hjelpemidler.configuration.Configuration
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -16,7 +18,7 @@ fun Route.ordreAPI(context: Context) {
     post("/ordrekvittering") {
         val kvittering = call.receive<Ordrekvittering>()
         log.info {
-            "Mottok ordrekvittering, id=${kvittering.id}, saksnummer=${kvittering.saksnummer}, ordrenummer: ${kvittering.ordrenummer}"
+            "Mottok ordrekvittering, $kvittering"
         }
         context.publish(
             kvittering.saksnummer,
@@ -27,11 +29,15 @@ fun Route.ordreAPI(context: Context) {
     post("/ordrefeilmelding") {
         val feilmelding = call.receive<Ordrefeilmelding>()
         log.warn {
-            "Mottok ordrefeilmelding, id=${feilmelding.id}, saksnummer=${feilmelding.saksnummer}, feilmelding: ${feilmelding.feilmelding}"
+            "Mottok ordrefeilmelding, $feilmelding"
         }
         context.publish(
             feilmelding.saksnummer,
             OrdrefeilmeldingMottatt(feilmelding = feilmelding)
+        )
+        Slack.post(
+            text = "*${Configuration.profile}* - $feilmelding",
+            channel = "#papaya-alerts"
         )
         call.response.status(HttpStatusCode.OK)
     }
@@ -43,7 +49,10 @@ data class Ordrekvittering(
     val ordrenummer: String,
     val system: String,
     val status: String,
-)
+) {
+    override fun toString(): String =
+        "id: $id, saksnummer: $saksnummer, ordrenummer: $ordrenummer, system: $system, status: $status"
+}
 
 data class Ordrefeilmelding(
     val id: String,
@@ -51,7 +60,10 @@ data class Ordrefeilmelding(
     val feilmelding: String,
     val system: String,
     val status: String,
-)
+) {
+    override fun toString(): String =
+        "id: $id, saksnummer: $saksnummer, feilmelding: $feilmelding, system: $system, status: $status"
+}
 
 data class OrdrekvitteringMottatt(
     val eventId: UUID = UUID.randomUUID(),

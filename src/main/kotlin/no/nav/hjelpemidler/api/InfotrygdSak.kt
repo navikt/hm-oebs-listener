@@ -2,11 +2,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
 import no.nav.hjelpemidler.Context
+import no.nav.hjelpemidler.Slack
 import no.nav.hjelpemidler.configuration.Configuration
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.toOrdrelinje
-import no.nav.hjelpemidler.slack.PostToSlack
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -21,11 +21,9 @@ fun parseInfotrygdOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
         val message = mapperJson.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
         sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: $message")
         context.metrics.manglendeFeltForVedtakInfotrygd()
-
-        PostToSlack.post(
-            Configuration.application["SLACK_HOOK"]!!,
-            "*${Configuration.profile}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
-            "#digihot-brukers-hjelpemiddelside-dev"
+        Slack.post(
+            text = "*${Configuration.profile}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
+            channel = "#digihot-brukers-hjelpemiddelside-dev"
         )
         throw RuntimeException("Ugyldig Infotrygd ordelinje")
     }

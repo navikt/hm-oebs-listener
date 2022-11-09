@@ -8,7 +8,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.RåOrdrelinje
 import java.time.LocalDate
-import kotlin.math.exp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.ExperimentalTime
