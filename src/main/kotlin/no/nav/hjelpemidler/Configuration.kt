@@ -86,7 +86,7 @@ internal object Configuration {
     val oebsToken = get("OEBSTOKEN")
     val slackHook = get("SLACK_HOOK")
     val ntfyUrl = "https://ntfy.sh"
-    val ntfyTopic = "teamdigihot_hm-oebs-listener_${profile.name.lowercase()}"
+    val ntfyTopic = "teamdigihot_hm-oebs-listener"
 
     enum class Profile {
         PROD, DEV, LOCAL;
