@@ -1,9 +1,9 @@
 package no.nav.hjelpemidler.metrics
 
+import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.hjelpemidler.Configuration
 import org.influxdb.dto.Point
-import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -15,8 +15,8 @@ import java.util.concurrent.TimeUnit
 class SensuMetrics(messageContext: MessageContext) {
     private val kafkaMetrics = KafkaMetrics(messageContext)
 
-    private val log = LoggerFactory.getLogger(SensuMetrics::class.java)
-    private val sensuURL = Configuration.application["SENSU_URL"] ?: "http://localhost/unconfigured"
+    private val log = KotlinLogging.logger {}
+    private val sensuUrl = Configuration.sensuUrl
     private val sensuName = "hm-oebs-listener-events"
 
     private val httpClient = HttpClient.newBuilder()
@@ -101,7 +101,7 @@ class SensuMetrics(messageContext: MessageContext) {
         val body = HttpRequest.BodyPublishers.ofString(sensuEvent.json)
         val request = HttpRequest.newBuilder()
             .POST(body)
-            .uri(URI.create(sensuURL))
+            .uri(URI.create(sensuUrl))
             .setHeader("User-Agent", "Java 11 HttpClient Bot") // add request header
             .header("Content-Type", "application/json")
             .header("X-Correlation-ID", UUID.randomUUID().toString())
@@ -126,9 +126,9 @@ class SensuMetrics(messageContext: MessageContext) {
 
     companion object {
         private val DEFAULT_TAGS: Map<String, String> = mapOf(
-            "application" to (Configuration.application["NAIS_APP_NAME"] ?: "hm-oebs-listener"),
-            "cluster" to (Configuration.application["NAIS_CLUSTER_NAME"] ?: "dev-fss"),
-            "namespace" to (Configuration.application["NAIS_NAMESPACE"] ?: "teamdigihot")
+            "application" to Configuration.application,
+            "cluster" to Configuration.cluster,
+            "namespace" to Configuration.namespace,
         )
 
         private const val SOKNADER = "hm-oebs-listener"

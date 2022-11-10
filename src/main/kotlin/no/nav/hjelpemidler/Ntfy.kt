@@ -25,7 +25,7 @@ object Ntfy {
     }
 
     fun publish(notification: Notification) = runBlocking(Dispatchers.IO) {
-        val response = client.post("https://ntfy.sh") {
+        val response = client.post(Configuration.ntfyUrl) {
             contentType(ContentType.Application.Json)
             setBody(notification)
         }
@@ -36,7 +36,7 @@ object Ntfy {
     }
 
     data class Notification(
-        val topic: String = "teamdigihot.hm-oebs-listener",
+        val topic: String = Configuration.ntfyTopic,
         val title: String? = null,
         val message: String? = null,
         val priority: Priority = Priority.DEFAULT,

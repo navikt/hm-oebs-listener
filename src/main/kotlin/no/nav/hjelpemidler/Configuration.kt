@@ -8,7 +8,6 @@ import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 
 internal object Configuration {
-
     private val prodProperties = ConfigurationMap(
         Profile.PROD.entry(),
 
@@ -37,7 +36,12 @@ internal object Configuration {
         Profile.LOCAL.entry(),
 
         "HTTP_PORT" to "8085",
-        "OEBSTOKEN" to "abc",
+
+        "NAIS_APP_NAME" to "hm-oebs-listener",
+        "NAIS_CLUSTER_NAME" to "local",
+        "NAIS_NAMESPACE" to "teamdigihot",
+
+        "OEBSTOKEN" to "token",
 
         "kafka.aiven.consumer" to "hm-oebs-listener-v1",
         "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
@@ -48,7 +52,7 @@ internal object Configuration {
         "KAFKA_TRUSTSTORE_PATH" to "",
         "KAFKA_CREDSTORE_PASSWORD" to "",
 
-        "SENSU_URL" to "https://test",
+        "SENSU_URL" to "https://test/sensu",
         "SLACK_HOOK" to "https://test/slack"
     )
 
@@ -73,14 +77,16 @@ internal object Configuration {
         "HTTP_PORT" to get("HTTP_PORT"),
     ) + System.getenv().filter { it.key.startsWith("NAIS_") }
 
-    val application: Map<String, String> = mapOf(
-        "APP_PROFILE" to get("application.profile"),
-        "SENSU_URL" to get("SENSU_URL"),
-        "OEBSTOKEN" to get("OEBSTOKEN"),
-        "SLACK_HOOK" to get("SLACK_HOOK"),
-    ) + System.getenv().filter { it.key.startsWith("NAIS_") }
+    val application = get("NAIS_APP_NAME")
+    val cluster = get("NAIS_CLUSTER_NAME")
+    val namespace = get("NAIS_NAMESPACE")
 
     val profile: Profile = get("application.profile").let { Profile.valueOf(it) }
+    val sensuUrl = get("SENSU_URL")
+    val oebsToken = get("OEBSTOKEN")
+    val slackHook = get("SLACK_HOOK")
+    val ntfyUrl = "https://ntfy.sh"
+    val ntfyTopic = "teamdigihot.hm-oebs-listener"
 
     enum class Profile {
         PROD, DEV, LOCAL;

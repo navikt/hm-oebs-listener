@@ -69,9 +69,7 @@ fun main() {
         }
         install(Authentication) {
             token("oebsToken") {
-                validate(requireNotNull(Configuration.application["OEBSTOKEN"]) {
-                    "OEBSTOKEN mangler"
-                })
+                validate(Configuration.oebsToken)
             }
         }
         val context = Context(rapidApp)

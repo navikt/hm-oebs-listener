@@ -23,7 +23,7 @@ object Slack {
         }
     }
 
-    fun post(url: String = Configuration.application["SLACK_HOOK"]!!, text: String, channel: String) =
+    fun post(url: String = Configuration.slackHook, text: String, channel: String) =
         runBlocking(Dispatchers.IO) {
             val response = client
                 .post(url) {
