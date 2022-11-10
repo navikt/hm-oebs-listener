@@ -38,7 +38,7 @@ internal object Configuration {
         "HTTP_PORT" to "8085",
 
         "NAIS_APP_NAME" to "hm-oebs-listener",
-        "NAIS_CLUSTER_NAME" to "local",
+        "NAIS_CLUSTER_NAME" to Profile.LOCAL.name,
         "NAIS_NAMESPACE" to "teamdigihot",
 
         "OEBSTOKEN" to "token",

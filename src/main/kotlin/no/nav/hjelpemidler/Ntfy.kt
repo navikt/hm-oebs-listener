@@ -24,15 +24,19 @@ object Ntfy {
         }
     }
 
-    fun publish(notification: Notification) = runBlocking(Dispatchers.IO) {
-        val response = client.post(Configuration.ntfyUrl) {
-            contentType(ContentType.Application.Json)
-            setBody(notification)
+    fun publish(notification: Notification) = runCatching {
+        runBlocking(Dispatchers.IO) {
+            val response = client.post(Configuration.ntfyUrl) {
+                contentType(ContentType.Application.Json)
+                setBody(notification.copy(tags = notification.tags + setOf(Configuration.profile.name)))
+            }
+            when (response.status) {
+                HttpStatusCode.OK -> Unit
+                else -> log.warn("Feil under publisering til ntfy: ${response.body<Map<String, Any?>>()}")
+            }
         }
-        when (response.status) {
-            HttpStatusCode.OK -> Unit
-            else -> log.warn("Feil ved publisering til ntfy: ${response.body<Map<String, Any?>>()}")
-        }
+    }.getOrElse {
+        log.warn(it) { "Feil under publisering til ntfy" }
     }
 
     data class Notification(

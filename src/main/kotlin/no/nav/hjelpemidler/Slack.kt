@@ -23,7 +23,7 @@ object Slack {
         }
     }
 
-    fun post(url: String = Configuration.slackHook, text: String, channel: String) =
+    fun post(url: String = Configuration.slackHook, text: String, channel: String) = runCatching {
         runBlocking(Dispatchers.IO) {
             val response = client
                 .post(url) {
@@ -42,4 +42,7 @@ object Slack {
                 else -> log.info(response.body<String>())
             }
         }
+    }.getOrElse {
+        log.warn(it) { "Feil under publisering til Slack" }
+    }
 }

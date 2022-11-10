@@ -47,6 +47,30 @@ internal class OrdreAPITest {
         }
     }
 
+    @Test
+    internal fun `sender ut ordrefeilmelding på rapid`() = testApplication {
+        configure()
+        val body = context.jsonMapper.writeValueAsString(
+            Ordrefeilmelding(
+                id = "1",
+                saksnummer = "2",
+                feilmelding = "Feilmelding",
+                system = "HOTSAK",
+                status = "ERROR"
+            )
+        )
+        client.post("/ordrefeilmelding") {
+            bearerAuth("qwer1234")
+            contentType(ContentType.Application.Json)
+            setBody(body)
+        }.apply {
+            status shouldBe HttpStatusCode.OK
+            verify {
+                context.publish("2", match { it.contains(body) })
+            }
+        }
+    }
+
     private fun ApplicationTestBuilder.configure() {
         install(ContentNegotiation) {
             jackson()
