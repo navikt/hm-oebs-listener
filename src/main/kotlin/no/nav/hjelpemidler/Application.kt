@@ -16,7 +16,6 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.hjelpemidler.api.ordreAPI
 import no.nav.hjelpemidler.api.ordrelinjeAPI
 import no.nav.hjelpemidler.api.serviceforespørselAPI
-import no.nav.hjelpemidler.configuration.Configuration
 import org.slf4j.event.Level
 import java.net.InetAddress
 

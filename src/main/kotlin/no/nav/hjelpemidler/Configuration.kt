@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.configuration
+package no.nav.hjelpemidler
 
 import com.natpryce.konfig.ConfigurationMap
 import com.natpryce.konfig.ConfigurationProperties

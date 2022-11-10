@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.metrics
 
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.Configuration
 import org.influxdb.dto.Point
 import org.slf4j.LoggerFactory
 import java.net.URI

@@ -15,7 +15,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import mu.KotlinLogging
 import no.nav.hjelpemidler.Context
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.Configuration
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.RåOrdrelinje

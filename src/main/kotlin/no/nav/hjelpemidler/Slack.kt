@@ -13,7 +13,6 @@ import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import no.nav.hjelpemidler.configuration.Configuration
 
 object Slack {
     private val log = KotlinLogging.logger {}

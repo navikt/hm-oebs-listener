@@ -9,7 +9,7 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.Ntfy
 import no.nav.hjelpemidler.Slack
-import no.nav.hjelpemidler.configuration.Configuration
+import no.nav.hjelpemidler.Configuration
 import java.time.LocalDateTime
 import java.util.UUID
 
