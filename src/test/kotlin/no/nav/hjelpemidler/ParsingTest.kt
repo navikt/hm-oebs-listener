@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -11,6 +12,7 @@ import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.ExperimentalTime
+
 
 internal class ParsingTest {
 
@@ -92,14 +94,14 @@ internal class ParsingTest {
                 "EgenAnsatt": "Y",
                 "LastUpdateDate": "2021-04-05",
                 "SendTilAddresse1": "1234 Oslo, bla bla bla",
-                "SerieNummerListe":"660383, 693065, 726136, 733046"
+                "SerieNummerListe":["660383", "693065", "726136", "733046"]
             }
             """.trimIndent()
         )
 
         println(result.toString())
         val expected = listOf("660383", "693065", "726136", "733046")
-        for (serienr in RåOrdrelinje.serienumreListeFraRå(result.serienumreRå!!)) {
+        for (serienr in result.serienumre ?: listOf()) { //  RåOrdrelinje.serienumreListeFraRå(result.serienumreRå!!)) {
             assert(expected.contains(serienr)) { "Expected to find only the serial numbers in the raw example" }
         }
     }

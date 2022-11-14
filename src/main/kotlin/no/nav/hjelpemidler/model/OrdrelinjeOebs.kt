@@ -3,6 +3,8 @@ package no.nav.hjelpemidler.model
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import java.time.LocalDate
 
 const val HOTSAK = "HOTSAK"
@@ -95,7 +97,7 @@ data class OrdrelinjeOebs(
     var sendtTilAdresse: String,
 
     @JsonProperty("SerieNummerListe")
-    val serienumreRå: String?,
+    val serienumre: List<String>? = emptyList(),
 )
 
 fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
@@ -128,7 +130,7 @@ fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje {
         egenAnsatt = this.egenAnsatt,
         sistOppdatert = this.sistOppdatert,
         sendtTilAdresse = this.sendtTilAdresse,
-        serienumre = this.serienumreRå?.let { RåOrdrelinje.serienumreListeFraRå(this.serienumreRå) } ?: listOf(),
+        serienumre = this.serienumre ?: listOf() // ?.let { RåOrdrelinje.serienumreListeFraRå(it) } ?: listOf(),
     )
 }
 
