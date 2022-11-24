@@ -6,10 +6,11 @@ import io.ktor.server.request.receive
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import mu.KotlinLogging
+import no.nav.hjelpemidler.Configuration
+import no.nav.hjelpemidler.Configuration.Profile
 import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.Ntfy
 import no.nav.hjelpemidler.Slack
-import no.nav.hjelpemidler.Configuration
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -36,25 +37,27 @@ fun Route.ordreAPI(context: Context) {
             feilmelding.saksnummer,
             OrdrefeilmeldingMottatt(feilmelding = feilmelding)
         )
-        Slack.post(
-            text = "*${Configuration.profile}* - $feilmelding",
-            channel = "#papaya-alerts"
-        )
-        Ntfy.publish(
-            Ntfy.Notification(
-                title = "Mottok ordrefeilmelding",
-                message = "Status: ${feilmelding.status}",
-                priority = Ntfy.Priority.HIGH,
-                actions = setOf(
-                    Ntfy.Action(
-                        action = Ntfy.ActionType.VIEW,
-                        label = "Se detaljer i Slack",
-                        clear = true,
-                        url = "https://nav-it.slack.com/archives/C02LS2W05E1"
+        if (Configuration.profile == Profile.PROD) {
+            Slack.post(
+                text = "*${Configuration.profile}* - $feilmelding",
+                channel = "#papaya-alerts"
+            )
+            Ntfy.publish(
+                Ntfy.Notification(
+                    title = "Mottok ordrefeilmelding",
+                    message = "Status: ${feilmelding.status}",
+                    priority = Ntfy.Priority.HIGH,
+                    actions = setOf(
+                        Ntfy.Action(
+                            action = Ntfy.ActionType.VIEW,
+                            label = "Se detaljer i Slack",
+                            clear = true,
+                            url = "https://nav-it.slack.com/archives/C02LS2W05E1"
+                        )
                     )
                 )
             )
-        )
+        }
         call.response.status(HttpStatusCode.OK)
     }
 }
