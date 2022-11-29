@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.ktor.client.request.request
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
@@ -14,6 +15,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.Configuration
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
@@ -98,11 +100,17 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
         return ordrelinje
     } catch (e: Exception) {
         // Deal with invalid json/xml in request
-        sikkerlogg.info("Parsing incoming $incomingFormatType request failed with exception (responding 4xx): $e")
-        if (Configuration.profile != Configuration.Profile.PROD) {
-            sikkerlogg.info(
-                "$incomingFormatType in failed parsing: ${mapperJson.writeValueAsString(requestBody)}"
+        withLoggingContext(
+            mapOf(
+                "rawRequestBody" to requestBody,
             )
+        ) {
+            sikkerlogg.info("Parsing incoming $incomingFormatType request failed with exception (responding 4xx): $e")
+            if (Configuration.profile != Configuration.Profile.PROD) {
+                sikkerlogg.info(
+                    "$incomingFormatType in failed parsing: ${mapperJson.writeValueAsString(requestBody)}"
+                )
+            }
         }
         context.metrics.oebsParsingFeilet()
         call.respond(HttpStatusCode.BadRequest, "bad request: $incomingFormatType not valid")
