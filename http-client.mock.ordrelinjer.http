@@ -6,7 +6,7 @@ Authorization: Bearer {{oebstoken}}
 
 {
   "System": "DIGIHOT",
-  "Id": 13,
+  "Id": 14,
   "IncidentNummer": 1,
   "IncidentStatus": "Closed",
   "IncidentType": "Vedtak Infotrygd",
@@ -25,6 +25,41 @@ Authorization: Bearer {{oebstoken}}
   "CategoryNum": "1",
   "User_ItemType": "Hjelpemiddel",
   "Quantity": 1,
+  "ShippingQuantityUom": "STK",
+  "AccountNumber": "{{fnr}}",
+  "EgenAnsatt": "N",
+  "LastUpdateDate": "{{vedtaksDato}}",
+  "Description": "Topro Olympos ATR M",
+  "SendTilAddresse1": "{{sendtTilAdresse}}"
+}
+
+### Ordrelinje med vedtak infotrygd og hjelpemiddeltype="Hjelpemiddel" + serienumre
+POST {{ingress}}/push
+Content-Type: application/json
+Authorization: Bearer {{oebstoken}}
+
+{
+  "System": "DIGIHOT",
+  "Id": 15,
+  "IncidentNummer": 1,
+  "IncidentStatus": "Closed",
+  "IncidentType": "Vedtak Infotrygd",
+  "IncidentSoknadType": "HJDASK",
+  "IncidentVedtakDato": "{{vedtaksDato}}",
+  "IncidentSoknad": "S",
+  "IncidentResultat": "I",
+  "IncidentRef": "{{infotrygdSaksblokkOgSaksnr}}",
+  "ReferanseNummer": "",
+  "Kilde": "",
+  "OrdreNumber": 1,
+  "LineNumber": 1,
+  "ShipmentNumber": 1,
+  "CategoryDescription": "Rollatorer, 4 hjul utebruk",
+  "OrderedItem": "286589",
+  "SerieNummerListe":["123456", "654321"],
+  "CategoryNum": "1",
+  "User_ItemType": "Hjelpemiddel",
+  "Quantity": 2,
   "ShippingQuantityUom": "STK",
   "AccountNumber": "{{fnr}}",
   "EgenAnsatt": "N",
