@@ -39,8 +39,8 @@ fun Route.ordreAPI(context: Context) {
         )
         if (Configuration.profile == Profile.PROD) {
             Slack.post(
-                text = "*${Configuration.profile}* - $feilmelding",
-                channel = "#papaya-alerts"
+                text = "*${Configuration.profile}* - $feilmelding - <@${Configuration.slackRecipient}>",
+                channel = "#digihot-oebs"
             )
             Ntfy.publish(
                 Ntfy.Notification(
