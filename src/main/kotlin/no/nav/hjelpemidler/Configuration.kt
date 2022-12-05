@@ -53,7 +53,8 @@ internal object Configuration {
         "KAFKA_CREDSTORE_PASSWORD" to "",
 
         "SENSU_URL" to "https://test/sensu",
-        "SLACK_HOOK" to "https://test/slack"
+        "SLACK_HOOK" to "https://test/slack",
+        "SLACK_RECIPIENT" to "test",
     )
 
     private val config = when (System.getenv("NAIS_CLUSTER_NAME") ?: System.getProperty("NAIS_CLUSTER_NAME")) {
