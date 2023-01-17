@@ -100,6 +100,8 @@ data class OrdrelinjeOebs(
     val serienumre: List<String>? = emptyList(),
 )
 
+fun OrdrelinjeOebs.fiksTommeSerienumre() = this.copy(serienumre = this.serienumre?.map { it.trim() }?.filter { it != "" })
+
 fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
 
 fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje {

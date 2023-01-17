@@ -23,6 +23,7 @@ import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.RåOrdrelinje
 import no.nav.hjelpemidler.model.UvalidertOrdrelinjeMessage
 import no.nav.hjelpemidler.model.erOpprettetFraHOTSAK
+import no.nav.hjelpemidler.model.fiksTommeSerienumre
 import no.nav.hjelpemidler.model.toRåOrdrelinje
 import opprettHotsakOrdrelinje
 import opprettInfotrygdOrdrelinje
@@ -83,10 +84,11 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
     val ordrelinje: OrdrelinjeOebs
     try {
         ordrelinje = if (incomingFormatType == "XML") {
-            mapperXml.readValue(requestBody)
+            mapperXml.readValue<OrdrelinjeOebs>(requestBody)
         } else {
-            mapperJson.readValue(requestBody)
-        }
+            mapperJson.readValue<OrdrelinjeOebs>(requestBody)
+        }.fiksTommeSerienumre()
+
         if (Configuration.profile != Configuration.Profile.PROD) {
             sikkerlogg.info(
                 "Parsing incoming $incomingFormatType request successful: ${
