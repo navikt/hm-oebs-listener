@@ -3,6 +3,7 @@ package no.nav.hjelpemidler.api
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
+import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import mu.KotlinLogging
@@ -18,47 +19,59 @@ private val log = KotlinLogging.logger { }
 
 fun Route.ordreAPI(context: Context) {
     post("/ordrekvittering") {
-        val kvittering = call.receive<Ordrekvittering>()
-        log.info {
-            "Mottok ordrekvittering, $kvittering"
+        try {
+            val kvittering = call.receive<Ordrekvittering>()
+            log.info {
+                "Mottok ordrekvittering, $kvittering"
+            }
+            context.publish(
+                kvittering.saksnummer,
+                OrdrekvitteringMottatt(kvittering = kvittering)
+            )
+            call.response.status(HttpStatusCode.OK)
+        } catch (e: Exception) {
+            log.error(e) { "Uventet feil under prosessering" }
+            call.respond(HttpStatusCode.InternalServerError)
+            return@post
         }
-        context.publish(
-            kvittering.saksnummer,
-            OrdrekvitteringMottatt(kvittering = kvittering)
-        )
-        call.response.status(HttpStatusCode.OK)
     }
     post("/ordrefeilmelding") {
-        val feilmelding = call.receive<Ordrefeilmelding>()
-        log.warn {
-            "Mottok ordrefeilmelding, $feilmelding"
-        }
-        context.publish(
-            feilmelding.saksnummer,
-            OrdrefeilmeldingMottatt(feilmelding = feilmelding)
-        )
-        if (Configuration.profile == Profile.PROD) {
-            Slack.post(
-                text = "*${Configuration.profile}* - $feilmelding - <@${Configuration.slackRecipient}>",
-                channel = "#digihot-oebs"
+        try {
+            val feilmelding = call.receive<Ordrefeilmelding>()
+            log.warn {
+                "Mottok ordrefeilmelding, $feilmelding"
+            }
+            context.publish(
+                feilmelding.saksnummer,
+                OrdrefeilmeldingMottatt(feilmelding = feilmelding)
             )
-            Ntfy.publish(
-                Ntfy.Notification(
-                    title = "Mottok ordrefeilmelding",
-                    message = "Status: ${feilmelding.status}",
-                    priority = Ntfy.Priority.HIGH,
-                    actions = setOf(
-                        Ntfy.Action(
-                            action = Ntfy.ActionType.VIEW,
-                            label = "Se detaljer i Slack",
-                            clear = true,
-                            url = "https://nav-it.slack.com/archives/C02LS2W05E1"
+            if (Configuration.profile == Profile.PROD) {
+                Slack.post(
+                    text = "*${Configuration.profile}* - $feilmelding - <@${Configuration.slackRecipient}>",
+                    channel = "#digihot-oebs"
+                )
+                Ntfy.publish(
+                    Ntfy.Notification(
+                        title = "Mottok ordrefeilmelding",
+                        message = "Status: ${feilmelding.status}",
+                        priority = Ntfy.Priority.HIGH,
+                        actions = setOf(
+                            Ntfy.Action(
+                                action = Ntfy.ActionType.VIEW,
+                                label = "Se detaljer i Slack",
+                                clear = true,
+                                url = "https://nav-it.slack.com/archives/C02LS2W05E1"
+                            )
                         )
                     )
                 )
-            )
+            }
+            call.response.status(HttpStatusCode.OK)
+        } catch (e: Exception) {
+            log.error(e) { "Uventet feil under prosessering" }
+            call.respond(HttpStatusCode.InternalServerError)
+            return@post
         }
-        call.response.status(HttpStatusCode.OK)
     }
 }
 

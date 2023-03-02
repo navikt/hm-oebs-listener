@@ -33,13 +33,9 @@ internal fun Route.serviceforespørselAPI(context: Context) {
             )
             publiserMelding(context, serviceForespørselEndring, sfMessage)
             call.respond(HttpStatusCode.OK)
-        } catch (e: RapidsAndRiverException) {
+        } catch (e: Exception) {
             logg.error(e) { "Feil under prosessering" }
             call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
-            return@post
-        } catch (e: RuntimeException) {
-            logg.error(e) { "Feil under prosessering" }
-            call.respond(HttpStatusCode.OK)
             return@post
         }
     }
@@ -88,7 +84,7 @@ private fun publiserMelding(
         context.metrics.meldingTilRapidSuksess()
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()
-        sikkerlogg.error("Sending til rapid feilet", e)
+        sikkerlogg.error(e) { "Sending til rapid feilet" }
         throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
     }
 }
