@@ -86,7 +86,13 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
     val requestBody: String = call.receiveText()
     context.metrics.meldingFraOebs()
     if (Configuration.profile != Configuration.Profile.PROD) {
-        sikkerlogg.info("Received $incomingFormatType push request from OEBS: $requestBody")
+        withLoggingContext(
+            mapOf(
+                "requestBody" to requestBody,
+            )
+        ) {
+            sikkerlogg.info("Received $incomingFormatType push request from OEBS")
+        }
     }
 
     // Check for valid json request
@@ -99,13 +105,13 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
         }.fiksTommeSerienumre()
 
         if (Configuration.profile != Configuration.Profile.PROD) {
-            sikkerlogg.info(
-                "Parsing incoming $incomingFormatType request successful: ${
-                    mapperJson.writeValueAsString(
-                        ordrelinje
-                    )
-                }"
-            )
+            withLoggingContext(
+                mapOf(
+                    "ordrelinje" to mapperJson.writeValueAsString(ordrelinje),
+                )
+            ) {
+                sikkerlogg.info("Parsing incoming $incomingFormatType request successful")
+            }
         }
         context.metrics.oebsParsingOk()
         return ordrelinje
@@ -113,15 +119,10 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
         // Deal with invalid json/xml in request
         withLoggingContext(
             mapOf(
-                "rawRequestBody" to requestBody,
+                "requestBody" to requestBody,
             )
         ) {
-            sikkerlogg.info("Parsing incoming $incomingFormatType request failed with exception (responding 4xx): $e")
-            if (Configuration.profile != Configuration.Profile.PROD) {
-                sikkerlogg.info(
-                    "$incomingFormatType in failed parsing: ${mapperJson.writeValueAsString(requestBody)}"
-                )
-            }
+            sikkerlogg.error(e) { "Parsing incoming $incomingFormatType request failed with exception (responding 4xx)" }
         }
         context.metrics.oebsParsingFeilet()
         return null
@@ -144,7 +145,7 @@ private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: RåOrd
         context.metrics.meldingTilRapidSuksess()
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()
-        sikkerlogg.error("Sending av uvalidert ordrelinje til rapid feilet, exception: $e\n\n${e.printStackTrace()}")
+        sikkerlogg.error(e) { "Sending av uvalidert ordrelinje til rapid feilet" }
         throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
     }
 }
@@ -197,16 +198,16 @@ private fun publiserMelding(
             // If address is not municipality-intake we mask it in logging.
             ordrelinje.sendtTilAdresse = "MASKERT"
         }
-        sikkerlogg.info(
-            "Ordrelinje med OebsId ${ordrelinje.oebsId} mottatt og sendt til rapid: ${
-                mapperJson.writeValueAsString(
-                    ordrelinje
-                )
-            }"
-        )
+        withLoggingContext(
+            mapOf(
+                "ordrelinje" to mapperJson.writeValueAsString(ordrelinje),
+            )
+        ) {
+            sikkerlogg.info("Ordrelinje med OebsId ${ordrelinje.oebsId} mottatt og sendt til rapid")
+        }
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()
-        sikkerlogg.error("Sending til rapid feilet", e)
+        sikkerlogg.error(e) { "Sending til rapid feilet" }
         throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
     }
 }
