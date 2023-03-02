@@ -5,7 +5,6 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.ktor.client.request.request
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
@@ -41,9 +40,21 @@ internal fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
         logg.info("incoming push")
         try {
-            val ordrelinje = parseOrdrelinje(context, call) ?: return@post
+            // Parse innkommende json/xml
+            val ordrelinje = parseOrdrelinje(context, call) ?:
+                return@post call.respond(HttpStatusCode.BadRequest, "bad request: request body not valid")
+
+            // Vi deler alle typer ordrelinjer med kommune-apiet
             sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
-            validerOrdrelinje(context, ordrelinje)
+
+            // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
+            if (!erOrdrelinjeRelevantForOss(context, ordrelinje)) {
+                logg.info("Urelevant ordrelinje mottatt og ignorert")
+                call.respond(HttpStatusCode.OK)
+                return@post
+            }
+
+            // Anti-corruption lag
             val melding = if (ordrelinje.erOpprettetFraHOTSAK()) {
                 parseHotsakOrdrelinje(context, ordrelinje)
                 context.metrics.hotsakSF()
@@ -54,15 +65,13 @@ internal fun Route.ordrelinjeAPI(context: Context) {
                 opprettInfotrygdOrdrelinje(ordrelinje)
             }
 
+            // Publiser resultat
             publiserMelding(context, ordrelinje, melding)
             call.respond(HttpStatusCode.OK)
-        } catch (e: RapidsAndRiverException) {
-            logg.error(e) { "Feil under prosessering" }
-            call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
-            return@post
-        } catch (e: RuntimeException) {
-            logg.error(e) { "Feil under prosessering" }
-            call.respond(HttpStatusCode.OK)
+
+        } catch (e: Exception) {
+            logg.error(e) { "Uventet feil under prosessering" }
+            call.respond(HttpStatusCode.InternalServerError)
             return@post
         }
     }
@@ -115,7 +124,6 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
             }
         }
         context.metrics.oebsParsingFeilet()
-        call.respond(HttpStatusCode.BadRequest, "bad request: $incomingFormatType not valid")
         return null
     }
 }
@@ -141,7 +149,7 @@ private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: RåOrd
     }
 }
 
-private fun validerOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
+private fun erOrdrelinjeRelevantForOss(context: Context, ordrelinje: OrdrelinjeOebs): Boolean {
     if (ordrelinje.serviceforespørseltype != "Vedtak Infotrygd") {
         if (ordrelinje.serviceforespørseltype == "") {
             logg.info(
@@ -155,7 +163,7 @@ private fun validerOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
             )
             context.metrics.sfTypeUlikVedtakInfotrygd()
         }
-        throw RuntimeException("Ugyldig ordrelinje")
+        return false
     } else {
         context.metrics.sfTypeVedtakInfotrygd()
     }
@@ -166,10 +174,12 @@ private fun validerOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
     ) {
         logg.info("Mottok melding fra oebs med irrelevant hjelpemiddeltype ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering")
         context.metrics.irrelevantHjelpemiddeltype()
-        throw RuntimeException("Ugyldig ordrelinje")
+        return false
     } else {
         context.metrics.rettHjelpemiddeltype()
     }
+
+    return true
 }
 
 private fun publiserMelding(
