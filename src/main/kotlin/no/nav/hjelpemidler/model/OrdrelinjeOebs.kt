@@ -81,7 +81,6 @@ data class OrdrelinjeOebs(
     val enhet: String,
 
     @JsonProperty("AccountNumber")
-    // TODO: Skift tilbake til val når ting stabiliserer seg
     var fnrBruker: String,
 
     // Sidan dette feltet har informasjon som kan bli utdatert blir ikkje dette brukt.
