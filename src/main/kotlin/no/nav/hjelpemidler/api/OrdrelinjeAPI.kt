@@ -42,7 +42,7 @@ internal fun Route.ordrelinjeAPI(context: Context) {
         try {
             // Parse innkommende json/xml
             val ordrelinje = parseOrdrelinje(context, call) ?:
-                return@post call.respond(HttpStatusCode.BadRequest, "bad request: request body not valid")
+                return@post call.respond(HttpStatusCode.BadRequest, "request body was not in a valid format")
 
             // Vi deler alle typer ordrelinjer med kommune-apiet
             sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
