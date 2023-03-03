@@ -5,6 +5,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import hotsakOrdrelinjeOk
+import infotrygdOrdrelinjeOk
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
@@ -26,8 +28,6 @@ import no.nav.hjelpemidler.model.fiksTommeSerienumre
 import no.nav.hjelpemidler.model.toRåOrdrelinje
 import opprettHotsakOrdrelinje
 import opprettInfotrygdOrdrelinje
-import parseHotsakOrdrelinje
-import parseInfotrygdOrdrelinje
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -56,11 +56,19 @@ internal fun Route.ordrelinjeAPI(context: Context) {
 
             // Anti-corruption lag
             val melding = if (ordrelinje.erOpprettetFraHOTSAK()) {
-                parseHotsakOrdrelinje(context, ordrelinje)
+                if (!hotsakOrdrelinjeOk(context, ordrelinje)) {
+                    logg.info("Hotsak ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer..")
+                    call.respond(HttpStatusCode.OK)
+                    return@post
+                }
                 context.metrics.hotsakSF()
                 opprettHotsakOrdrelinje(ordrelinje)
             } else {
-                parseInfotrygdOrdrelinje(context, ordrelinje)
+                if (!infotrygdOrdrelinjeOk(context, ordrelinje)) {
+                    logg.warn("Infotrygd ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer..")
+                    call.respond(HttpStatusCode.OK)
+                    return@post
+                }
                 context.metrics.infotrygdSF()
                 opprettInfotrygdOrdrelinje(ordrelinje)
             }
