@@ -14,7 +14,7 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-fun parseInfotrygdOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
+fun infotrygdOrdrelinjeOk(context: Context, ordrelinje: OrdrelinjeOebs): Boolean {
     if (ordrelinje.saksblokkOgSaksnr?.isBlank() == true || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
         logg.warn("Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!")
         ordrelinje.fnrBruker = "MASKERT"
@@ -25,8 +25,9 @@ fun parseInfotrygdOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
             text = "*${Configuration.profile}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
             channel = "#digihot-brukers-hjelpemiddelside-dev"
         )
-        throw RuntimeException("Ugyldig Infotrygd ordelinje")
+        return false
     }
+    return true
 }
 
 fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs) = OrdrelinjeMessage(

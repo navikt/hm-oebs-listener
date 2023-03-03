@@ -14,7 +14,7 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-fun parseHotsakOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
+fun hotsakOrdrelinjeOk(context: Context, ordrelinje: OrdrelinjeOebs): Boolean {
     if (ordrelinje.hotSakSaksnummer.isNullOrBlank()) {
         logg.warn("Melding frå OEBS manglar HOTSAK saksnummer")
         ordrelinje.fnrBruker = "MASKERT"
@@ -25,8 +25,9 @@ fun parseHotsakOrdrelinje(context: Context, ordrelinje: OrdrelinjeOebs) {
             text = "*${Configuration.profile}* - Manglende felt i Hotsak Oebs ordrelinje: ```$message```",
             channel = "#digihot-hotsak-varslinger-dev"
         )
-        throw RuntimeException("Ugyldig Hotsak ordrelinje")
+        return false
     }
+    return true
 }
 
 fun opprettHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs) = OrdrelinjeMessage(
