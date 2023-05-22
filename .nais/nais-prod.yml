@@ -29,3 +29,8 @@ spec:
     - https://hm-oebs-listener.intern.nav.no
   secureLogs:
     enabled: true
+  accessPolicy:
+    outbound:
+      external:
+        - host: digihot-proxy.prod-fss-pub.nais.io
+        - host: hooks.slack.com
