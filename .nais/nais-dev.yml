@@ -26,7 +26,7 @@ spec:
   readiness:
     path: /isready
   ingresses:
-    - https://hm-oebs-listener.dev.intern.nav.no
+    - https://hm-oebs-listener.intern.dev.nav.no
   secureLogs:
     enabled: true
   accessPolicy:
