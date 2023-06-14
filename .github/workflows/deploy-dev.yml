@@ -8,6 +8,7 @@ on:
       - "CODEOWNERS"
     branches:
       - main
+      - delebestilling
 env:
   docker_image: docker.pkg.github.com/${{ github.repository }}/hm-oebs-listener:${{ github.sha }}
 jobs:

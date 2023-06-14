@@ -61,6 +61,11 @@ internal fun Route.ordrelinjeAPI(context: Context) {
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }
+                if(ordrelinje.hotSakSaksnummer?.startsWith("hmdel_") == true) {
+                    logg.info("Ordrelinje fra delebestilling mottatt. Ignorer.")
+                    sikkerlogg.info { "Ignorert ordrelinje for delebestilling: $ordrelinje" }
+                    return@post call.respond(HttpStatusCode.OK)
+                }
                 context.metrics.hotsakSF()
                 opprettHotsakOrdrelinje(ordrelinje)
             } else {
