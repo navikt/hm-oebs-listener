@@ -24,6 +24,12 @@ fun Route.ordreAPI(context: Context) {
             log.info {
                 "Mottok ordrekvittering, $kvittering"
             }
+
+            if (kvittering.saksnummer.startsWith("hmdel_")) {
+                log.info { "Ignorerer ordrekvittering for delebestilling: $kvittering" }
+                return@post call.response.status(HttpStatusCode.OK)
+            }
+
             context.publish(
                 kvittering.saksnummer,
                 OrdrekvitteringMottatt(kvittering = kvittering)
@@ -41,6 +47,12 @@ fun Route.ordreAPI(context: Context) {
             log.warn {
                 "Mottok ordrefeilmelding, $feilmelding"
             }
+
+            if (feilmelding.saksnummer.startsWith("hmdel_")) {
+                log.info { "Ignorerer ordrefeilmelding for delebestilling: $feilmelding" }
+                return@post call.response.status(HttpStatusCode.OK)
+            }
+
             context.publish(
                 feilmelding.saksnummer,
                 OrdrefeilmeldingMottatt(feilmelding = feilmelding)

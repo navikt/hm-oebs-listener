@@ -3,8 +3,6 @@ package no.nav.hjelpemidler.model
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonSetter
-import com.fasterxml.jackson.annotation.Nulls
 import java.time.LocalDate
 
 const val HOTSAK = "HOTSAK"
@@ -101,7 +99,7 @@ data class OrdrelinjeOebs(
 
 fun OrdrelinjeOebs.fiksTommeSerienumre() = this.copy(serienumre = this.serienumre?.map { it.trim() }?.filter { it != "" })
 
-fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK
+fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK // I OEBS så får alt fra Digihot kilde==HOTSAK
 
 fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje {
     return RåOrdrelinje(
