@@ -27,9 +27,11 @@ fun Route.ordreAPI(context: Context) {
 
             if (kvittering.saksnummer.startsWith("hmdel_")) {
                 log.info { "Publiserer ordrekvittering for delebestilling: $kvittering" }
+                val sakId = kvittering.saksnummer.removePrefix("hmdel_") // trenger ikke denne videre nedover
+                val status = kvittering.status.uppercase() // for enums
                 context.publish(
                     kvittering.saksnummer,
-                    OrdrekvitteringDelbestillingMottatt(kvittering = kvittering)
+                    OrdrekvitteringDelbestillingMottatt(kvittering = kvittering.copy(saksnummer = sakId, status = status))
                 )
             } else {
                 context.publish(
