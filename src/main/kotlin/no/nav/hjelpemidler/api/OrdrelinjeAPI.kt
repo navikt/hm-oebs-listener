@@ -44,6 +44,10 @@ internal fun Route.ordrelinjeAPI(context: Context) {
             val ordrelinje = parseOrdrelinje(context, call) ?:
                 return@post call.respond(HttpStatusCode.BadRequest, "request body was not in a valid format")
 
+            if(ordrelinje.hotSakSaksnummer?.startsWith("hmdel_") == true) {
+                sikkerlogg.info { "Delbestilling ordrelinje: <$ordrelinje>" }
+            }
+
             // Vi deler alle typer ordrelinjer med kommune-apiet
             sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
 

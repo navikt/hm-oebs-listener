@@ -26,14 +26,20 @@ fun Route.ordreAPI(context: Context) {
             }
 
             if (kvittering.saksnummer.startsWith("hmdel_")) {
-                log.info { "Ignorerer ordrekvittering for delebestilling: $kvittering" }
-                return@post call.response.status(HttpStatusCode.OK)
+                log.info { "Publiserer ordrekvittering for delebestilling: $kvittering" }
+                val sakId = kvittering.saksnummer.removePrefix("hmdel_") // trenger ikke denne videre nedover
+                val status = kvittering.status.uppercase() // for enums
+                context.publish(
+                    kvittering.saksnummer,
+                    OrdrekvitteringDelbestillingMottatt(kvittering = kvittering.copy(saksnummer = sakId, status = status))
+                )
+            } else {
+                context.publish(
+                    kvittering.saksnummer,
+                    OrdrekvitteringMottatt(kvittering = kvittering)
+                )
             }
 
-            context.publish(
-                kvittering.saksnummer,
-                OrdrekvitteringMottatt(kvittering = kvittering)
-            )
             call.response.status(HttpStatusCode.OK)
         } catch (e: Exception) {
             log.error(e) { "Uventet feil under prosessering" }
@@ -49,7 +55,7 @@ fun Route.ordreAPI(context: Context) {
             }
 
             if (feilmelding.saksnummer.startsWith("hmdel_")) {
-                log.info { "Ignorerer ordrefeilmelding for delebestilling: $feilmelding" }
+                log.error { "Ignorerer ordrefeilmelding for delebestilling: $feilmelding" }
                 return@post call.response.status(HttpStatusCode.OK)
             }
 
@@ -112,6 +118,13 @@ data class Ordrefeilmelding(
 data class OrdrekvitteringMottatt(
     val eventId: UUID = UUID.randomUUID(),
     val eventName: String = "hm-ordrekvittering-mottatt",
+    val opprettet: LocalDateTime = LocalDateTime.now(),
+    val kvittering: Ordrekvittering,
+)
+
+data class OrdrekvitteringDelbestillingMottatt(
+    val eventId: UUID = UUID.randomUUID(),
+    val eventName: String = "hm-ordrekvittering-delbestilling-mottatt",
     val opprettet: LocalDateTime = LocalDateTime.now(),
     val kvittering: Ordrekvittering,
 )
