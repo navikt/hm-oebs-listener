@@ -78,6 +78,9 @@ data class OrdrelinjeOebs(
     @JsonProperty("ShippingQuantityUom")
     val enhet: String,
 
+    @JsonProperty("ShippingInstructions")
+    val skipningsinstrukser: String?,
+
     @JsonProperty("AccountNumber")
     var fnrBruker: String,
 
