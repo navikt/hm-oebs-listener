@@ -48,11 +48,11 @@ internal fun Route.ordrelinjeAPI(context: Context) {
                 sikkerlogg.info { "Delbestilling ordrelinje: <$ordrelinje>" }
             }
 
-            // Vi deler alle typer ordrelinjer med kommune-apiet
+            // Vi deler alle typer ordrelinjer med delbestilling (som sjekker på ordrenummer) og kommune-apiet
             sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
 
             // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
-            if (!erOrdrelinjeRelevantForOss(context, ordrelinje)) {
+            if (!erOrdrelinjeRelevantForHotsak(context, ordrelinje)) {
                 logg.info("Urelevant ordrelinje mottatt og ignorert")
                 call.respond(HttpStatusCode.OK)
                 return@post
@@ -148,7 +148,7 @@ private suspend fun parseOrdrelinje(context: Context, call: ApplicationCall): Or
 
 private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: RåOrdrelinje) {
     try {
-        logg.info("Publiserer uvalidert ordrelinje med OebsId ${ordrelinje.oebsId} til rapid i miljø ${Configuration.profile}")
+        logg.info("Publiserer uvalidert ordrelinje med OebsId ${ordrelinje.oebsId} og ordrenr ${ordrelinje.ordrenr} til rapid i miljø ${Configuration.profile}")
         context.publish(
             ordrelinje.fnrBruker, mapperJson.writeValueAsString(
                 UvalidertOrdrelinjeMessage(
@@ -167,7 +167,7 @@ private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: RåOrd
     }
 }
 
-private fun erOrdrelinjeRelevantForOss(context: Context, ordrelinje: OrdrelinjeOebs): Boolean {
+private fun erOrdrelinjeRelevantForHotsak(context: Context, ordrelinje: OrdrelinjeOebs): Boolean {
     if (ordrelinje.serviceforespørseltype != "Vedtak Infotrygd") {
         if (ordrelinje.serviceforespørseltype == "") {
             logg.info(
