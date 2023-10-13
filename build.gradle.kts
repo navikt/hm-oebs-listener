@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation("com.natpryce:konfig:1.6.10.0")
     implementation("org.influxdb:influxdb-java:2.23")
+    implementation("com.influxdb:influxdb-client-kotlin:6.10.0")
     implementation("com.github.navikt:rapids-and-rivers:2022110411121667556720.8a951a765583") {
         exclude(group = "ch.qos.logback")
     }

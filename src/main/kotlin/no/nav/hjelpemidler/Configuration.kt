@@ -16,8 +16,6 @@ internal object Configuration {
         "kafka.aiven.consumer" to "hm-oebs-listener-v1",
         "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
         "kafka.reset.policy" to "latest",
-
-        "SENSU_URL" to "https://digihot-proxy.prod-fss-pub.nais.io/sensu",
     )
 
     private val devProperties = ConfigurationMap(
@@ -28,8 +26,6 @@ internal object Configuration {
         "kafka.aiven.consumer" to "hm-oebs-listener-v2",
         "kafka.aiven.topic" to "teamdigihot.hm-soknadsbehandling-v1",
         "kafka.reset.policy" to "latest",
-
-        "SENSU_URL" to "https://digihot-proxy.dev-fss-pub.nais.io/sensu",
     )
 
     private val localProperties = ConfigurationMap(
@@ -52,9 +48,14 @@ internal object Configuration {
         "KAFKA_TRUSTSTORE_PATH" to "",
         "KAFKA_CREDSTORE_PASSWORD" to "",
 
-        "SENSU_URL" to "https://test/sensu",
         "SLACK_HOOK" to "https://test/slack",
         "SLACK_RECIPIENT" to "test",
+
+        "INFLUX_HOST" to "abc",
+        "INFLUX_PORT" to "abc",
+        "INFLUX_DATABASE_NAME" to "abc",
+        "INFLUX_USER" to "abc",
+        "INFLUX_PASSWORD" to "abc",
     )
 
     private val config = when (System.getenv("NAIS_CLUSTER_NAME") ?: System.getProperty("NAIS_CLUSTER_NAME")) {
@@ -83,12 +84,17 @@ internal object Configuration {
     val namespace = get("NAIS_NAMESPACE")
 
     val profile: Profile = get("application.profile").let { Profile.valueOf(it) }
-    val sensuUrl = get("SENSU_URL")
     val oebsToken = get("OEBSTOKEN")
     val slackHook = get("SLACK_HOOK")
     val slackRecipient = get("SLACK_RECIPIENT")
     const val ntfyUrl = "https://ntfy.sh"
     const val ntfyTopic = "teamdigihot_hm-oebs-listener"
+
+    val influxHost = get("INFLUX_HOST")
+    val influxPort = get("INFLUX_PORT")
+    val influxDbName = get("INFLUX_DATABASE_NAME")
+    val influxUser = get("INFLUX_USER")
+    val influxPassword = get("INFLUX_PASSWORD")
 
     enum class Profile {
         PROD, DEV, LOCAL;

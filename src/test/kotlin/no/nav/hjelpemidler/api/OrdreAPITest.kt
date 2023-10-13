@@ -21,7 +21,7 @@ import kotlin.test.Test
 
 internal class OrdreAPITest {
 
-    private val context = Context(mockk(relaxed = true))
+    private val context = Context(mockk(relaxed = true), mockk(relaxed = true))
 
     @Test
     internal fun `sender ut ordrekvittering på rapid`() = testApplication {

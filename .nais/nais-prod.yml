@@ -11,6 +11,7 @@ spec:
     pool: nav-prod
   envFrom:
     - secret: hm-oebs-listener-secret
+    - secret: hm-influxdb-secret
   replicas:
     min: 2
     max: 4
@@ -32,5 +33,4 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: digihot-proxy.prod-fss-pub.nais.io
         - host: hooks.slack.com
