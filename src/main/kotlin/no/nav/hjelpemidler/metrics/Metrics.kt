@@ -2,15 +2,6 @@ package no.nav.hjelpemidler.metrics
 
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.hjelpemidler.Configuration
-import org.influxdb.dto.Point
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import java.time.Duration
-import java.util.UUID
-import java.util.concurrent.TimeUnit
 
 private val log = KotlinLogging.logger {}
 

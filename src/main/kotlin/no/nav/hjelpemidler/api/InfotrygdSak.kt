@@ -1,9 +1,9 @@
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
+import no.nav.hjelpemidler.Configuration
 import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.Slack
-import no.nav.hjelpemidler.Configuration
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.toOrdrelinje

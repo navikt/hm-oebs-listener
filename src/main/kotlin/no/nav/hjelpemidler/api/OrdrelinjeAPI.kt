@@ -17,8 +17,8 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.Configuration
+import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.model.RåOrdrelinje
@@ -41,10 +41,10 @@ internal fun Route.ordrelinjeAPI(context: Context) {
         logg.info("incoming push")
         try {
             // Parse innkommende json/xml
-            val ordrelinje = parseOrdrelinje(context, call) ?:
-                return@post call.respond(HttpStatusCode.BadRequest, "request body was not in a valid format")
+            val ordrelinje = parseOrdrelinje(context, call)
+                ?: return@post call.respond(HttpStatusCode.BadRequest, "request body was not in a valid format")
 
-            if(ordrelinje.skipningsinstrukser?.contains("Tekniker") == true) {
+            if (ordrelinje.skipningsinstrukser?.contains("Tekniker") == true) {
                 sikkerlogg.info { "Delbestilling ordrelinje: <$ordrelinje>" }
             }
 
@@ -65,7 +65,7 @@ internal fun Route.ordrelinjeAPI(context: Context) {
                     call.respond(HttpStatusCode.OK)
                     return@post
                 }
-                if(ordrelinje.hotSakSaksnummer?.startsWith("hmdel_") == true) {
+                if (ordrelinje.hotSakSaksnummer?.startsWith("hmdel_") == true) {
                     logg.info("Ordrelinje fra delebestilling mottatt. Ignorer.")
                     sikkerlogg.info { "Ignorert ordrelinje for delebestilling: $ordrelinje" }
                     return@post call.respond(HttpStatusCode.OK)
@@ -85,7 +85,6 @@ internal fun Route.ordrelinjeAPI(context: Context) {
             // Publiser resultat
             publiserMelding(context, ordrelinje, melding)
             call.respond(HttpStatusCode.OK)
-
         } catch (e: Exception) {
             logg.error(e) { "Uventet feil under prosessering" }
             call.respond(HttpStatusCode.InternalServerError)
@@ -150,7 +149,8 @@ private fun sendUvalidertOrdrelinjeTilRapid(context: Context, ordrelinje: RåOrd
     try {
         logg.info("Publiserer uvalidert ordrelinje med OebsId ${ordrelinje.oebsId} og ordrenr ${ordrelinje.ordrenr} til rapid i miljø ${Configuration.profile}")
         context.publish(
-            ordrelinje.fnrBruker, mapperJson.writeValueAsString(
+            ordrelinje.fnrBruker,
+            mapperJson.writeValueAsString(
                 UvalidertOrdrelinjeMessage(
                     eventId = UUID.randomUUID(),
                     eventName = "hm-uvalidert-ordrelinje",
@@ -177,7 +177,7 @@ private fun erOrdrelinjeRelevantForHotsak(context: Context, ordrelinje: Ordrelin
         } else {
             logg.info(
                 "Mottok melding fra oebs med sf-type ${ordrelinje.serviceforespørseltype} og sf-status ${ordrelinje.serviceforespørselstatus}. " +
-                        "Avbryter prosesseringen og returnerer"
+                    "Avbryter prosesseringen og returnerer"
             )
             context.metrics.sfTypeUlikVedtakInfotrygd()
         }

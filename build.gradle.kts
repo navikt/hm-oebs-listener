@@ -1,11 +1,12 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.9.0"
+    id("com.diffplug.spotless") version "6.2.1"
 }
 
 group = "no.nav.hjelpemidler"
 version = "1.0-SNAPSHOT"
+
+val ktlint_version = "0.43.2"
 
 repositories {
     mavenCentral()
@@ -16,7 +17,7 @@ dependencies {
     implementation("com.natpryce:konfig:1.6.10.0")
     implementation("org.influxdb:influxdb-java:2.23")
     implementation("com.influxdb:influxdb-client-kotlin:6.10.0")
-    implementation("com.github.navikt:rapids-and-rivers:2022110411121667556720.8a951a765583") {
+    implementation("com.github.navikt:rapids-and-rivers:2023101613431697456627.0cdd93eb696f") {
         exclude(group = "ch.qos.logback")
     }
 
@@ -31,7 +32,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     // Ktor
-    fun ktor(name: String) = "io.ktor:ktor-$name:2.1.3"
+    fun ktor(name: String) = "io.ktor:ktor-$name:2.3.3"
     implementation(ktor("serialization-jackson"))
     implementation(ktor("server-auth"))
     implementation(ktor("server-content-negotiation"))
@@ -46,8 +47,14 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.2")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+spotless {
+    kotlin {
+        ktlint(ktlint_version)
+    }
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint(ktlint_version)
+    }
 }
 
 tasks.test {
