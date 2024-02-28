@@ -46,7 +46,7 @@ data class ServiceForespørselEndring(
     val id: String,
     val sfnummer: String,
     val saknummer: String,
-    val antallKostnadslinjer?: String,
+    val antallKostnadslinjer: String?,
     val ordre: List<ServiceForespørselOrdre>? = null,
     @JsonProperty("status")
     val status: SFEndringType,
