@@ -76,7 +76,7 @@ private fun publiserMelding(
         logg.info(
             "Publiserer oppdatering for SF fra OEBS med id: ${serviceForespørselEndring.id}, " +
                 "sfnummer: ${serviceForespørselEndring.sfnummer}, saknummer: ${serviceForespørselEndring.saknummer}" +
-                ", status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}"
+                ", status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}, antall kostnadslinjer opprettet: ${serviceForespørselEndring.antallKostnadslinjer ?: '-'}"
         )
         context.publish(
             serviceForespørselEndring.saknummer,
