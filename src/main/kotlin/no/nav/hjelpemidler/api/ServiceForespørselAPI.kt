@@ -20,17 +20,18 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonMapperBuilder().addModule(JavaTimeModule()).build()
 
-internal fun Route.serviceforespørselAPI(context: Context) {
+fun Route.serviceforespørselAPI(context: Context) {
     post("/sf") {
         logg.info("incoming sf-oppdatering")
         try {
             val serviceForespørselEndring = call.receive<ServiceForespørselEndring>()
-            val sfMessage = SfMessage(
-                eventId = UUID.randomUUID(),
-                eventName = "hm-EndretSF-oebs-v2",
-                opprettet = LocalDateTime.now(),
-                data = serviceForespørselEndring
-            )
+            val sfMessage =
+                SfMessage(
+                    eventId = UUID.randomUUID(),
+                    eventName = "hm-EndretSF-oebs-v2",
+                    opprettet = LocalDateTime.now(),
+                    data = serviceForespørselEndring,
+                )
             publiserMelding(context, serviceForespørselEndring, sfMessage)
             call.respond(HttpStatusCode.OK)
         } catch (e: Exception) {
@@ -58,7 +59,10 @@ data class ServiceForespørselOrdre(
 )
 
 enum class SFEndringType(value: String) {
-    OPPRETTET("opprettet"), LUKKET("Lukket"), TILORDNET("Tilordnet");
+    OPPRETTET("opprettet"),
+    LUKKET("Lukket"),
+    TILORDNET("Tilordnet"),
+    ;
 
     companion object {
         @JvmStatic
@@ -74,13 +78,24 @@ private fun publiserMelding(
 ) {
     try {
         logg.info(
-            "Publiserer oppdatering for SF fra OEBS med id: ${serviceForespørselEndring.id}, " +
-                "sfnummer: ${serviceForespørselEndring.sfnummer}, saknummer: ${serviceForespørselEndring.saknummer}" +
-                ", status: ${serviceForespørselEndring.status}, ordre: ${serviceForespørselEndring.ordre}, antall kostnadslinjer opprettet: ${serviceForespørselEndring.antallKostnadslinjer ?: '-'}"
+            buildString {
+                append("Publiserer oppdatering for SF fra OEBS med id: ")
+                append(serviceForespørselEndring.id)
+                append(", sfnummer: ")
+                append(serviceForespørselEndring.sfnummer)
+                append(", saknummer: ")
+                append(serviceForespørselEndring.saknummer)
+                append(", status: ")
+                append(serviceForespørselEndring.status)
+                append(", ordre: ")
+                append(serviceForespørselEndring.ordre)
+                append(", antall kostnadslinjer opprettet: ")
+                append(serviceForespørselEndring.antallKostnadslinjer ?: '-')
+            },
         )
         context.publish(
             serviceForespørselEndring.saknummer,
-            mapperJson.writeValueAsString(sfMessage)
+            mapperJson.writeValueAsString(sfMessage),
         )
         context.metrics.meldingTilRapidSuksess()
     } catch (e: Exception) {

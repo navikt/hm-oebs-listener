@@ -11,8 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.ExperimentalTime
 
-internal class ParsingTest {
-
+class ParsingTest {
     @ExperimentalTime
     @Test
     fun `Parse vedtaksdato to LocalDate`() {
@@ -20,36 +19,37 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
-            {
-                "System": "DIGIHOT",
-                "Id":585,
-                "IncidentNummer":21072339,
-                "IncidentStatus": "Open",
-                "IncidentType": "Vedtak Infotrygd",
-                "IncidentSoknadType": "HJDAAN",
-                "IncidentVedtakDato": "2021-04-04",
-                "IncidentSoknad": "S",
-                "IncidentResultat": "I",
-                "IncidentRef": "A01",
-                "OrdreNumber":7068818,
-                "LineNumber":1,
-                "ShipmentNumber":1,
-                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                "CategoryDescription": "",
-                "OrderedItem":149305,
-                "CategoryNum": "122291",
-                "User_ItemType": "Hjelpemiddel",
-                "Quantity":1,
-                "ShippingQuantityUom": "STK",
-                "AccountNumber": "XXXXXXXXXXX",
-                "EgenAnsatt": "Y",
-                "LastUpdateDate": "2021-04-05",
-                "SendTilAddresse1": "1234 Oslo, bla bla bla"
-            }
-            """.trimIndent()
-        )
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
+                {
+                    "System": "DIGIHOT",
+                    "Id":585,
+                    "IncidentNummer":21072339,
+                    "IncidentStatus": "Open",
+                    "IncidentType": "Vedtak Infotrygd",
+                    "IncidentSoknadType": "HJDAAN",
+                    "IncidentVedtakDato": "2021-04-04",
+                    "IncidentSoknad": "S",
+                    "IncidentResultat": "I",
+                    "IncidentRef": "A01",
+                    "OrdreNumber":7068818,
+                    "LineNumber":1,
+                    "ShipmentNumber":1,
+                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                    "CategoryDescription": "",
+                    "OrderedItem":149305,
+                    "CategoryNum": "122291",
+                    "User_ItemType": "Hjelpemiddel",
+                    "Quantity":1,
+                    "ShippingQuantityUom": "STK",
+                    "AccountNumber": "XXXXXXXXXXX",
+                    "EgenAnsatt": "Y",
+                    "LastUpdateDate": "2021-04-05",
+                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                }
+                """.trimIndent(),
+            )
 
         println(result.toString())
         assertEquals(LocalDate.of(2021, 4, 4), result.vedtaksdato)
@@ -64,37 +64,38 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
-            {
-                "System": "DIGIHOT",
-                "Id":585,
-                "IncidentNummer":21072339,
-                "IncidentStatus": "Open",
-                "IncidentType": "Vedtak Infotrygd",
-                "IncidentSoknadType": "HJDAAN",
-                "IncidentVedtakDato": "2021-04-04",
-                "IncidentSoknad": "S",
-                "IncidentResultat": "I",
-                "IncidentRef": "A01",
-                "OrdreNumber":7068818,
-                "LineNumber":1,
-                "ShipmentNumber":1,
-                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                "CategoryDescription": "",
-                "OrderedItem":149305,
-                "CategoryNum": "122291",
-                "User_ItemType": "Hjelpemiddel",
-                "Quantity":1,
-                "ShippingQuantityUom": "STK",
-                "AccountNumber": "XXXXXXXXXXX",
-                "EgenAnsatt": "Y",
-                "LastUpdateDate": "2021-04-05",
-                "SendTilAddresse1": "1234 Oslo, bla bla bla",
-                "SerieNummerListe":["660383", "693065", "726136", "733046"]
-            }
-            """.trimIndent()
-        )
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
+                {
+                    "System": "DIGIHOT",
+                    "Id":585,
+                    "IncidentNummer":21072339,
+                    "IncidentStatus": "Open",
+                    "IncidentType": "Vedtak Infotrygd",
+                    "IncidentSoknadType": "HJDAAN",
+                    "IncidentVedtakDato": "2021-04-04",
+                    "IncidentSoknad": "S",
+                    "IncidentResultat": "I",
+                    "IncidentRef": "A01",
+                    "OrdreNumber":7068818,
+                    "LineNumber":1,
+                    "ShipmentNumber":1,
+                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                    "CategoryDescription": "",
+                    "OrderedItem":149305,
+                    "CategoryNum": "122291",
+                    "User_ItemType": "Hjelpemiddel",
+                    "Quantity":1,
+                    "ShippingQuantityUom": "STK",
+                    "AccountNumber": "XXXXXXXXXXX",
+                    "EgenAnsatt": "Y",
+                    "LastUpdateDate": "2021-04-05",
+                    "SendTilAddresse1": "1234 Oslo, bla bla bla",
+                    "SerieNummerListe":["660383", "693065", "726136", "733046"]
+                }
+                """.trimIndent(),
+            )
 
         println(result.toString())
         val expected = listOf("660383", "693065", "726136", "733046")
@@ -110,36 +111,37 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
-            {
-                "System": "DIGIHOT",
-                "Id":585,
-                "IncidentNummer":21072339,
-                "IncidentStatus": "Open",
-                "IncidentType": "Vedtak Infotrygd",
-                "IncidentSoknadType": "HJDAAN",
-                "IncidentVedtakDato": "",
-                "IncidentSoknad": "S",
-                "IncidentResultat": "I",
-                "IncidentRef": "A01",
-                "OrdreNumber":7068818,
-                "LineNumber":1,
-                "ShipmentNumber":1,
-                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                "CategoryDescription": "",
-                "OrderedItem":149305,
-                "CategoryNum": "122291",
-                "User_ItemType": "Hjelpemiddel",
-                "Quantity":1,
-                "ShippingQuantityUom": "STK",
-                "AccountNumber": "XXXXXXXXXXX",
-                "EgenAnsatt": "N",
-                "LastUpdateDate": "2021-04-05",
-                "SendTilAddresse1": "1234 Oslo, bla bla bla"
-            }
-            """.trimIndent()
-        )
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
+                {
+                    "System": "DIGIHOT",
+                    "Id":585,
+                    "IncidentNummer":21072339,
+                    "IncidentStatus": "Open",
+                    "IncidentType": "Vedtak Infotrygd",
+                    "IncidentSoknadType": "HJDAAN",
+                    "IncidentVedtakDato": "",
+                    "IncidentSoknad": "S",
+                    "IncidentResultat": "I",
+                    "IncidentRef": "A01",
+                    "OrdreNumber":7068818,
+                    "LineNumber":1,
+                    "ShipmentNumber":1,
+                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                    "CategoryDescription": "",
+                    "OrderedItem":149305,
+                    "CategoryNum": "122291",
+                    "User_ItemType": "Hjelpemiddel",
+                    "Quantity":1,
+                    "ShippingQuantityUom": "STK",
+                    "AccountNumber": "XXXXXXXXXXX",
+                    "EgenAnsatt": "N",
+                    "LastUpdateDate": "2021-04-05",
+                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                }
+                """.trimIndent(),
+            )
 
         println(result.toString())
         assertEquals(null, result.vedtaksdato)
@@ -154,36 +156,37 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
-            {
-                "System": "DIGIHOT",
-                "Id":585,
-                "IncidentNummer":21072339,
-                "IncidentStatus": "Open",
-                "IncidentType": "Vedtak Infotrygd",
-                "IncidentSoknadType": "HJDAAN",
-                "IncidentVedtakDato": "",
-                "IncidentSoknad": "S",
-                "IncidentResultat": "I",
-                "IncidentRef": "A01",
-                "OrdreNumber":7068818,
-                "LineNumber":1,
-                "ShipmentNumber":1,
-                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                "CategoryDescription": "",
-                "OrderedItem": "012345",
-                "CategoryNum": "122291",
-                "User_ItemType": "Hjelpemiddel",
-                "Quantity":1,
-                "ShippingQuantityUom": "STK",
-                "AccountNumber": "XXXXXXXXXXX",
-                "EgenAnsatt": "Y",
-                "LastUpdateDate": "2021-04-05",
-                "SendTilAddresse1": "1234 Oslo, bla bla bla"
-            }
-            """.trimIndent()
-        )
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
+                {
+                    "System": "DIGIHOT",
+                    "Id":585,
+                    "IncidentNummer":21072339,
+                    "IncidentStatus": "Open",
+                    "IncidentType": "Vedtak Infotrygd",
+                    "IncidentSoknadType": "HJDAAN",
+                    "IncidentVedtakDato": "",
+                    "IncidentSoknad": "S",
+                    "IncidentResultat": "I",
+                    "IncidentRef": "A01",
+                    "OrdreNumber":7068818,
+                    "LineNumber":1,
+                    "ShipmentNumber":1,
+                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                    "CategoryDescription": "",
+                    "OrderedItem": "012345",
+                    "CategoryNum": "122291",
+                    "User_ItemType": "Hjelpemiddel",
+                    "Quantity":1,
+                    "ShippingQuantityUom": "STK",
+                    "AccountNumber": "XXXXXXXXXXX",
+                    "EgenAnsatt": "Y",
+                    "LastUpdateDate": "2021-04-05",
+                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                }
+                """.trimIndent(),
+            )
 
         println(result.toString())
         assertEquals("012345", result.artikkelnr)
@@ -196,8 +199,9 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
                     <ki:Id>645</ki:Id>
@@ -224,8 +228,8 @@ internal class ParsingTest {
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
                     <ki:SendTilAddresse1>1234 Oslo, bla bla bla</ki:SendTilAddresse1>
                 </ki:StatusInfo>
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
 
         println(result.toString())
         assertEquals("012345", result.artikkelnr)
@@ -239,36 +243,37 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
-            {
-                "System": "DIGIHOT",
-                "Id":585,
-                "IncidentNummer":21072339,
-                "IncidentStatus": "Open",
-                "IncidentType": "Vedtak Infotrygd",
-                "IncidentSoknadType": "HJDAAN",
-                "IncidentVedtakDato": "",
-                "IncidentSoknad": "S",
-                "IncidentResultat": "I",
-                "IncidentRef": "A01",
-                "OrdreNumber":7068818,
-                "LineNumber":1,
-                "ShipmentNumber":1,
-                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                "CategoryDescription": "",
-                "OrderedItem": "012345",
-                "CategoryNum": "122291",
-                "User_ItemType": "Hjelpemiddel",
-                "Quantity":2,
-                "ShippingQuantityUom": "STK",
-                "AccountNumber": "XXXXXXXXXXX",
-                "EgenAnsatt": "N",
-                "LastUpdateDate": "2021-04-05",
-                "SendTilAddresse1": "1234 Oslo, bla bla bla"
-            }
-            """.trimIndent()
-        )
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
+                {
+                    "System": "DIGIHOT",
+                    "Id":585,
+                    "IncidentNummer":21072339,
+                    "IncidentStatus": "Open",
+                    "IncidentType": "Vedtak Infotrygd",
+                    "IncidentSoknadType": "HJDAAN",
+                    "IncidentVedtakDato": "",
+                    "IncidentSoknad": "S",
+                    "IncidentResultat": "I",
+                    "IncidentRef": "A01",
+                    "OrdreNumber":7068818,
+                    "LineNumber":1,
+                    "ShipmentNumber":1,
+                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                    "CategoryDescription": "",
+                    "OrderedItem": "012345",
+                    "CategoryNum": "122291",
+                    "User_ItemType": "Hjelpemiddel",
+                    "Quantity":2,
+                    "ShippingQuantityUom": "STK",
+                    "AccountNumber": "XXXXXXXXXXX",
+                    "EgenAnsatt": "N",
+                    "LastUpdateDate": "2021-04-05",
+                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                }
+                """.trimIndent(),
+            )
 
         assertEquals(2.0, result.antall)
     }
@@ -279,8 +284,9 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
                     <ki:Id>123</ki:Id>
@@ -307,8 +313,8 @@ internal class ParsingTest {
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
                     <ki:SendTilAddresse1>1234 Oslo, bla bla bla</ki:SendTilAddresse1>
                 </ki:StatusInfo>
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
 
         assertEquals(3.0, result.antall)
     }
@@ -320,36 +326,37 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
-            {
-                "System": "DIGIHOT",
-                "Id":234,
-                "IncidentNummer":21072339,
-                "IncidentStatus": "Open",
-                "IncidentType": "Vedtak Infotrygd",
-                "IncidentSoknadType": "HJDAAN",
-                "IncidentVedtakDato": "",
-                "IncidentSoknad": "S",
-                "IncidentResultat": "I",
-                "IncidentRef": "A01",
-                "OrdreNumber":7068818,
-                "LineNumber":1,
-                "ShipmentNumber":1,
-                "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                "CategoryDescription": "",
-                "OrderedItem": "012345",
-                "CategoryNum": "122291",
-                "User_ItemType": "Hjelpemiddel",
-                "Quantity":2.999,
-                "ShippingQuantityUom": "STK",
-                "AccountNumber": "XXXXXXXXXXX",
-                "EgenAnsatt": "Y",
-                "LastUpdateDate": "2021-04-05",
-                "SendTilAddresse1": "1234 Oslo, bla bla bla"
-            }
-            """.trimIndent()
-        )
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
+                {
+                    "System": "DIGIHOT",
+                    "Id":234,
+                    "IncidentNummer":21072339,
+                    "IncidentStatus": "Open",
+                    "IncidentType": "Vedtak Infotrygd",
+                    "IncidentSoknadType": "HJDAAN",
+                    "IncidentVedtakDato": "",
+                    "IncidentSoknad": "S",
+                    "IncidentResultat": "I",
+                    "IncidentRef": "A01",
+                    "OrdreNumber":7068818,
+                    "LineNumber":1,
+                    "ShipmentNumber":1,
+                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                    "CategoryDescription": "",
+                    "OrderedItem": "012345",
+                    "CategoryNum": "122291",
+                    "User_ItemType": "Hjelpemiddel",
+                    "Quantity":2.999,
+                    "ShippingQuantityUom": "STK",
+                    "AccountNumber": "XXXXXXXXXXX",
+                    "EgenAnsatt": "Y",
+                    "LastUpdateDate": "2021-04-05",
+                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                }
+                """.trimIndent(),
+            )
 
         assertEquals(2.999, result.antall)
     }
@@ -360,8 +367,9 @@ internal class ParsingTest {
         mapper.registerModule(JavaTimeModule())
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
-        val result: OrdrelinjeOebs = mapper.readValue(
-            """
+        val result: OrdrelinjeOebs =
+            mapper.readValue(
+                """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
                     <ki:Id>565</ki:Id>
@@ -388,8 +396,8 @@ internal class ParsingTest {
                     <ki:LastUpdateDate>2021-04-15</ki:LastUpdateDate>
                     <ki:SendTilAddresse1>1234 Oslo, bla bla bla</ki:SendTilAddresse1>
                 </ki:StatusInfo>
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
 
         assertEquals(3.999, result.antall)
     }

@@ -12,90 +12,63 @@ const val INFOTRYGD = "INFOTRYGD"
 data class OrdrelinjeOebs(
     @JsonProperty("System")
     val mottakendeSystem: String,
-
     @JsonProperty("Id")
     val oebsId: Int,
-
     @JsonProperty("IncidentNummer")
     val serviceforespørsel: Int,
-
     @JsonProperty("IncidentStatus")
     val serviceforespørselstatus: String,
-
     @JsonProperty("IncidentType")
     val serviceforespørseltype: String,
-
     @JsonProperty("IncidentSoknadType")
     val søknadstype: String,
-
     // N.B.: Viss dato er "" i meldinga blir den til null under deserialisering og forblir null under serialisering (utgåande JSON)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("IncidentVedtakDato")
     val vedtaksdato: LocalDate?,
-
     @JsonProperty("IncidentSoknad")
     val søknad: String,
-
     @JsonProperty("ReferanseNummer")
     val hotSakSaksnummer: String?,
-
     @JsonProperty("Kilde")
     val kilde: String?,
-
     @JsonProperty("IncidentResultat")
     val resultat: String,
-
     @JsonProperty("IncidentRef")
     val saksblokkOgSaksnr: String?,
-
     @JsonProperty("OrdreNumber")
     val ordrenr: Int,
-
     @JsonProperty("LineNumber")
     val ordrelinje: Int,
-
     @JsonProperty("ShipmentNumber")
     val delordrelinje: Int,
-
     @JsonProperty("Description")
     val artikkelbeskrivelse: String,
-
     @JsonProperty("CategoryDescription")
     val produktgruppe: String,
-
     @JsonProperty("CategoryNum")
     val produktgruppeNr: String,
-
     @JsonProperty("OrderedItem")
     val artikkelnr: String,
-
     @JsonProperty("User_ItemType")
     val hjelpemiddeltype: String,
-
     @JsonProperty("Quantity")
     val antall: Double,
-
     @JsonProperty("ShippingQuantityUom")
     val enhet: String,
-
     @JsonProperty("ShippingInstructions")
     val skipningsinstrukser: String?,
-
     @JsonProperty("AccountNumber")
     var fnrBruker: String,
-
     // Sidan dette feltet har informasjon som kan bli utdatert blir ikkje dette brukt.
     // Uansett skal ein NAV-ansatt også få sjå hjelpemidla som er på veg til dei.
     @JsonProperty("EgenAnsatt")
     val egenAnsatt: String,
-
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonProperty("LastUpdateDate")
     val sistOppdatert: LocalDate,
-
     @JsonProperty("SendTilAddresse1")
     var sendtTilAdresse: String,
-
     @JsonProperty("SerieNummerListe")
     val serienumre: List<String>? = emptyList(),
 )
@@ -132,7 +105,7 @@ fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje {
         egenAnsatt = this.egenAnsatt,
         sistOppdatert = this.sistOppdatert,
         sendtTilAdresse = this.sendtTilAdresse,
-        serienumre = this.serienumre ?: listOf() // ?.let { RåOrdrelinje.serienumreListeFraRå(it) } ?: listOf(),
+        serienumre = this.serienumre ?: listOf(),
     )
 }
 

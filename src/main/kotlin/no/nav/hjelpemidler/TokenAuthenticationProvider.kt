@@ -30,22 +30,24 @@ fun ApplicationRequest.tokenCredentials(): TokenCredential? {
             }
             return TokenCredential(authHeader.blob)
         }
+
         else -> return null
     }
 }
 
-class TokenAuthenticationProvider internal constructor(config: Config) : AuthenticationProvider(config) {
-    internal val authenticationFunction = config.authenticationFunction
+class TokenAuthenticationProvider(config: Config) : AuthenticationProvider(config) {
+    val authenticationFunction = config.authenticationFunction
 
     override suspend fun onAuthenticate(context: AuthenticationContext) {
         val call = context.call
         val credentials = call.request.tokenCredentials()
         val principal = credentials?.let { authenticationFunction(call, it) }
-        val cause = when {
-            credentials == null -> AuthenticationFailedCause.NoCredentials
-            principal == null -> AuthenticationFailedCause.InvalidCredentials
-            else -> null
-        }
+        val cause =
+            when {
+                credentials == null -> AuthenticationFailedCause.NoCredentials
+                principal == null -> AuthenticationFailedCause.InvalidCredentials
+                else -> null
+            }
         if (cause != null) {
             @Suppress("NAME_SHADOWING")
             context.challenge("", cause) { challenge, call ->
@@ -53,9 +55,9 @@ class TokenAuthenticationProvider internal constructor(config: Config) : Authent
                     UnauthorizedResponse(
                         HttpAuthHeader.Parameterized(
                             AuthScheme.Bearer,
-                            mapOf("realm" to "Ktor Server")
-                        )
-                    )
+                            mapOf("realm" to "Ktor Server"),
+                        ),
+                    ),
                 )
                 challenge.complete()
             }
@@ -65,23 +67,24 @@ class TokenAuthenticationProvider internal constructor(config: Config) : Authent
         }
     }
 
-    class Config internal constructor(name: String?) : AuthenticationProvider.Config(name) {
-        internal var authenticationFunction: AuthenticationFunction<TokenCredential> = {
+    class Config(name: String?) : AuthenticationProvider.Config(name) {
+        var authenticationFunction: AuthenticationFunction<TokenCredential> = {
             throw NotImplementedError(
-                "Token validate function is not specified. Use token { validate { ... } } to fix."
+                "Token validate function is not specified. Use token { validate { ... } } to fix.",
             )
         }
 
-        fun validate(body: suspend ApplicationCall.(TokenCredential) -> Principal?) {
+        private fun validate(body: suspend ApplicationCall.(TokenCredential) -> Principal?) {
             authenticationFunction = body
         }
 
-        fun validate(expectedToken: String) = validate {
-            when (it.token) {
-                expectedToken -> TokenPrincipal(it.token)
-                else -> null
+        fun validate(expectedToken: String) =
+            validate {
+                when (it.token) {
+                    expectedToken -> TokenPrincipal(it.token)
+                    else -> null
+                }
             }
-        }
     }
 }
 

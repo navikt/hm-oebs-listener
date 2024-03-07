@@ -10,13 +10,17 @@ import no.nav.hjelpemidler.metrics.Metrics
 
 class Context(
     private val messageContext: MessageContext,
-    influxClient: InfluxClient = InfluxClient()
+    influxClient: InfluxClient = InfluxClient(),
 ) : MessageContext by messageContext {
-    val jsonMapper: JsonMapper = jacksonMapperBuilder()
-        .addModule(JavaTimeModule())
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .build()
+    val jsonMapper: JsonMapper =
+        jacksonMapperBuilder()
+            .addModule(JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build()
     val metrics: Metrics = Metrics(influxClient, messageContext)
 
-    fun <T> publish(key: String, message: T) = publish(key, jsonMapper.writeValueAsString(message))
+    fun <T> publish(
+        key: String,
+        message: T,
+    ) = publish(key, jsonMapper.writeValueAsString(message))
 }

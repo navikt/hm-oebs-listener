@@ -10,10 +10,8 @@ data class RåOrdrelinje(
     val serviceforespørselstatus: String,
     val serviceforespørseltype: String,
     val søknadstype: String,
-
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val vedtaksdato: LocalDate?,
-
     val søknad: String,
     val hotSakSaksnummer: String?,
     val kilde: String?,
@@ -31,12 +29,9 @@ data class RåOrdrelinje(
     val enhet: String,
     val fnrBruker: String,
     val egenAnsatt: String,
-
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val sistOppdatert: LocalDate,
-
     val sendtTilAdresse: String,
-
     var serienumre: List<String> = listOf(),
 ) {
     companion object {

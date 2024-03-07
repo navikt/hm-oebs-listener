@@ -67,12 +67,16 @@ class Metrics(
         registerPoint(INFOTRYGD_SF, mapOf("counter" to 1L), emptyMap())
     }
 
-    private fun registerPoint(measurement: String, fields: Map<String, Any>, tags: Map<String, String>) {
-        log.info("Posting point to Influx: measurment {} fields {} tags {} ", measurement, fields, tags)
+    private fun registerPoint(
+        measurement: String,
+        fields: Map<String, Any>,
+        tags: Map<String, String>,
+    ) {
+        log.info("Posting point to Influx: measurement {} fields {} tags {} ", measurement, fields, tags)
         try {
             influxClient.writeEvent(measurement, fields, tags)
         } catch (e: Exception) {
-            log.error("Feil ved sending til Influx: eventname: $measurement")
+            log.error("Feil ved sending til Influx, measurement: $measurement", e)
         }
         kafkaMetrics.registerPoint(measurement, fields, tags)
     }

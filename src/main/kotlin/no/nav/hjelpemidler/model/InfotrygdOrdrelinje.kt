@@ -10,11 +10,9 @@ data class InfotrygdOrdrelinje(
     val serviceforespørselstatus: String,
     val serviceforespørseltype: String,
     val søknadstype: String,
-
     // N.B.: Hvis dato er "" i meldinga blir den til null under deserialisering og forblir null under serialisering (utgåande JSON)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val vedtaksdato: LocalDate?,
-
     val søknad: String,
     val resultat: String,
     val saksblokkOgSaksnr: String,
@@ -30,9 +28,7 @@ data class InfotrygdOrdrelinje(
     val enhet: String,
     val fnrBruker: String,
     val egenAnsatt: String,
-
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val sistOppdatert: LocalDate,
-
     val sendtTilAdresse: String,
 ) : Ordrelinje

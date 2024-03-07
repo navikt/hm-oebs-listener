@@ -1,46 +1,41 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.annotation.JsonValue
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
+import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.http.createHttpClient
 
 object Ntfy {
     private val log = KotlinLogging.logger {}
-    private val client = HttpClient(CIO) {
-        expectSuccess = false
-        install(ContentNegotiation) {
-            jackson()
-        }
-    }
+    private val client = createHttpClient()
 
-    fun publish(notification: Notification) = runCatching {
-        runBlocking(Dispatchers.IO) {
-            val response = client.post(Configuration.ntfyUrl) {
-                contentType(ContentType.Application.Json)
-                setBody(notification.copy(tags = notification.tags + setOf(Configuration.profile.name)))
+    fun publish(notification: Notification) =
+        runCatching {
+            runBlocking(Dispatchers.IO) {
+                val response =
+                    client.post(NTFY_URL) {
+                        contentType(ContentType.Application.Json)
+                        setBody(notification.copy(tags = notification.tags + setOf(Environment.current.toString())))
+                    }
+                when (response.status) {
+                    HttpStatusCode.OK -> Unit
+                    else -> log.warn("Feil under publisering til ntfy: ${response.body<Map<String, Any?>>()}")
+                }
             }
-            when (response.status) {
-                HttpStatusCode.OK -> Unit
-                else -> log.warn("Feil under publisering til ntfy: ${response.body<Map<String, Any?>>()}")
-            }
+        }.getOrElse {
+            log.warn(it) { "Feil under publisering til ntfy" }
         }
-    }.getOrElse {
-        log.warn(it) { "Feil under publisering til ntfy" }
-    }
 
     data class Notification(
-        val topic: String = Configuration.ntfyTopic,
+        val topic: String = NTFY_TOPIC,
         val title: String? = null,
         val message: String? = null,
         val priority: Priority = Priority.DEFAULT,
@@ -66,7 +61,9 @@ object Ntfy {
         val extras: Map<String, String> = emptyMap(),
     )
 
-    enum class Priority(@JsonValue val value: Int) {
+    enum class Priority(
+        @JsonValue val value: Int,
+    ) {
         MIN(1),
         LOW(2),
         DEFAULT(3),
@@ -74,7 +71,9 @@ object Ntfy {
         MAX(5),
     }
 
-    enum class ActionType(@JsonValue val value: String) {
+    enum class ActionType(
+        @JsonValue val value: String,
+    ) {
         VIEW("view"),
         BROADCAST("broadcast"),
         HTTP("http"),

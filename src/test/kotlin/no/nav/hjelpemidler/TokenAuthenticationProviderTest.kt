@@ -14,47 +14,50 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlin.test.Test
 
-internal class TokenAuthenticationProviderTest {
+class TokenAuthenticationProviderTest {
+    @Test
+    fun `authentication fails, missing token`() =
+        testApplication {
+            configure()
+            client.get("/secured") {
+            }.apply {
+                status shouldBe HttpStatusCode.Unauthorized
+            }
+        }
 
     @Test
-    internal fun `authentication fails, missing token`() = testApplication {
-        configure()
-        client.get("/secured") {
-        }.apply {
-            status shouldBe HttpStatusCode.Unauthorized
+    fun `authentication fails, wrong token`() =
+        testApplication {
+            configure()
+            client.get("/secured") {
+                bearerAuth("1234qwer")
+            }.apply {
+                status shouldBe HttpStatusCode.Unauthorized
+            }
         }
-    }
 
     @Test
-    internal fun `authentication fails, wrong token`() = testApplication {
-        configure()
-        client.get("/secured") {
-            bearerAuth("1234qwer")
-        }.apply {
-            status shouldBe HttpStatusCode.Unauthorized
+    fun `authentication fails, wrong scheme`() =
+        testApplication {
+            configure()
+            client.get("/secured") {
+                basicAuth("foo", "bar")
+            }.apply {
+                status shouldBe HttpStatusCode.Unauthorized
+            }
         }
-    }
 
     @Test
-    internal fun `authentication fails, wrong scheme`() = testApplication {
-        configure()
-        client.get("/secured") {
-            basicAuth("foo", "bar")
-        }.apply {
-            status shouldBe HttpStatusCode.Unauthorized
+    fun `authentication succeeds`() =
+        testApplication {
+            configure()
+            client.get("/secured") {
+                bearerAuth("qwer1234")
+            }.apply {
+                status shouldBe HttpStatusCode.OK
+                bodyAsText() shouldBe "secret"
+            }
         }
-    }
-
-    @Test
-    internal fun `authentication succeeds`() = testApplication {
-        configure()
-        client.get("/secured") {
-            bearerAuth("qwer1234")
-        }.apply {
-            status shouldBe HttpStatusCode.OK
-            bodyAsText() shouldBe "secret"
-        }
-    }
 
     private fun ApplicationTestBuilder.configure() {
         install(Authentication) {

@@ -19,57 +19,60 @@ import no.nav.hjelpemidler.shouldBe
 import no.nav.hjelpemidler.token
 import kotlin.test.Test
 
-internal class OrdreAPITest {
-
+class OrdreAPITest {
     private val context = Context(mockk(relaxed = true), mockk(relaxed = true))
 
     @Test
-    internal fun `sender ut ordrekvittering på rapid`() = testApplication {
-        configure()
-        val body = context.jsonMapper.writeValueAsString(
-            Ordrekvittering(
-                id = "1",
-                saksnummer = "2",
-                ordrenummer = "3",
-                system = "HOTSAK",
-                status = "ENTERED"
-            )
-        )
-        client.post("/ordrekvittering") {
-            bearerAuth("qwer1234")
-            contentType(ContentType.Application.Json)
-            setBody(body)
-        }.apply {
-            status shouldBe HttpStatusCode.OK
-            verify {
-                context.publish("2", match { it.contains(body) })
+    fun `sender ut ordrekvittering på rapid`() =
+        testApplication {
+            configure()
+            val body =
+                context.jsonMapper.writeValueAsString(
+                    Ordrekvittering(
+                        id = "1",
+                        saksnummer = "2",
+                        ordrenummer = "3",
+                        system = "HOTSAK",
+                        status = "ENTERED",
+                    ),
+                )
+            client.post("/ordrekvittering") {
+                bearerAuth("qwer1234")
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }.apply {
+                status shouldBe HttpStatusCode.OK
+                verify {
+                    context.publish("2", match { it.contains(body) })
+                }
             }
         }
-    }
 
     @Test
-    internal fun `sender ut ordrefeilmelding på rapid`() = testApplication {
-        configure()
-        val body = context.jsonMapper.writeValueAsString(
-            Ordrefeilmelding(
-                id = "1",
-                saksnummer = "2",
-                feilmelding = "Feilmelding",
-                system = "HOTSAK",
-                status = "ERROR"
-            )
-        )
-        client.post("/ordrefeilmelding") {
-            bearerAuth("qwer1234")
-            contentType(ContentType.Application.Json)
-            setBody(body)
-        }.apply {
-            status shouldBe HttpStatusCode.OK
-            verify {
-                context.publish("2", match { it.contains(body) })
+    fun `sender ut ordrefeilmelding på rapid`() =
+        testApplication {
+            configure()
+            val body =
+                context.jsonMapper.writeValueAsString(
+                    Ordrefeilmelding(
+                        id = "1",
+                        saksnummer = "2",
+                        feilmelding = "Feilmelding",
+                        system = "HOTSAK",
+                        status = "ERROR",
+                    ),
+                )
+            client.post("/ordrefeilmelding") {
+                bearerAuth("qwer1234")
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }.apply {
+                status shouldBe HttpStatusCode.OK
+                verify {
+                    context.publish("2", match { it.contains(body) })
+                }
             }
         }
-    }
 
     private fun ApplicationTestBuilder.configure() {
         install(ContentNegotiation) {
