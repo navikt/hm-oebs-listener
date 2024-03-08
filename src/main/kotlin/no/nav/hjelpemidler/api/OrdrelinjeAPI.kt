@@ -248,7 +248,7 @@ private fun publiserMelding(
                 "ordrelinje" to mapperJson.writeValueAsString(ordrelinje),
             ),
         ) {
-            sikkerlogg.info("Ordrelinje med OebsId ${ordrelinje.oebsId} mottatt og sendt til rapid")
+            sikkerlogg.info("Ordrelinje med oebsId: ${ordrelinje.oebsId} mottatt og sendt til rapid")
         }
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()

@@ -72,11 +72,11 @@ class Metrics(
         fields: Map<String, Any>,
         tags: Map<String, String>,
     ) {
-        log.info("Posting point to Influx: measurement {} fields {} tags {} ", measurement, fields, tags)
+        log.debug { "Posting point to Influx, measurement: $measurement, fields: $fields, tags: $tags" }
         try {
             influxClient.writeEvent(measurement, fields, tags)
         } catch (e: Exception) {
-            log.error("Feil ved sending til Influx, measurement: $measurement", e)
+            log.warn(e) { "Feil ved sending til Influx, measurement: $measurement" }
         }
         kafkaMetrics.registerPoint(measurement, fields, tags)
     }
