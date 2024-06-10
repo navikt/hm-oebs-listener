@@ -1,15 +1,15 @@
-package no.nav.hjelpemidler.metrics
+package no.nav.hjelpemidler.oebs.listener.metrics
 
 import com.influxdb.client.InfluxDBClientFactory
 import com.influxdb.client.WriteApi
 import com.influxdb.client.domain.WritePrecision
 import com.influxdb.client.write.Point
-import no.nav.hjelpemidler.INFLUX_DATABASE_NAME
-import no.nav.hjelpemidler.INFLUX_HOST
-import no.nav.hjelpemidler.INFLUX_PASSWORD
-import no.nav.hjelpemidler.INFLUX_PORT
-import no.nav.hjelpemidler.INFLUX_USER
 import no.nav.hjelpemidler.configuration.NaisEnvironmentVariable
+import no.nav.hjelpemidler.oebs.listener.INFLUX_DATABASE_NAME
+import no.nav.hjelpemidler.oebs.listener.INFLUX_HOST
+import no.nav.hjelpemidler.oebs.listener.INFLUX_PASSWORD
+import no.nav.hjelpemidler.oebs.listener.INFLUX_PORT
+import no.nav.hjelpemidler.oebs.listener.INFLUX_USER
 import java.time.Instant
 
 class InfluxClient(

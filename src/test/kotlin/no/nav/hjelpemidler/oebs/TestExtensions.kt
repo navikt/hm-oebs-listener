@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler
+package no.nav.hjelpemidler.oebs
 
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals

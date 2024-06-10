@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.api
+package no.nav.hjelpemidler.oebs.listener.api
 
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
@@ -14,9 +14,9 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.hjelpemidler.Context
-import no.nav.hjelpemidler.shouldBe
-import no.nav.hjelpemidler.token
+import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.token
+import no.nav.hjelpemidler.oebs.shouldBe
 import kotlin.test.Test
 
 class OrdreAPITest {

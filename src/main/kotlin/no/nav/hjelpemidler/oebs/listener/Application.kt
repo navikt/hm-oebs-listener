@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler
+package no.nav.hjelpemidler.oebs.listener
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -13,10 +13,10 @@ import io.ktor.server.routing.routing
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidApplication.RapidApplicationConfig
 import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.hjelpemidler.api.ordreAPI
-import no.nav.hjelpemidler.api.ordrelinjeAPI
-import no.nav.hjelpemidler.api.serviceforespørselAPI
 import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.oebs.listener.api.ordreAPI
+import no.nav.hjelpemidler.oebs.listener.api.ordrelinjeAPI
+import no.nav.hjelpemidler.oebs.listener.api.serviceforespørselAPI
 import org.slf4j.event.Level
 
 private val log = KotlinLogging.logger {}

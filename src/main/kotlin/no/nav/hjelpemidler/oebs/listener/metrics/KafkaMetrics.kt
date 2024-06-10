@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.metrics
+package no.nav.hjelpemidler.oebs.listener.metrics
 
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext

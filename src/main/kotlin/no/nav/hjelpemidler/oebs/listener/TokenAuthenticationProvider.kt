@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler
+package no.nav.hjelpemidler.oebs.listener
 
 import io.ktor.http.auth.AuthScheme
 import io.ktor.http.auth.HttpAuthHeader

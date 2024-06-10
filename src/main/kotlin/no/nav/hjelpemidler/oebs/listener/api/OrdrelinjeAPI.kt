@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.api
+package no.nav.hjelpemidler.oebs.listener.api
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
@@ -16,15 +16,15 @@ import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
-import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.model.OrdrelinjeMessage
-import no.nav.hjelpemidler.model.OrdrelinjeOebs
-import no.nav.hjelpemidler.model.RåOrdrelinje
-import no.nav.hjelpemidler.model.UvalidertOrdrelinjeMessage
-import no.nav.hjelpemidler.model.erOpprettetFraHOTSAK
-import no.nav.hjelpemidler.model.fiksTommeSerienumre
-import no.nav.hjelpemidler.model.toRåOrdrelinje
+import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
+import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
+import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
+import no.nav.hjelpemidler.oebs.listener.model.UvalidertOrdrelinjeMessage
+import no.nav.hjelpemidler.oebs.listener.model.erOpprettetFraHotsak
+import no.nav.hjelpemidler.oebs.listener.model.fiksTommeSerienumre
+import no.nav.hjelpemidler.oebs.listener.model.toRåOrdrelinje
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -60,8 +60,8 @@ fun Route.ordrelinjeAPI(context: Context) {
 
             // Anti-corruption lag
             val melding =
-                if (ordrelinje.erOpprettetFraHOTSAK()) {
-                    if (!hotsakOrdrelinjeOk(context, ordrelinje)) {
+                if (ordrelinje.erOpprettetFraHotsak()) {
+                    if (!hotsakOrdrelinjeOK(context, ordrelinje)) {
                         logg.info { "Hotsak ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
                         call.respond(HttpStatusCode.OK)
                         return@post
@@ -74,7 +74,7 @@ fun Route.ordrelinjeAPI(context: Context) {
                     context.metrics.hotsakSF()
                     opprettHotsakOrdrelinje(ordrelinje)
                 } else {
-                    if (!infotrygdOrdrelinjeOk(context, ordrelinje)) {
+                    if (!infotrygdOrdrelinjeOK(context, ordrelinje)) {
                         logg.warn { "Infotrygd ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
                         call.respond(HttpStatusCode.OK)
                         return@post
@@ -180,7 +180,7 @@ private fun sendUvalidertOrdrelinjeTilRapid(
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()
         sikkerlogg.error(e) { "Sending av uvalidert ordrelinje til rapid feilet" }
-        throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
+        error("Noe gikk feil ved publisering av melding")
     }
 }
 
@@ -248,6 +248,6 @@ private fun publiserMelding(
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()
         sikkerlogg.error(e) { "Sending til rapid feilet" }
-        throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
+        error("Noe gikk feil ved publisering av melding")
     }
 }

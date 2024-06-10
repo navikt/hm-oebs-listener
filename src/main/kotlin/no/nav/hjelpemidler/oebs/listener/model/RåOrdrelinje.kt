@@ -1,21 +1,22 @@
-package no.nav.hjelpemidler.model
+package no.nav.hjelpemidler.oebs.listener.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
-data class HotsakOrdrelinje(
+data class RåOrdrelinje(
     val mottakendeSystem: String,
     val oebsId: Int,
     val serviceforespørsel: Int,
     val serviceforespørselstatus: String,
     val serviceforespørseltype: String,
     val søknadstype: String,
-    // N.B.: Hvis dato er "" i meldinga blir den til null under deserialisering og forblir null under serialisering (utgåande JSON)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val vedtaksdato: LocalDate?,
     val søknad: String,
+    val hotSakSaksnummer: String?,
+    val kilde: String?,
     val resultat: String,
-    val saksnummer: String,
+    val saksblokkOgSaksnr: String?,
     val ordrenr: Int,
     val ordrelinje: Int,
     val delordrelinje: Int,
@@ -31,4 +32,5 @@ data class HotsakOrdrelinje(
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val sistOppdatert: LocalDate,
     val sendtTilAdresse: String,
-) : Ordrelinje
+    var serienumre: List<String> = listOf(),
+)

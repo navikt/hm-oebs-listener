@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.api
+package no.nav.hjelpemidler.oebs.listener.api
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -11,8 +11,8 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
-import no.nav.hjelpemidler.Context
-import no.nav.hjelpemidler.model.SfMessage
+import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.model.SfMessage
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -101,6 +101,6 @@ private fun publiserMelding(
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()
         sikkerlogg.error(e) { "Sending til rapid feilet" }
-        throw RapidsAndRiverException("Noe gikk feil ved publisering av melding")
+        error("Noe gikk feil ved publisering av melding")
     }
 }

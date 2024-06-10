@@ -32,7 +32,7 @@ dependencies {
 
 application {
     applicationName = "hm-oebs-listener"
-    mainClass.set("no.nav.hjelpemidler.ApplicationKt")
+    mainClass.set("no.nav.hjelpemidler.oebs.listener.ApplicationKt")
 }
 
 spotless {

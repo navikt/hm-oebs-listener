@@ -1,14 +1,14 @@
-package no.nav.hjelpemidler.api
+package no.nav.hjelpemidler.oebs.listener.api
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
-import no.nav.hjelpemidler.Context
-import no.nav.hjelpemidler.Slack
 import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.model.OrdrelinjeMessage
-import no.nav.hjelpemidler.model.OrdrelinjeOebs
-import no.nav.hjelpemidler.model.toOrdrelinje
+import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.Slack
+import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
+import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
+import no.nav.hjelpemidler.oebs.listener.model.toOrdrelinje
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -16,7 +16,7 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-fun infotrygdOrdrelinjeOk(
+fun infotrygdOrdrelinjeOK(
     context: Context,
     ordrelinje: OrdrelinjeOebs,
 ): Boolean {
@@ -35,7 +35,7 @@ fun infotrygdOrdrelinjeOk(
     return true
 }
 
-fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs) =
+fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs): OrdrelinjeMessage =
     OrdrelinjeMessage(
         eventId = UUID.randomUUID(),
         eventName = "hm-NyOrdrelinje",

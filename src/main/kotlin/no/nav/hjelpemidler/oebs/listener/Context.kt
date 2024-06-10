@@ -1,12 +1,12 @@
-package no.nav.hjelpemidler
+package no.nav.hjelpemidler.oebs.listener
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.hjelpemidler.metrics.InfluxClient
-import no.nav.hjelpemidler.metrics.Metrics
+import no.nav.hjelpemidler.oebs.listener.metrics.InfluxClient
+import no.nav.hjelpemidler.oebs.listener.metrics.Metrics
 
 class Context(
     private val messageContext: MessageContext,

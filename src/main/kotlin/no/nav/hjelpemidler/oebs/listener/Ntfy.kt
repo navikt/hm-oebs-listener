@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler
+package no.nav.hjelpemidler.oebs.listener
 
 import com.fasterxml.jackson.annotation.JsonValue
 import io.github.oshai.kotlinlogging.KotlinLogging

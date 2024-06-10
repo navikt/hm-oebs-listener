@@ -1,7 +1,7 @@
-package no.nav.hjelpemidler.model
+package no.nav.hjelpemidler.oebs.listener.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import no.nav.hjelpemidler.api.ServiceForespørselEndring
+import no.nav.hjelpemidler.oebs.listener.api.ServiceForespørselEndring
 import java.time.LocalDateTime
 import java.util.UUID
 

@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler
+package no.nav.hjelpemidler.oebs.listener
 
 import no.nav.hjelpemidler.configuration.EnvironmentVariable
 

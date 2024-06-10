@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.metrics
+package no.nav.hjelpemidler.oebs.listener.metrics
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.helse.rapids_rivers.MessageContext

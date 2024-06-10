@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.model
+package no.nav.hjelpemidler.oebs.listener.model
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -73,12 +73,12 @@ data class OrdrelinjeOebs(
     val serienumre: List<String>? = emptyList(),
 )
 
-fun OrdrelinjeOebs.fiksTommeSerienumre() = this.copy(serienumre = this.serienumre?.map { it.trim() }?.filter { it != "" })
+fun OrdrelinjeOebs.fiksTommeSerienumre(): OrdrelinjeOebs = this.copy(serienumre = this.serienumre?.map { it.trim() }?.filter { it != "" })
 
-fun OrdrelinjeOebs.erOpprettetFraHOTSAK() = kilde != null && kilde == HOTSAK // I OEBS så får alt fra Digihot kilde==HOTSAK
+fun OrdrelinjeOebs.erOpprettetFraHotsak(): Boolean = kilde != null && kilde == HOTSAK // I OEBS så får alt fra Digihot kilde==HOTSAK
 
-fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje {
-    return RåOrdrelinje(
+fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje =
+    RåOrdrelinje(
         mottakendeSystem = this.mottakendeSystem,
         oebsId = this.oebsId,
         serviceforespørsel = this.serviceforespørsel,
@@ -107,10 +107,9 @@ fun OrdrelinjeOebs.toRåOrdrelinje(): RåOrdrelinje {
         sendtTilAdresse = this.sendtTilAdresse,
         serienumre = this.serienumre ?: listOf(),
     )
-}
 
-fun OrdrelinjeOebs.toHotsakOrdrelinje(): HotsakOrdrelinje {
-    return HotsakOrdrelinje(
+fun OrdrelinjeOebs.toHotsakOrdrelinje(): HotsakOrdrelinje =
+    HotsakOrdrelinje(
         mottakendeSystem = this.mottakendeSystem,
         oebsId = this.oebsId,
         serviceforespørsel = this.serviceforespørsel,
@@ -136,10 +135,9 @@ fun OrdrelinjeOebs.toHotsakOrdrelinje(): HotsakOrdrelinje {
         sistOppdatert = this.sistOppdatert,
         sendtTilAdresse = this.sendtTilAdresse,
     )
-}
 
-fun OrdrelinjeOebs.toOrdrelinje(): InfotrygdOrdrelinje {
-    return InfotrygdOrdrelinje(
+fun OrdrelinjeOebs.toOrdrelinje(): InfotrygdOrdrelinje =
+    InfotrygdOrdrelinje(
         this.mottakendeSystem,
         this.oebsId,
         this.serviceforespørsel,
@@ -165,4 +163,3 @@ fun OrdrelinjeOebs.toOrdrelinje(): InfotrygdOrdrelinje {
         this.sistOppdatert,
         this.sendtTilAdresse,
     )
-}

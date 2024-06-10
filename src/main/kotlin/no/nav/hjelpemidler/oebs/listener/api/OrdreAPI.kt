@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.api
+package no.nav.hjelpemidler.oebs.listener.api
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
@@ -7,11 +7,11 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
-import no.nav.hjelpemidler.Context
-import no.nav.hjelpemidler.Ntfy
-import no.nav.hjelpemidler.SLACK_RECIPIENT
-import no.nav.hjelpemidler.Slack
 import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.Ntfy
+import no.nav.hjelpemidler.oebs.listener.SLACK_RECIPIENT
+import no.nav.hjelpemidler.oebs.listener.Slack
 import java.time.LocalDateTime
 import java.util.UUID
 
