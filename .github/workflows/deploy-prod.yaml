@@ -14,5 +14,4 @@ jobs:
     uses: navikt/hm-workflows/.github/workflows/deploy-prod.yaml@main
     with:
       manifest: .nais/nais-prod.yaml
-      vars: .nais/prod.json
     secrets: inherit
