@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.oebs
+package no.nav.hjelpemidler.oebs.listener
 
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.bearerAuth
@@ -12,7 +12,6 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
-import no.nav.hjelpemidler.oebs.listener.token
 import kotlin.test.Test
 
 class TokenAuthenticationProviderTest {

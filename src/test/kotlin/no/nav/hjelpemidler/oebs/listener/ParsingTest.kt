@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.oebs
+package no.nav.hjelpemidler.oebs.listener
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper

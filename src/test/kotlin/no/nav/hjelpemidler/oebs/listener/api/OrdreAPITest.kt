@@ -15,8 +15,8 @@ import io.ktor.server.testing.testApplication
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.shouldBe
 import no.nav.hjelpemidler.oebs.listener.token
-import no.nav.hjelpemidler.oebs.shouldBe
 import kotlin.test.Test
 
 class OrdreAPITest {

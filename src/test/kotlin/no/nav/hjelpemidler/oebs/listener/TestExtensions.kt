@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.oebs
+package no.nav.hjelpemidler.oebs.listener
 
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
