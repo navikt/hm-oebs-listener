@@ -7,6 +7,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import hotsakOrdrelinjeOk
 import infotrygdOrdrelinjeOk
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.oshai.kotlinlogging.coroutines.withLoggingContextAsync
+import io.github.oshai.kotlinlogging.withLoggingContext
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
@@ -15,8 +18,6 @@ import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
-import mu.KotlinLogging
-import mu.withLoggingContext
 import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.model.OrdrelinjeMessage
@@ -40,7 +41,7 @@ private val mapperXml =
 
 fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
-        logg.info("incoming push")
+        logg.info { "incoming push" }
         try {
             // Parse innkommende json/xml
             val ordrelinje =
@@ -56,7 +57,7 @@ fun Route.ordrelinjeAPI(context: Context) {
 
             // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
             if (!erOrdrelinjeRelevantForHotsak(context, ordrelinje)) {
-                logg.info("Urelevant ordrelinje mottatt og ignorert")
+                logg.info { "Urelevant ordrelinje mottatt og ignorert" }
                 call.respond(HttpStatusCode.OK)
                 return@post
             }
@@ -65,12 +66,12 @@ fun Route.ordrelinjeAPI(context: Context) {
             val melding =
                 if (ordrelinje.erOpprettetFraHOTSAK()) {
                     if (!hotsakOrdrelinjeOk(context, ordrelinje)) {
-                        logg.info("Hotsak ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer..")
+                        logg.info { "Hotsak ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
                         call.respond(HttpStatusCode.OK)
                         return@post
                     }
                     if (ordrelinje.hotSakSaksnummer?.startsWith("hmdel_") == true) {
-                        logg.info("Ordrelinje fra delebestilling mottatt. Ignorer.")
+                        logg.info { "Ordrelinje fra delebestilling mottatt. Ignorer." }
                         sikkerlogg.info { "Ignorert ordrelinje for delebestilling: $ordrelinje" }
                         return@post call.respond(HttpStatusCode.OK)
                     }
@@ -78,7 +79,7 @@ fun Route.ordrelinjeAPI(context: Context) {
                     opprettHotsakOrdrelinje(ordrelinje)
                 } else {
                     if (!infotrygdOrdrelinjeOk(context, ordrelinje)) {
-                        logg.warn("Infotrygd ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer..")
+                        logg.warn { "Infotrygd ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
                         call.respond(HttpStatusCode.OK)
                         return@post
                     }
@@ -109,12 +110,12 @@ private suspend fun parseOrdrelinje(
     val requestBody: String = call.receiveText()
     context.metrics.meldingFraOebs()
     if (!Environment.current.tier.isProd) {
-        withLoggingContext(
+        withLoggingContextAsync(
             mapOf(
                 "requestBody" to requestBody,
             ),
         ) {
-            sikkerlogg.info("Received $incomingFormatType push request from OEBS")
+            sikkerlogg.info { "Received $incomingFormatType push request from OEBS" }
         }
     }
 
@@ -129,19 +130,19 @@ private suspend fun parseOrdrelinje(
             }.fiksTommeSerienumre()
 
         if (!Environment.current.tier.isProd) {
-            withLoggingContext(
+            withLoggingContextAsync(
                 mapOf(
                     "ordrelinje" to mapperJson.writeValueAsString(ordrelinje),
                 ),
             ) {
-                sikkerlogg.info("Parsing incoming $incomingFormatType request successful")
+                sikkerlogg.info { "Parsing incoming $incomingFormatType request successful" }
             }
         }
         context.metrics.oebsParsingOk()
         return ordrelinje
     } catch (e: Exception) {
         // Deal with invalid json/xml in request
-        withLoggingContext(
+        withLoggingContextAsync(
             mapOf(
                 "requestBody" to requestBody,
             ),
@@ -158,7 +159,7 @@ private fun sendUvalidertOrdrelinjeTilRapid(
     ordrelinje: RåOrdrelinje,
 ) {
     try {
-        logg.info(
+        logg.info {
             buildString {
                 append("Publiserer uvalidert ordrelinje med oebsId: ")
                 append(ordrelinje.oebsId)
@@ -166,8 +167,8 @@ private fun sendUvalidertOrdrelinjeTilRapid(
                 append(ordrelinje.ordrenr)
                 append(" til rapid i miljø: ")
                 append(Environment.current)
-            },
-        )
+            }
+        }
         context.publish(
             ordrelinje.fnrBruker,
             mapperJson.writeValueAsString(
@@ -193,20 +194,18 @@ private fun erOrdrelinjeRelevantForHotsak(
 ): Boolean {
     if (ordrelinje.serviceforespørseltype != "Vedtak Infotrygd") {
         if (ordrelinje.serviceforespørseltype == "") {
-            logg.info(
-                "Mottok melding fra OEBS som ikke er en SF. Avbryter prosesseringen og returnerer",
-            )
+            logg.info { "Mottok melding fra OEBS som ikke er en SF. Avbryter prosesseringen og returnerer" }
             context.metrics.sfTypeBlank()
         } else {
-            logg.info(
+            logg.info {
                 buildString {
                     append("Mottok melding fra oebs med serviceforespørseltype: ")
                     append(ordrelinje.serviceforespørseltype)
                     append(" og serviceforespørselstatus: ")
                     append(ordrelinje.serviceforespørselstatus)
                     append(". Avbryter prosesseringen og returnerer")
-                },
-            )
+                }
+            }
             context.metrics.sfTypeUlikVedtakInfotrygd()
         }
         return false
@@ -218,7 +217,7 @@ private fun erOrdrelinjeRelevantForHotsak(
         ordrelinje.hjelpemiddeltype != "Individstyrt hjelpemiddel" &&
         ordrelinje.hjelpemiddeltype != "Del"
     ) {
-        logg.info("Mottok melding fra OEBS med irrelevant hjelpemiddeltype: ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering")
+        logg.info { "Mottok melding fra OEBS med irrelevant hjelpemiddeltype: ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering" }
         context.metrics.irrelevantHjelpemiddeltype()
         return false
     } else {
@@ -234,7 +233,7 @@ private fun publiserMelding(
     melding: OrdrelinjeMessage,
 ) {
     try {
-        logg.info("Publiserer ordrelinje med oebsId: ${ordrelinje.oebsId} til rapid i miljø: ${Environment.current}")
+        logg.info { "Publiserer ordrelinje med oebsId: ${ordrelinje.oebsId} til rapid i miljø: ${Environment.current}" }
         context.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
         context.metrics.meldingTilRapidSuksess()
 
@@ -248,7 +247,7 @@ private fun publiserMelding(
                 "ordrelinje" to mapperJson.writeValueAsString(ordrelinje),
             ),
         ) {
-            sikkerlogg.info("Ordrelinje med oebsId: ${ordrelinje.oebsId} mottatt og sendt til rapid")
+            sikkerlogg.info { "Ordrelinje med oebsId: ${ordrelinje.oebsId} mottatt og sendt til rapid" }
         }
     } catch (e: Exception) {
         context.metrics.meldingTilRapidFeilet()

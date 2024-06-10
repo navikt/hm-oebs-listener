@@ -1,6 +1,6 @@
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.Slack
 import no.nav.hjelpemidler.configuration.Environment
@@ -19,10 +19,10 @@ fun infotrygdOrdrelinjeOk(
     ordrelinje: OrdrelinjeOebs,
 ): Boolean {
     if (ordrelinje.saksblokkOgSaksnr?.isBlank() == true || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
-        logg.warn("Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!")
+        logg.warn { "Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!" }
         ordrelinje.fnrBruker = "MASKERT"
         val message = mapperJson.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
-        sikkerlogg.warn("Vedtak Infotrygd-melding med manglande informasjon: $message")
+        sikkerlogg.warn { "Vedtak Infotrygd-melding med manglande informasjon: $message" }
         context.metrics.manglendeFeltForVedtakInfotrygd()
         Slack.post(
             text = "*${Environment.current}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",

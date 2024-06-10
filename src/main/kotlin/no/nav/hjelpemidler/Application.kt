@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -9,7 +10,6 @@ import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
 import io.ktor.server.routing.routing
-import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidApplication.RapidApplicationConfig
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -53,7 +53,7 @@ fun main() {
                 }
             }.build()
 
-    log.info("hm-oebs-listener with environment: ${Environment.current} starting...")
+    log.info { "hm-oebs-listener with environment: ${Environment.current} starting..." }
     rapidApp.start()
-    log.info("Application stopping...")
+    log.info { "Application stopping..." }
 }

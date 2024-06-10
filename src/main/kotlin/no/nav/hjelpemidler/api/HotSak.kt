@@ -1,6 +1,6 @@
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.Context
 import no.nav.hjelpemidler.Slack
 import no.nav.hjelpemidler.configuration.Environment
@@ -19,10 +19,10 @@ fun hotsakOrdrelinjeOk(
     ordrelinje: OrdrelinjeOebs,
 ): Boolean {
     if (ordrelinje.hotSakSaksnummer.isNullOrBlank()) {
-        logg.warn("Melding frå OEBS manglar HOTSAK saksnummer")
+        logg.warn { "Melding frå OEBS manglar HOTSAK saksnummer" }
         ordrelinje.fnrBruker = "MASKERT"
         val message = mapperJson.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
-        sikkerlogg.warn("Vedtak HOTSAK-melding med manglende informasjon: $message")
+        sikkerlogg.warn { "Vedtak HOTSAK-melding med manglende informasjon: $message" }
         context.metrics.manglendeFeltForVedtakHOTSAK()
         Slack.post(
             text = "*${Environment.current}* - Manglende felt i Hotsak Oebs ordrelinje: ```$message```",

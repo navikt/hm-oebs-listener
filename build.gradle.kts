@@ -20,7 +20,7 @@ dependencies {
 
     // Ktor
     implementation(libs.ktor.serialization.jackson)
-    implementation(libs.ktor.server.auth.jvm)
+    implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.content.negotiation)
 

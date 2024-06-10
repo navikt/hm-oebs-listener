@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler
 
 import com.fasterxml.jackson.annotation.JsonValue
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -9,7 +10,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.http.createHttpClient
 
@@ -27,7 +27,10 @@ object Ntfy {
                     }
                 when (response.status) {
                     HttpStatusCode.OK -> Unit
-                    else -> log.warn("Feil under publisering til ntfy: ${response.body<Map<String, Any?>>()}")
+                    else -> {
+                        val body = response.body<Map<String, Any?>>()
+                        log.warn { "Feil under publisering til ntfy: $body" }
+                    }
                 }
             }
         }.getOrElse {

@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.metrics
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.helse.rapids_rivers.MessageContext
 
 private val log = KotlinLogging.logger {}
