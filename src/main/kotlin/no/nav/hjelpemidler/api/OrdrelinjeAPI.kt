@@ -5,8 +5,6 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import hotsakOrdrelinjeOk
-import infotrygdOrdrelinjeOk
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.coroutines.withLoggingContextAsync
 import io.github.oshai.kotlinlogging.withLoggingContext
@@ -27,8 +25,6 @@ import no.nav.hjelpemidler.model.UvalidertOrdrelinjeMessage
 import no.nav.hjelpemidler.model.erOpprettetFraHOTSAK
 import no.nav.hjelpemidler.model.fiksTommeSerienumre
 import no.nav.hjelpemidler.model.toRåOrdrelinje
-import opprettHotsakOrdrelinje
-import opprettInfotrygdOrdrelinje
 import java.time.LocalDateTime
 import java.util.UUID
 
