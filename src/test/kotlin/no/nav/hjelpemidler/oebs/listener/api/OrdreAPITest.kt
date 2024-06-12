@@ -20,7 +20,7 @@ import no.nav.hjelpemidler.oebs.listener.token
 import kotlin.test.Test
 
 class OrdreAPITest {
-    private val context = Context(mockk(relaxed = true), mockk(relaxed = true))
+    private val context = Context(mockk(relaxed = true))
 
     @Test
     fun `sender ut ordrekvittering på rapid`() =

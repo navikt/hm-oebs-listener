@@ -97,9 +97,7 @@ private fun publiserMelding(
             serviceForespørselEndring.saknummer,
             mapperJson.writeValueAsString(sfMessage),
         )
-        context.metrics.meldingTilRapidSuksess()
     } catch (e: Exception) {
-        context.metrics.meldingTilRapidFeilet()
         sikkerlogg.error(e) { "Sending til rapid feilet" }
         error("Noe gikk feil ved publisering av melding")
     }

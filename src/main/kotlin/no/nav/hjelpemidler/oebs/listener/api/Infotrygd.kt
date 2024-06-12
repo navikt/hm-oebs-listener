@@ -4,7 +4,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
@@ -16,16 +15,12 @@ private val logg = KotlinLogging.logger {}
 private val sikkerlogg = KotlinLogging.logger("tjenestekall")
 private val mapperJson = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-fun infotrygdOrdrelinjeOK(
-    context: Context,
-    ordrelinje: OrdrelinjeOebs,
-): Boolean {
+fun infotrygdOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
     if (ordrelinje.saksblokkOgSaksnr?.isBlank() == true || ordrelinje.vedtaksdato == null || ordrelinje.fnrBruker.isBlank()) {
         logg.warn { "Melding frå OEBS manglar saksblokk, vedtaksdato eller fnr!" }
         ordrelinje.fnrBruker = "MASKERT"
         val message = mapperJson.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
         sikkerlogg.warn { "Vedtak Infotrygd-melding med manglande informasjon: $message" }
-        context.metrics.manglendeFeltForVedtakInfotrygd()
         Slack.post(
             text = "*${Environment.current}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
             channel = "#digihot-brukers-hjelpemiddelside-dev",

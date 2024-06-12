@@ -52,7 +52,7 @@ fun Route.ordrelinjeAPI(context: Context) {
             sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
 
             // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
-            if (!erOrdrelinjeRelevantForHotsak(context, ordrelinje)) {
+            if (!erOrdrelinjeRelevantForHotsak(ordrelinje)) {
                 logg.info { "Urelevant ordrelinje mottatt og ignorert" }
                 call.respond(HttpStatusCode.OK)
                 return@post
@@ -61,7 +61,7 @@ fun Route.ordrelinjeAPI(context: Context) {
             // Anti-corruption lag
             val melding =
                 if (ordrelinje.erOpprettetFraHotsak()) {
-                    if (!hotsakOrdrelinjeOK(context, ordrelinje)) {
+                    if (!hotsakOrdrelinjeOK(ordrelinje)) {
                         logg.info { "Hotsak ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
                         call.respond(HttpStatusCode.OK)
                         return@post
@@ -71,15 +71,13 @@ fun Route.ordrelinjeAPI(context: Context) {
                         sikkerlogg.info { "Ignorert ordrelinje for delebestilling: $ordrelinje" }
                         return@post call.respond(HttpStatusCode.OK)
                     }
-                    context.metrics.hotsakSF()
                     opprettHotsakOrdrelinje(ordrelinje)
                 } else {
-                    if (!infotrygdOrdrelinjeOK(context, ordrelinje)) {
+                    if (!infotrygdOrdrelinjeOK(ordrelinje)) {
                         logg.warn { "Infotrygd ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
                         call.respond(HttpStatusCode.OK)
                         return@post
                     }
-                    context.metrics.infotrygdSF()
                     opprettInfotrygdOrdrelinje(ordrelinje)
                 }
 
@@ -104,7 +102,6 @@ private suspend fun parseOrdrelinje(
     }
 
     val requestBody: String = call.receiveText()
-    context.metrics.meldingFraOebs()
     if (!Environment.current.tier.isProd) {
         withLoggingContextAsync(
             mapOf(
@@ -134,7 +131,6 @@ private suspend fun parseOrdrelinje(
                 sikkerlogg.info { "Parsing incoming $incomingFormatType request successful" }
             }
         }
-        context.metrics.oebsParsingOk()
         return ordrelinje
     } catch (e: Exception) {
         // Deal with invalid json/xml in request
@@ -145,7 +141,6 @@ private suspend fun parseOrdrelinje(
         ) {
             sikkerlogg.error(e) { "Parsing incoming $incomingFormatType request failed with exception (responding 4xx)" }
         }
-        context.metrics.oebsParsingFeilet()
         return null
     }
 }
@@ -176,22 +171,16 @@ private fun sendUvalidertOrdrelinjeTilRapid(
                 ),
             ),
         )
-        context.metrics.meldingTilRapidSuksess()
     } catch (e: Exception) {
-        context.metrics.meldingTilRapidFeilet()
         sikkerlogg.error(e) { "Sending av uvalidert ordrelinje til rapid feilet" }
         error("Noe gikk feil ved publisering av melding")
     }
 }
 
-private fun erOrdrelinjeRelevantForHotsak(
-    context: Context,
-    ordrelinje: OrdrelinjeOebs,
-): Boolean {
+private fun erOrdrelinjeRelevantForHotsak(ordrelinje: OrdrelinjeOebs): Boolean {
     if (ordrelinje.serviceforespørseltype != "Vedtak Infotrygd") {
         if (ordrelinje.serviceforespørseltype == "") {
             logg.info { "Mottok melding fra OEBS som ikke er en SF. Avbryter prosesseringen og returnerer" }
-            context.metrics.sfTypeBlank()
         } else {
             logg.info {
                 buildString {
@@ -202,11 +191,8 @@ private fun erOrdrelinjeRelevantForHotsak(
                     append(". Avbryter prosesseringen og returnerer")
                 }
             }
-            context.metrics.sfTypeUlikVedtakInfotrygd()
         }
         return false
-    } else {
-        context.metrics.sfTypeVedtakInfotrygd()
     }
 
     if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel" &&
@@ -214,10 +200,7 @@ private fun erOrdrelinjeRelevantForHotsak(
         ordrelinje.hjelpemiddeltype != "Del"
     ) {
         logg.info { "Mottok melding fra OEBS med irrelevant hjelpemiddeltype: ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering" }
-        context.metrics.irrelevantHjelpemiddeltype()
         return false
-    } else {
-        context.metrics.rettHjelpemiddeltype()
     }
 
     return true
@@ -231,7 +214,6 @@ private fun publiserMelding(
     try {
         logg.info { "Publiserer ordrelinje med oebsId: ${ordrelinje.oebsId} til rapid i miljø: ${Environment.current}" }
         context.publish(ordrelinje.fnrBruker, mapperJson.writeValueAsString(melding))
-        context.metrics.meldingTilRapidSuksess()
 
         ordrelinje.fnrBruker = "MASKERT"
         if (ordrelinje.sendtTilAdresse.take(4).toIntOrNull() == null) {
@@ -246,7 +228,6 @@ private fun publiserMelding(
             sikkerlogg.info { "Ordrelinje med oebsId: ${ordrelinje.oebsId} mottatt og sendt til rapid" }
         }
     } catch (e: Exception) {
-        context.metrics.meldingTilRapidFeilet()
         sikkerlogg.error(e) { "Sending til rapid feilet" }
         error("Noe gikk feil ved publisering av melding")
     }

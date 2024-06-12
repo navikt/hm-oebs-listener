@@ -5,7 +5,6 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.influxdb.client.kotlin)
     implementation(libs.rapidsAndRivers)
     implementation(libs.hm.http)
 
