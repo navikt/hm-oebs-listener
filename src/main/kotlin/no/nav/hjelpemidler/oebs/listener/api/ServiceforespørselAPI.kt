@@ -59,7 +59,7 @@ data class ServiceForespørselOrdre(
 )
 
 enum class SFEndringType(value: String) {
-    OPPRETTET("opprettet"),
+    OPPRETTET("Opprettet"),
     LUKKET("Lukket"),
     TILORDNET("Tilordnet"),
     ;
