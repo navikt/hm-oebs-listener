@@ -58,10 +58,11 @@ data class ServiceForespørselOrdre(
     val status: String,
 )
 
-enum class SFEndringType(value: String) {
+enum class SFEndringType(val value: String) {
     OPPRETTET("Opprettet"),
     LUKKET("Lukket"),
     TILORDNET("Tilordnet"),
+    FEIL_KOSTNADSLINJER("Feil i kostnadslinjer"),
     ;
 
     companion object {
