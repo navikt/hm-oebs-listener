@@ -1,9 +1,6 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
-import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -16,13 +13,12 @@ import no.nav.hjelpemidler.oebs.listener.model.SfMessage
 import java.time.LocalDateTime
 import java.util.UUID
 
-private val logg = KotlinLogging.logger {}
-private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-private val mapperJson = jacksonMapperBuilder().addModule(JavaTimeModule()).build()
+private val log = KotlinLogging.logger {}
+private val secureLog = KotlinLogging.logger("tjenestekall")
 
 fun Route.serviceforespørselAPI(context: Context) {
     post("/sf") {
-        logg.info { "incoming sf-oppdatering" }
+        log.info { "incoming sf-oppdatering" }
         try {
             val serviceForespørselEndring = call.receive<ServiceForespørselEndring>()
             val sfMessage =
@@ -35,7 +31,7 @@ fun Route.serviceforespørselAPI(context: Context) {
             publiserMelding(context, serviceForespørselEndring, sfMessage)
             call.respond(HttpStatusCode.OK)
         } catch (e: Exception) {
-            logg.error(e) { "Feil under prosessering" }
+            log.error(e) { "Feil under prosessering" }
             call.respond(HttpStatusCode.InternalServerError, "Feil under prosessering")
             return@post
         }
@@ -58,18 +54,11 @@ data class ServiceForespørselOrdre(
     val status: String,
 )
 
-enum class SFEndringType(val value: String) {
-    OPPRETTET("Opprettet"),
-    LUKKET("Lukket"),
-    TILORDNET("Tilordnet"),
-    FEIL_KOSTNADSLINJER("Feil i kostnadslinjer"),
-    ;
-
-    companion object {
-        @JvmStatic
-        @JsonCreator
-        fun fromString(value: String) = valueOf(value.uppercase())
-    }
+enum class SFEndringType {
+    OPPRETTET,
+    LUKKET,
+    TILORDNET,
+    FEIL_KOSTNADSLINJER,
 }
 
 private fun publiserMelding(
@@ -78,7 +67,7 @@ private fun publiserMelding(
     sfMessage: SfMessage,
 ) {
     try {
-        logg.info {
+        log.info {
             buildString {
                 append("Publiserer oppdatering for SF fra OEBS med id: ")
                 append(serviceForespørselEndring.id)
@@ -96,10 +85,10 @@ private fun publiserMelding(
         }
         context.publish(
             serviceForespørselEndring.saknummer,
-            mapperJson.writeValueAsString(sfMessage),
+            sfMessage,
         )
     } catch (e: Exception) {
-        sikkerlogg.error(e) { "Sending til rapid feilet" }
+        secureLog.error(e) { "Sending til rapid feilet" }
         error("Noe gikk feil ved publisering av melding")
     }
 }

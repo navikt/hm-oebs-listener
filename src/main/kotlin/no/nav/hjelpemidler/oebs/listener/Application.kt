@@ -1,8 +1,8 @@
 package no.nav.hjelpemidler.oebs.listener
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.ktor.serialization.jackson.jackson
+import io.ktor.http.ContentType
+import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
@@ -38,10 +38,10 @@ fun main() {
                     }
                 }
                 install(ContentNegotiation) {
-                    jackson { registerModule(JavaTimeModule()) }
+                    register(ContentType.Application.Json, JacksonConverter(jsonMapper))
                 }
                 install(Authentication) {
-                    token("oebsToken") { validate(OEBSTOKEN) }
+                    token("oebsToken") { validate(Configuration.OEBSTOKEN) }
                 }
                 val context = Context(rapidApp)
                 routing {

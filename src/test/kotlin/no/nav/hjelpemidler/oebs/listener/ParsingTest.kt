@@ -15,12 +15,8 @@ class ParsingTest {
     @ExperimentalTime
     @Test
     fun `Parse vedtaksdato to LocalDate`() {
-        val mapper = jacksonObjectMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            jsonMapper.readValue(
                 """
                 {
                     "System": "DIGIHOT",
@@ -54,7 +50,7 @@ class ParsingTest {
         println(result.toString())
         assertEquals(LocalDate.of(2021, 4, 4), result.vedtaksdato)
         assertEquals(LocalDate.of(2021, 4, 5), result.sistOppdatert)
-        println(mapper.writeValueAsString(result))
+        println(jsonMapper.writeValueAsString(result))
     }
 
     @ExperimentalTime

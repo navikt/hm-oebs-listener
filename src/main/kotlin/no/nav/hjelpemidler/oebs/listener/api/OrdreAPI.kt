@@ -8,9 +8,9 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.oebs.listener.Configuration
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.Ntfy
-import no.nav.hjelpemidler.oebs.listener.SLACK_RECIPIENT
 import no.nav.hjelpemidler.oebs.listener.Slack
 import java.time.LocalDateTime
 import java.util.UUID
@@ -71,7 +71,7 @@ fun Route.ordreAPI(context: Context) {
             )
             if (Environment.current.tier.isProd) {
                 Slack.post(
-                    text = "*${Environment.current}* - $feilmelding - <@$SLACK_RECIPIENT>",
+                    text = "*${Environment.current}* - $feilmelding - <@${Configuration.SLACK_RECIPIENT}>",
                     channel = "#digihot-oebs",
                 )
                 Ntfy.publish(

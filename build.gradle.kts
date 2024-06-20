@@ -5,13 +5,13 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.kotlin.stdlib)
     implementation(libs.rapidsAndRivers)
     implementation(libs.hm.http)
 
     // Logging
     implementation(libs.kotlin.logging)
-    runtimeOnly(libs.logback.classic)
-    runtimeOnly(libs.logstash.logback.encoder)
+    runtimeOnly(libs.bundles.logging.runtime)
 
     // Jackson
     implementation(libs.jackson.dataformat.xml)

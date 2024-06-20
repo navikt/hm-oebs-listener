@@ -21,7 +21,7 @@ object Ntfy {
         runCatching {
             runBlocking(Dispatchers.IO) {
                 val response =
-                    client.post(NTFY_URL) {
+                    client.post(Configuration.NTFY_URL) {
                         contentType(ContentType.Application.Json)
                         setBody(notification.copy(tags = notification.tags + setOf(Environment.current.toString())))
                     }
@@ -38,7 +38,7 @@ object Ntfy {
         }
 
     data class Notification(
-        val topic: String = NTFY_TOPIC,
+        val topic: String = Configuration.NTFY_TOPIC,
         val title: String? = null,
         val message: String? = null,
         val priority: Priority = Priority.DEFAULT,

@@ -15,6 +15,7 @@ import io.ktor.server.testing.testApplication
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.jsonMapper
 import no.nav.hjelpemidler.oebs.listener.shouldBe
 import no.nav.hjelpemidler.oebs.listener.token
 import kotlin.test.Test
@@ -27,7 +28,7 @@ class OrdreAPITest {
         testApplication {
             configure()
             val body =
-                context.jsonMapper.writeValueAsString(
+                jsonMapper.writeValueAsString(
                     Ordrekvittering(
                         id = "1",
                         saksnummer = "2",
@@ -53,7 +54,7 @@ class OrdreAPITest {
         testApplication {
             configure()
             val body =
-                context.jsonMapper.writeValueAsString(
+                jsonMapper.writeValueAsString(
                     Ordrefeilmelding(
                         id = "1",
                         saksnummer = "2",
