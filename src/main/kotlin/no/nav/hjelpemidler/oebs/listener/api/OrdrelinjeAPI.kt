@@ -47,7 +47,7 @@ fun Route.ordrelinjeAPI(context: Context) {
 
             // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
             if (!erOrdrelinjeRelevantForHotsak(ordrelinje)) {
-                log.info { "Urelevant ordrelinje mottatt og ignorert" }
+                log.info { "Irrelevant ordrelinje mottatt og ignorert" }
                 call.respond(HttpStatusCode.OK)
                 return@post
             }
