@@ -19,10 +19,10 @@ fun infotrygdOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
         ordrelinje.fnrBruker = "MASKERT"
         val message = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
         secureLog.warn { "Vedtak Infotrygd-melding med manglande informasjon: $message" }
-        Slack.post(
-            text = "*${Environment.current}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
-            channel = "#digihot-brukers-hjelpemiddelside-dev",
-        )
+        // Slack.post(
+        //     text = "*${Environment.current}* - Manglande felt i Vedtak Infotrygd-melding: ```$message```",
+        //     channel = "#digihot-brukers-hjelpemiddelside-dev",
+        // )
         return false
     }
     return true
