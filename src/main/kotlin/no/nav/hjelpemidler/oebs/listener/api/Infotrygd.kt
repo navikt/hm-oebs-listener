@@ -1,8 +1,6 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
