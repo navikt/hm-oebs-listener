@@ -6,7 +6,7 @@ Authorization: Bearer {{oebstoken}}
 
 {
   "System": "DIGIHOT",
-  "Id": 14,
+  "Id": 203,
   "IncidentNummer": 1,
   "IncidentStatus": "Closed",
   "IncidentType": "Vedtak Infotrygd",
@@ -40,7 +40,7 @@ Authorization: Bearer {{oebstoken}}
 
 {
   "System": "DIGIHOT",
-  "Id": 15,
+  "Id": 230,
   "IncidentNummer": 1,
   "IncidentStatus": "Closed",
   "IncidentType": "Vedtak Infotrygd",
@@ -109,7 +109,7 @@ Authorization: Bearer {{oebstoken}}
 
 {
   "System": "DIGIHOT",
-  "Id": 1,
+  "Id": 300,
   "IncidentNummer": 1,
   "IncidentStatus": "Closed",
   "IncidentType": "Vedtak Infotrygd",
@@ -133,6 +133,7 @@ Authorization: Bearer {{oebstoken}}
   "EgenAnsatt": "N",
   "LastUpdateDate": "{{vedtaksDato}}",
   "Description": "Topro Terskeleliminator",
+  "SerieNummerListe":["123456", "654321"],
   "SendTilAddresse1": "{{sendtTilAdresse}}"
 }
 
