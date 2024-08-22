@@ -42,11 +42,6 @@ fun Route.ordrelinjeAPI(context: Context) {
                 secureLog.info { "Delbestilling ordrelinje: <$ordrelinje>" }
             }
 
-            // Debuglog først for å se hva ordrelinjen for bytter inneholder
-            if (ordrelinje.serviceforespørseltype == "Bytte av hjelpemiddel") {
-                secureLog.info { "[DEBUG] Mottatt serviceforespørseltype=BYTTE for ordrelinje: $ordrelinje" }
-            }
-
             // Vi deler alle typer ordrelinjer med delbestilling (som sjekker på ordrenummer) og kommune-apiet
             sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
 
