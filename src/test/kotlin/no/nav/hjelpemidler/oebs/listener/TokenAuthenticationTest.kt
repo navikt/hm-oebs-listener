@@ -8,8 +8,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import no.nav.hjelpemidler.oebs.listener.api.SFEndringType
-import no.nav.hjelpemidler.oebs.listener.api.ServiceforespørselEndring
+import no.nav.hjelpemidler.oebs.listener.test.Fixtures
 import no.nav.hjelpemidler.oebs.listener.test.runTest
 import no.nav.hjelpemidler.oebs.listener.test.validToken
 import kotlin.test.Test
@@ -49,17 +48,7 @@ class TokenAuthenticationTest {
                 client.post("/sf") {
                     validToken()
                     contentType(ContentType.Application.Json)
-                    setBody(
-                        ServiceforespørselEndring(
-                            system = "HOTSAK",
-                            id = "1",
-                            sfnummer = "1",
-                            saksnummer = "1",
-                            antallKostnadslinjer = "1",
-                            ordre = emptyList(),
-                            status = SFEndringType.OPPRETTET,
-                        ),
-                    )
+                    setBody(Fixtures.lagServiceforespørselEndring())
                 }
             response.status shouldBe HttpStatusCode.OK
         }

@@ -8,6 +8,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.hjelpemidler.oebs.listener.model.ServiceforespørselEndringMessage
+import no.nav.hjelpemidler.oebs.listener.test.Fixtures
 import no.nav.hjelpemidler.oebs.listener.test.runTest
 import no.nav.hjelpemidler.oebs.listener.test.shouldHaveKey
 import no.nav.hjelpemidler.oebs.listener.test.shouldHaveValue
@@ -18,16 +19,7 @@ class ServiceforespørselAPITest {
     @Test
     fun `Sender ut SF-oppdatering på Kafka`() =
         runTest {
-            val endring =
-                ServiceforespørselEndring(
-                    system = "HOTSAK",
-                    id = "1",
-                    sfnummer = "2",
-                    saksnummer = "3",
-                    antallKostnadslinjer = null,
-                    ordre = emptyList(),
-                    status = SFEndringType.OPPRETTET,
-                )
+            val endring = Fixtures.lagServiceforespørselEndring()
 
             val response =
                 client.post("/sf") {
