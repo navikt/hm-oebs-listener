@@ -11,7 +11,9 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.hjelpemidler.configuration.Environment
+import org.intellij.lang.annotations.Language
 
 val jsonMapper: JsonMapper =
     jacksonMapperBuilder()
@@ -24,6 +26,14 @@ val xmlMapper: ObjectMapper =
         .addModules(kotlinModule(), JavaTimeModule())
         .configure()
         .build()
+
+inline fun <reified T> jsonToValue(
+    @Language("JSON") content: String,
+) = jsonMapper.readValue<T>(content)
+
+inline fun <reified T> xmlToValue(
+    @Language("XML") content: String,
+) = xmlMapper.readValue<T>(content)
 
 private fun <M : ObjectMapper, B : MapperBuilder<M, B>> MapperBuilder<M, B>.configure(): B =
     this

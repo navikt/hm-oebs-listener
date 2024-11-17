@@ -8,29 +8,28 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.http.createHttpClient
 
 object Ntfy {
     private val log = KotlinLogging.logger {}
-    private val client = createHttpClient()
+    private val client =
+        createHttpClient {
+            expectSuccess = true
+        }
 
-    fun publish(notification: Notification) =
+    suspend fun publish(notification: Notification) =
         runCatching {
-            runBlocking(Dispatchers.IO) {
-                val response =
-                    client.post(Configuration.NTFY_URL) {
-                        contentType(ContentType.Application.Json)
-                        setBody(notification.copy(tags = notification.tags + setOf(Environment.current.toString())))
-                    }
-                when (response.status) {
-                    HttpStatusCode.OK -> Unit
-                    else -> {
-                        val body = response.body<Map<String, Any?>>()
-                        log.warn { "Feil under publisering til ntfy: $body" }
-                    }
+            val response =
+                client.post(Configuration.NTFY_URL) {
+                    contentType(ContentType.Application.Json)
+                    setBody(notification.copy(tags = notification.tags + setOf(Environment.current.toString())))
+                }
+            when (response.status) {
+                HttpStatusCode.OK -> Unit
+                else -> {
+                    val body = response.body<Map<String, Any?>>()
+                    log.warn { "Feil under publisering til ntfy: $body" }
                 }
             }
         }.getOrElse {

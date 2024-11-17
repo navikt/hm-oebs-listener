@@ -8,13 +8,13 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
+import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.model.SfMessage
 import java.time.LocalDateTime
 import java.util.UUID
 
 private val log = KotlinLogging.logger {}
-private val secureLog = KotlinLogging.logger("tjenestekall")
 
 fun Route.serviceforespørselAPI(context: Context) {
     post("/sf") {
@@ -61,7 +61,7 @@ enum class SFEndringType {
     FEIL_KOSTNADSLINJER,
 }
 
-private fun publiserMelding(
+private suspend fun publiserMelding(
     context: Context,
     serviceForespørselEndring: ServiceForespørselEndring,
     sfMessage: SfMessage,
@@ -69,11 +69,11 @@ private fun publiserMelding(
     try {
         log.info {
             buildString {
-                append("Publiserer oppdatering for SF fra OEBS med id: ")
+                append("Publiserer oppdatering for SF fra OeBS med id: ")
                 append(serviceForespørselEndring.id)
-                append(", sfnummer: ")
+                append(", SF-nummer: ")
                 append(serviceForespørselEndring.sfnummer)
-                append(", saknummer: ")
+                append(", saksnummer: ")
                 append(serviceForespørselEndring.saknummer)
                 append(", status: ")
                 append(serviceForespørselEndring.status)
@@ -88,7 +88,7 @@ private fun publiserMelding(
             sfMessage,
         )
     } catch (e: Exception) {
-        secureLog.error(e) { "Sending til rapid feilet" }
+        secureLog.error(e) { "Sending på Kafka feilet" }
         error("Noe gikk feil ved publisering av melding")
     }
 }

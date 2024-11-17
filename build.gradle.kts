@@ -5,28 +5,29 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlin.stdlib)
-    implementation(libs.rapidsAndRivers)
-    implementation(libs.hm.http)
+    implementation(libs.hotlibs.core)
+    implementation(libs.hotlibs.http)
+    implementation(libs.hotlibs.kafka)
 
     // Logging
     implementation(libs.kotlin.logging)
     runtimeOnly(libs.bundles.logging.runtime)
 
+    // Metrics
+    implementation(libs.micrometer.registry.prometheus)
+
     // Jackson
+    implementation(libs.bundles.jackson)
     implementation(libs.jackson.dataformat.xml)
-    implementation(libs.jackson.datatype.jsr310)
 
     // Ktor
     implementation(libs.ktor.serialization.jackson)
     implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.content.negotiation)
-
-    // Testing
-    testImplementation(libs.kotlin.test.junit5)
-    testImplementation(libs.ktor.server.test.host)
-    testImplementation(libs.mockk)
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.metrics.micrometer)
+    implementation(libs.ktor.server.netty)
 }
 
 application {
@@ -42,6 +43,22 @@ spotless {
     }
 }
 
-kotlin { jvmToolchain(21) }
+@Suppress("UnstableApiUsage")
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useKotlinTest(libs.versions.kotlin.asProvider())
+            dependencies {
+                implementation(libs.kotest.assertions.core)
+                implementation(libs.ktor.server.test.host)
+                implementation(libs.mockk)
+            }
+        }
+    }
+}
 
-tasks.test { useJUnitPlatform() }
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}

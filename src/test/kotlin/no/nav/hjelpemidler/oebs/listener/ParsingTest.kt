@@ -1,22 +1,15 @@
 package no.nav.hjelpemidler.oebs.listener
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import io.kotest.matchers.shouldBe
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import java.time.LocalDate
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.time.ExperimentalTime
 
 class ParsingTest {
-    @ExperimentalTime
     @Test
     fun `Parse vedtaksdato to LocalDate`() {
         val result: OrdrelinjeOebs =
-            jsonMapper.readValue(
+            jsonToValue(
                 """
                 {
                     "System": "DIGIHOT",
@@ -47,21 +40,14 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        println(result.toString())
-        assertEquals(LocalDate.of(2021, 4, 4), result.vedtaksdato)
-        assertEquals(LocalDate.of(2021, 4, 5), result.sistOppdatert)
-        println(jsonMapper.writeValueAsString(result))
+        result.vedtaksdato shouldBe LocalDate.of(2021, 4, 4)
+        result.sistOppdatert shouldBe LocalDate.of(2021, 4, 5)
     }
 
-    @ExperimentalTime
     @Test
     fun `Parse serienumre`() {
-        val mapper = jacksonObjectMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            jsonToValue(
                 """
                 {
                     "System": "DIGIHOT",
@@ -93,22 +79,13 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        println(result.toString())
-        val expected = listOf("660383", "693065", "726136", "733046")
-        for (serienr in result.serienumre ?: listOf()) { //  RåOrdrelinje.serienumreListeFraRå(result.serienumreRå!!)) {
-            assert(expected.contains(serienr)) { "Expected to find only the serial numbers in the raw example" }
-        }
+        result.serienumre shouldBe listOf("660383", "693065", "726136", "733046")
     }
 
-    @ExperimentalTime
     @Test
     fun `Parse tom dato-streng til LocalDate`() {
-        val mapper = jacksonObjectMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            jsonToValue(
                 """
                 {
                     "System": "DIGIHOT",
@@ -139,21 +116,14 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        println(result.toString())
-        assertEquals(null, result.vedtaksdato)
-        assertEquals(LocalDate.of(2021, 4, 5), result.sistOppdatert)
-        println(mapper.writeValueAsString(result))
+        result.vedtaksdato shouldBe null
+        result.sistOppdatert shouldBe LocalDate.of(2021, 4, 5)
     }
 
-    @ExperimentalTime
     @Test
     fun `Parse artikkelnr med leading zero`() {
-        val mapper = jacksonObjectMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            jsonToValue(
                 """
                 {
                     "System": "DIGIHOT",
@@ -184,19 +154,13 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        println(result.toString())
-        assertEquals("012345", result.artikkelnr)
-        println(mapper.writeValueAsString(result))
+        result.artikkelnr shouldBe "012345"
     }
 
     @Test
     fun `Parse XML`() {
-        val mapper = XmlMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            xmlToValue(
                 """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
@@ -227,20 +191,13 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        println(result.toString())
-        assertEquals("012345", result.artikkelnr)
-        println(mapper.writeValueAsString(result))
+        result.artikkelnr shouldBe "012345"
     }
 
-    @ExperimentalTime
     @Test
     fun `Parse int til double`() {
-        val mapper = jacksonObjectMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            jsonToValue(
                 """
                 {
                     "System": "DIGIHOT",
@@ -271,17 +228,13 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        assertEquals(2.0, result.antall)
+        result.antall shouldBe 2.0
     }
 
     @Test
     fun `Parse int til double for XML`() {
-        val mapper = XmlMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            xmlToValue(
                 """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
@@ -312,18 +265,13 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        assertEquals(3.0, result.antall)
+        result.antall shouldBe 3.0
     }
 
-    @ExperimentalTime
     @Test
-    fun `Parse desimaltal til double`() {
-        val mapper = jacksonObjectMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
+    fun `Parse flyttall til double`() {
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            jsonToValue(
                 """
                 {
                     "System": "DIGIHOT",
@@ -354,17 +302,13 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        assertEquals(2.999, result.antall)
+        result.antall shouldBe 2.999
     }
 
     @Test
-    fun `Parse desimaltal til double for XML`() {
-        val mapper = XmlMapper()
-        mapper.registerModule(JavaTimeModule())
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
+    fun `Parse flyttall til double for XML`() {
         val result: OrdrelinjeOebs =
-            mapper.readValue(
+            xmlToValue(
                 """
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
@@ -395,6 +339,6 @@ class ParsingTest {
                 """.trimIndent(),
             )
 
-        assertEquals(3.999, result.antall)
+        result.antall shouldBe 3.999
     }
 }

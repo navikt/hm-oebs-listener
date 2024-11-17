@@ -10,6 +10,7 @@ import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.oebs.listener.Configuration
 import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.Metrics
 import no.nav.hjelpemidler.oebs.listener.Ntfy
 import no.nav.hjelpemidler.oebs.listener.Slack
 import java.time.LocalDateTime
@@ -24,6 +25,8 @@ fun Route.ordreAPI(context: Context) {
             log.info {
                 "Mottok ordrekvittering, $kvittering"
             }
+
+            Metrics.ordrekvitteringCounter.increment()
 
             if (kvittering.saksnummer.startsWith("hmdel_")) {
                 log.info { "Publiserer ordrekvittering for delebestilling: $kvittering" }

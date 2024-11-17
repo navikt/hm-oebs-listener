@@ -1,6 +1,5 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.coroutines.withLoggingContextAsync
 import io.github.oshai.kotlinlogging.withLoggingContext
@@ -13,21 +12,19 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.domain.id.UUID
+import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
+import no.nav.hjelpemidler.oebs.listener.jsonToValue
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.UvalidertOrdrelinjeMessage
-import no.nav.hjelpemidler.oebs.listener.model.erOpprettetFraHotsak
-import no.nav.hjelpemidler.oebs.listener.model.fiksTommeSerienumre
-import no.nav.hjelpemidler.oebs.listener.model.toRåOrdrelinje
-import no.nav.hjelpemidler.oebs.listener.xmlMapper
+import no.nav.hjelpemidler.oebs.listener.xmlToValue
 import java.time.LocalDateTime
-import java.util.UUID
 
 private val log = KotlinLogging.logger {}
-private val secureLog = KotlinLogging.logger("tjenestekall")
 
 fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
@@ -43,7 +40,7 @@ fun Route.ordrelinjeAPI(context: Context) {
             }
 
             // Vi deler alle typer ordrelinjer med delbestilling (som sjekker på ordrenummer) og kommune-apiet
-            sendUvalidertOrdrelinjeTilRapid(context, ordrelinje.toRåOrdrelinje())
+            sendUvalidertOrdrelinjeTilKafka(context, ordrelinje.toRåOrdrelinje())
 
             // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
             if (!erOrdrelinjeRelevantForHotsak(ordrelinje)) {
@@ -54,7 +51,7 @@ fun Route.ordrelinjeAPI(context: Context) {
 
             // Anti-corruption lag
             val melding =
-                if (ordrelinje.erOpprettetFraHotsak()) {
+                if (ordrelinje.opprettetFraHotsak) {
                     if (!hotsakOrdrelinjeOK(ordrelinje)) {
                         log.info { "Hotsak ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
                         call.respond(HttpStatusCode.OK)
@@ -99,7 +96,7 @@ private suspend fun parseOrdrelinje(call: ApplicationCall): OrdrelinjeOebs? {
                 "requestBody" to requestBody,
             ),
         ) {
-            secureLog.info { "Received $incomingFormatType push request from OEBS" }
+            secureLog.info { "Received $incomingFormatType push request from OeBS" }
         }
     }
 
@@ -108,9 +105,9 @@ private suspend fun parseOrdrelinje(call: ApplicationCall): OrdrelinjeOebs? {
     try {
         ordrelinje =
             if (incomingFormatType == "XML") {
-                xmlMapper.readValue<OrdrelinjeOebs>(requestBody)
+                xmlToValue<OrdrelinjeOebs>(requestBody)
             } else {
-                jsonMapper.readValue<OrdrelinjeOebs>(requestBody)
+                jsonToValue<OrdrelinjeOebs>(requestBody)
             }.fiksTommeSerienumre()
 
         if (!Environment.current.tier.isProd) {
@@ -136,7 +133,7 @@ private suspend fun parseOrdrelinje(call: ApplicationCall): OrdrelinjeOebs? {
     }
 }
 
-private fun sendUvalidertOrdrelinjeTilRapid(
+private suspend fun sendUvalidertOrdrelinjeTilKafka(
     context: Context,
     ordrelinje: RåOrdrelinje,
 ) {
@@ -147,21 +144,21 @@ private fun sendUvalidertOrdrelinjeTilRapid(
                 append(ordrelinje.oebsId)
                 append(" og ordrenr: ")
                 append(ordrelinje.ordrenr)
-                append(" til rapid i miljø: ")
+                append(" på Kafka i miljø: ")
                 append(Environment.current)
             }
         }
         context.publish(
             ordrelinje.fnrBruker,
             UvalidertOrdrelinjeMessage(
-                eventId = UUID.randomUUID(),
+                eventId = UUID(),
                 eventName = "hm-uvalidert-ordrelinje",
                 eventCreated = LocalDateTime.now(),
                 orderLine = ordrelinje,
             ),
         )
     } catch (e: Exception) {
-        secureLog.error(e) { "Sending av uvalidert ordrelinje til rapid feilet" }
+        secureLog.error(e) { "Sending av uvalidert ordrelinje på Kafka feilet" }
         error("Noe gikk feil ved publisering av melding")
     }
 }
@@ -169,7 +166,7 @@ private fun sendUvalidertOrdrelinjeTilRapid(
 private fun erOrdrelinjeRelevantForHotsak(ordrelinje: OrdrelinjeOebs): Boolean {
     if (ordrelinje.serviceforespørseltype != "Vedtak Infotrygd") {
         if (ordrelinje.serviceforespørseltype == "") {
-            log.info { "Mottok melding fra OEBS som ikke er en SF. Avbryter prosesseringen og returnerer" }
+            log.info { "Mottok melding fra OeBS som ikke er en SF. Avbryter prosesseringen og returnerer" }
         } else {
             log.info {
                 buildString {
@@ -188,20 +185,20 @@ private fun erOrdrelinjeRelevantForHotsak(ordrelinje: OrdrelinjeOebs): Boolean {
         ordrelinje.hjelpemiddeltype != "Individstyrt hjelpemiddel" &&
         ordrelinje.hjelpemiddeltype != "Del"
     ) {
-        log.info { "Mottok melding fra OEBS med irrelevant hjelpemiddeltype: ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering" }
+        log.info { "Mottok melding fra OeBS med irrelevant hjelpemiddeltype: ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering" }
         return false
     }
 
     return true
 }
 
-private fun publiserMelding(
+private suspend fun publiserMelding(
     context: Context,
     ordrelinje: OrdrelinjeOebs,
     melding: OrdrelinjeMessage,
 ) {
     try {
-        log.info { "Publiserer ordrelinje med oebsId: ${ordrelinje.oebsId} til rapid i miljø: ${Environment.current}" }
+        log.info { "Publiserer ordrelinje med oebsId: ${ordrelinje.oebsId} på Kafka i miljø: ${Environment.current}" }
         context.publish(ordrelinje.fnrBruker, melding)
 
         ordrelinje.fnrBruker = "MASKERT"
@@ -214,10 +211,10 @@ private fun publiserMelding(
                 "ordrelinje" to jsonMapper.writeValueAsString(ordrelinje),
             ),
         ) {
-            secureLog.info { "Ordrelinje med oebsId: ${ordrelinje.oebsId} mottatt og sendt til rapid" }
+            secureLog.info { "Ordrelinje med oebsId: ${ordrelinje.oebsId} mottatt og sendt på Kafka" }
         }
     } catch (e: Exception) {
-        secureLog.error(e) { "Sending til rapid feilet" }
+        secureLog.error(e) { "Sending på Kafka feilet" }
         error("Noe gikk feil ved publisering av melding")
     }
 }

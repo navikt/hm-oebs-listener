@@ -25,6 +25,10 @@ spec:
     path: /isalive
   readiness:
     path: /isready
+  prometheus:
+    enabled: true
+    path: /metrics
+  port: 8080
   ingresses:
     - https://hm-oebs-listener.intern.dev.nav.no
   secureLogs:
@@ -34,16 +38,8 @@ spec:
       external:
         - host: hooks.slack.com
   env:
-    - name: HTTP_PORT
-      value: "8080"
-    - name: RAPID_APP_NAME
-      value: hm-oebs-listener
-    - name: KAFKA_CONSUMER_GROUP_ID
-      value: hm-oebs-listener-v2
-    - name: KAFKA_RAPID_TOPIC
-      value: teamdigihot.hm-soknadsbehandling-v1
-    - name: KAFKA_RESET_POLICY
-      value: latest
+    - name: OEBS_LISTENER_LOG_LEVEL
+      value: DEBUG
     - name: NTFY_URL
       value: https://ntfy.sh
     - name: NTFY_TOPIC

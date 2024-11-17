@@ -10,7 +10,7 @@ data class InfotrygdOrdrelinje(
     val serviceforespørselstatus: String,
     val serviceforespørseltype: String,
     val søknadstype: String,
-    // N.B.: Hvis dato er "" i meldinga blir den til null under deserialisering og forblir null under serialisering (utgåande JSON)
+    // N.B.: Hvis dato er "" i meldingen blir den til null under deserialisering og forblir null under serialisering (utgående JSON)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val vedtaksdato: LocalDate?,
     val søknad: String,

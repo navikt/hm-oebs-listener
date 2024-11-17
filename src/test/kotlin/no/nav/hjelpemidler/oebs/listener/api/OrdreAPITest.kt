@@ -1,93 +1,77 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
-import io.ktor.client.request.bearerAuth
+import io.kotest.inspectors.shouldForOne
+import io.kotest.matchers.shouldBe
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.serialization.jackson.jackson
-import io.ktor.server.auth.Authentication
-import io.ktor.server.auth.authenticate
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.testing.ApplicationTestBuilder
-import io.ktor.server.testing.testApplication
-import io.mockk.mockk
-import io.mockk.verify
-import no.nav.hjelpemidler.oebs.listener.Context
-import no.nav.hjelpemidler.oebs.listener.jsonMapper
-import no.nav.hjelpemidler.oebs.listener.shouldBe
-import no.nav.hjelpemidler.oebs.listener.token
+import no.nav.hjelpemidler.oebs.listener.test.runTest
+import no.nav.hjelpemidler.oebs.listener.test.shouldHaveKey
+import no.nav.hjelpemidler.oebs.listener.test.shouldHaveValue
+import no.nav.hjelpemidler.oebs.listener.test.validToken
 import kotlin.test.Test
 
+/**
+ * @see [no.nav.hjelpemidler.oebs.listener.api.ordreAPI]
+ */
 class OrdreAPITest {
-    private val context = Context(mockk(relaxed = true))
-
     @Test
-    fun `sender ut ordrekvittering på rapid`() =
-        testApplication {
-            configure()
+    fun `Sender ut ordrekvittering på Kafka`() =
+        runTest {
             val body =
-                jsonMapper.writeValueAsString(
-                    Ordrekvittering(
-                        id = "1",
-                        saksnummer = "2",
-                        ordrenummer = "3",
-                        system = "HOTSAK",
-                        status = "ENTERED",
-                    ),
+                Ordrekvittering(
+                    id = "1",
+                    saksnummer = "2",
+                    ordrenummer = "3",
+                    system = "HOTSAK",
+                    status = "ENTERED",
                 )
-            client.post("/ordrekvittering") {
-                bearerAuth("qwer1234")
-                contentType(ContentType.Application.Json)
-                setBody(body)
-            }.apply {
-                status shouldBe HttpStatusCode.OK
-                verify {
-                    context.publish("2", match { it.contains(body) })
+
+            val response =
+                client.post("/ordrekvittering") {
+                    validToken()
+                    contentType(ContentType.Application.Json)
+                    setBody(body)
+                }
+
+            response.status shouldBe HttpStatusCode.OK
+
+            kafkaHistory.shouldForOne {
+                it shouldHaveKey body.saksnummer
+                it.shouldHaveValue<OrdrekvitteringMottatt> { value ->
+                    value.kvittering shouldBe body
                 }
             }
         }
 
     @Test
-    fun `sender ut ordrefeilmelding på rapid`() =
-        testApplication {
-            configure()
+    fun `Sender ut ordrefeilmelding på Kafka`() =
+        runTest {
             val body =
-                jsonMapper.writeValueAsString(
-                    Ordrefeilmelding(
-                        id = "1",
-                        saksnummer = "2",
-                        feilmelding = "Feilmelding",
-                        system = "HOTSAK",
-                        status = "ERROR",
-                    ),
+                Ordrefeilmelding(
+                    id = "1",
+                    saksnummer = "2",
+                    feilmelding = "Feilmelding",
+                    system = "HOTSAK",
+                    status = "ERROR",
                 )
-            client.post("/ordrefeilmelding") {
-                bearerAuth("qwer1234")
-                contentType(ContentType.Application.Json)
-                setBody(body)
-            }.apply {
-                status shouldBe HttpStatusCode.OK
-                verify {
-                    context.publish("2", match { it.contains(body) })
+
+            val response =
+                client.post("/ordrefeilmelding") {
+                    validToken()
+                    contentType(ContentType.Application.Json)
+                    setBody(body)
+                }
+
+            response.status shouldBe HttpStatusCode.OK
+
+            kafkaHistory.shouldForOne {
+                it shouldHaveKey body.saksnummer
+                it.shouldHaveValue<OrdrefeilmeldingMottatt> { value ->
+                    value.feilmelding shouldBe body
                 }
             }
         }
-
-    private fun ApplicationTestBuilder.configure() {
-        install(ContentNegotiation) {
-            jackson()
-        }
-        install(Authentication) {
-            token("oebsToken") {
-                validate("qwer1234")
-            }
-        }
-        routing {
-            authenticate("oebsToken") {
-                ordreAPI(context)
-            }
-        }
-    }
 }
