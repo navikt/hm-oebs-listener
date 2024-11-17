@@ -1,12 +1,10 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import no.nav.hjelpemidler.domain.id.UUID
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
-import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
 
@@ -23,9 +21,7 @@ fun infotrygdOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
 
 fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs): OrdrelinjeMessage =
     OrdrelinjeMessage(
-        eventId = UUID(),
         eventName = "hm-NyOrdrelinje",
-        opprettet = LocalDateTime.now(),
         fnrBruker = ordrelinje.fnrBruker,
         data = ordrelinje.toOrdrelinje(),
     )

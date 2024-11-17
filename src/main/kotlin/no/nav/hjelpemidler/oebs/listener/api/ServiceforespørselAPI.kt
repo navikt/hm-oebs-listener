@@ -1,6 +1,5 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -10,25 +9,17 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
-import no.nav.hjelpemidler.oebs.listener.model.SfMessage
-import java.time.LocalDateTime
-import java.util.UUID
+import no.nav.hjelpemidler.oebs.listener.model.ServiceforespørselEndringMessage
 
 private val log = KotlinLogging.logger {}
 
 fun Route.serviceforespørselAPI(context: Context) {
     post("/sf") {
-        log.info { "incoming sf-oppdatering" }
+        log.info { "Innkommende SF-oppdatering" }
         try {
-            val serviceForespørselEndring = call.receive<ServiceForespørselEndring>()
-            val sfMessage =
-                SfMessage(
-                    eventId = UUID.randomUUID(),
-                    eventName = "hm-EndretSF-oebs-v2",
-                    opprettet = LocalDateTime.now(),
-                    data = serviceForespørselEndring,
-                )
-            publiserMelding(context, serviceForespørselEndring, sfMessage)
+            val endring = call.receive<ServiceforespørselEndring>()
+            val message = ServiceforespørselEndringMessage(endring)
+            publiserMelding(context, endring, message)
             call.respond(HttpStatusCode.OK)
         } catch (e: Exception) {
             log.error(e) { "Feil under prosessering" }
@@ -38,14 +29,13 @@ fun Route.serviceforespørselAPI(context: Context) {
     }
 }
 
-data class ServiceForespørselEndring(
+data class ServiceforespørselEndring(
     val system: String,
     val id: String,
     val sfnummer: String,
     val saknummer: String,
     val antallKostnadslinjer: String?,
     val ordre: List<ServiceForespørselOrdre>? = null,
-    @JsonProperty("status")
     val status: SFEndringType,
 )
 
@@ -63,29 +53,29 @@ enum class SFEndringType {
 
 private suspend fun publiserMelding(
     context: Context,
-    serviceForespørselEndring: ServiceForespørselEndring,
-    sfMessage: SfMessage,
+    endring: ServiceforespørselEndring,
+    message: ServiceforespørselEndringMessage,
 ) {
     try {
         log.info {
             buildString {
                 append("Publiserer oppdatering for SF fra OeBS med id: ")
-                append(serviceForespørselEndring.id)
+                append(endring.id)
                 append(", SF-nummer: ")
-                append(serviceForespørselEndring.sfnummer)
+                append(endring.sfnummer)
                 append(", saksnummer: ")
-                append(serviceForespørselEndring.saknummer)
+                append(endring.saknummer)
                 append(", status: ")
-                append(serviceForespørselEndring.status)
+                append(endring.status)
                 append(", ordre: ")
-                append(serviceForespørselEndring.ordre)
+                append(endring.ordre)
                 append(", antall kostnadslinjer opprettet: ")
-                append(serviceForespørselEndring.antallKostnadslinjer ?: '-')
+                append(endring.antallKostnadslinjer ?: '-')
             }
         }
         context.publish(
-            serviceForespørselEndring.saknummer,
-            sfMessage,
+            endring.saknummer,
+            message,
         )
     } catch (e: Exception) {
         secureLog.error(e) { "Sending på Kafka feilet" }

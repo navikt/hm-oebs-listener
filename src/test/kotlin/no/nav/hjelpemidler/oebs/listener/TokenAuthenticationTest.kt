@@ -9,7 +9,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.hjelpemidler.oebs.listener.api.SFEndringType
-import no.nav.hjelpemidler.oebs.listener.api.ServiceForespørselEndring
+import no.nav.hjelpemidler.oebs.listener.api.ServiceforespørselEndring
 import no.nav.hjelpemidler.oebs.listener.test.runTest
 import no.nav.hjelpemidler.oebs.listener.test.validToken
 import kotlin.test.Test
@@ -50,7 +50,7 @@ class TokenAuthenticationTest {
                     validToken()
                     contentType(ContentType.Application.Json)
                     setBody(
-                        ServiceForespørselEndring(
+                        ServiceforespørselEndring(
                             system = "HOTSAK",
                             id = "1",
                             sfnummer = "1",

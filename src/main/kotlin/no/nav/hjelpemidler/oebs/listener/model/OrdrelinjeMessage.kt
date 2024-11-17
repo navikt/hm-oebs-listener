@@ -1,31 +1,20 @@
 package no.nav.hjelpemidler.oebs.listener.model
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import no.nav.hjelpemidler.oebs.listener.api.ServiceForespørselEndring
-import java.time.LocalDateTime
-import java.util.UUID
+import no.nav.hjelpemidler.oebs.listener.api.ServiceforespørselEndring
 
 data class OrdrelinjeMessage(
-    val eventId: UUID,
-    val eventName: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    val opprettet: LocalDateTime,
+    override val eventName: String,
     val fnrBruker: String,
     val data: Ordrelinje,
-)
+) : Message
 
-data class SfMessage(
-    val eventId: UUID,
-    val eventName: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    val opprettet: LocalDateTime,
-    val data: ServiceForespørselEndring,
-)
+data class ServiceforespørselEndringMessage(val data: ServiceforespørselEndring) : Message {
+    override val eventName = "hm-EndretSF-oebs-v2"
+}
 
-data class UvalidertOrdrelinjeMessage(
-    val eventId: UUID,
-    val eventName: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    val eventCreated: LocalDateTime,
-    val orderLine: RåOrdrelinje,
-)
+data class UvalidertOrdrelinjeMessage(val orderLine: RåOrdrelinje) : Message {
+    override val eventName = "hm-uvalidert-ordrelinje"
+
+    @Suppress("unused") // leses kanskje nedstrøms
+    val eventCreated = opprettet
+}

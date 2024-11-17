@@ -12,7 +12,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.domain.id.UUID
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
@@ -22,7 +21,6 @@ import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.UvalidertOrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.xmlToValue
-import java.time.LocalDateTime
 
 private val log = KotlinLogging.logger {}
 
@@ -150,12 +148,7 @@ private suspend fun sendUvalidertOrdrelinjeTilKafka(
         }
         context.publish(
             ordrelinje.fnrBruker,
-            UvalidertOrdrelinjeMessage(
-                eventId = UUID(),
-                eventName = "hm-uvalidert-ordrelinje",
-                eventCreated = LocalDateTime.now(),
-                orderLine = ordrelinje,
-            ),
+            UvalidertOrdrelinjeMessage(ordrelinje),
         )
     } catch (e: Exception) {
         secureLog.error(e) { "Sending av uvalidert ordrelinje på Kafka feilet" }
