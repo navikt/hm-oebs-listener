@@ -12,30 +12,30 @@ class ParsingTest {
             jsonToValue(
                 """
                 {
-                    "System": "DIGIHOT",
-                    "Id":585,
-                    "IncidentNummer":21072339,
-                    "IncidentStatus": "Open",
-                    "IncidentType": "Vedtak Infotrygd",
-                    "IncidentSoknadType": "HJDAAN",
-                    "IncidentVedtakDato": "2021-04-04",
-                    "IncidentSoknad": "S",
-                    "IncidentResultat": "I",
-                    "IncidentRef": "A01",
-                    "OrdreNumber":7068818,
-                    "LineNumber":1,
-                    "ShipmentNumber":1,
-                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                    "CategoryDescription": "",
-                    "OrderedItem":149305,
-                    "CategoryNum": "122291",
-                    "User_ItemType": "Hjelpemiddel",
-                    "Quantity":1,
-                    "ShippingQuantityUom": "STK",
-                    "AccountNumber": "XXXXXXXXXXX",
-                    "EgenAnsatt": "Y",
-                    "LastUpdateDate": "2021-04-05",
-                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                  "System": "DIGIHOT",
+                  "Id": 585,
+                  "IncidentNummer": 21072339,
+                  "IncidentStatus": "Open",
+                  "IncidentType": "Vedtak Infotrygd",
+                  "IncidentSoknadType": "HJDAAN",
+                  "IncidentVedtakDato": "2021-04-04",
+                  "IncidentSoknad": "S",
+                  "IncidentResultat": "I",
+                  "IncidentRef": "A01",
+                  "OrdreNumber": 7068818,
+                  "LineNumber": 1,
+                  "ShipmentNumber": 1,
+                  "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                  "CategoryDescription": "",
+                  "OrderedItem": 149305,
+                  "CategoryNum": "122291",
+                  "User_ItemType": "Hjelpemiddel",
+                  "Quantity": 1,
+                  "ShippingQuantityUom": "STK",
+                  "AccountNumber": "XXXXXXXXXXX",
+                  "EgenAnsatt": "Y",
+                  "LastUpdateDate": "2021-04-05",
+                  "SendTilAddresse1": "1234 Oslo, bla bla bla"
                 }
                 """.trimIndent(),
             )
@@ -50,31 +50,36 @@ class ParsingTest {
             jsonToValue(
                 """
                 {
-                    "System": "DIGIHOT",
-                    "Id":585,
-                    "IncidentNummer":21072339,
-                    "IncidentStatus": "Open",
-                    "IncidentType": "Vedtak Infotrygd",
-                    "IncidentSoknadType": "HJDAAN",
-                    "IncidentVedtakDato": "2021-04-04",
-                    "IncidentSoknad": "S",
-                    "IncidentResultat": "I",
-                    "IncidentRef": "A01",
-                    "OrdreNumber":7068818,
-                    "LineNumber":1,
-                    "ShipmentNumber":1,
-                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                    "CategoryDescription": "",
-                    "OrderedItem":149305,
-                    "CategoryNum": "122291",
-                    "User_ItemType": "Hjelpemiddel",
-                    "Quantity":1,
-                    "ShippingQuantityUom": "STK",
-                    "AccountNumber": "XXXXXXXXXXX",
-                    "EgenAnsatt": "Y",
-                    "LastUpdateDate": "2021-04-05",
-                    "SendTilAddresse1": "1234 Oslo, bla bla bla",
-                    "SerieNummerListe":["660383", "693065", "726136", "733046"]
+                  "System": "DIGIHOT",
+                  "Id": 585,
+                  "IncidentNummer": 21072339,
+                  "IncidentStatus": "Open",
+                  "IncidentType": "Vedtak Infotrygd",
+                  "IncidentSoknadType": "HJDAAN",
+                  "IncidentVedtakDato": "2021-04-04",
+                  "IncidentSoknad": "S",
+                  "IncidentResultat": "I",
+                  "IncidentRef": "A01",
+                  "OrdreNumber": 7068818,
+                  "LineNumber": 1,
+                  "ShipmentNumber": 1,
+                  "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                  "CategoryDescription": "",
+                  "OrderedItem": 149305,
+                  "CategoryNum": "122291",
+                  "User_ItemType": "Hjelpemiddel",
+                  "Quantity": 1,
+                  "ShippingQuantityUom": "STK",
+                  "AccountNumber": "XXXXXXXXXXX",
+                  "EgenAnsatt": "Y",
+                  "LastUpdateDate": "2021-04-05",
+                  "SendTilAddresse1": "1234 Oslo, bla bla bla",
+                  "SerieNummerListe": [
+                    "660383",
+                    "693065",
+                    "726136",
+                    "733046"
+                  ]
                 }
                 """.trimIndent(),
             )
@@ -88,30 +93,30 @@ class ParsingTest {
             jsonToValue(
                 """
                 {
-                    "System": "DIGIHOT",
-                    "Id":585,
-                    "IncidentNummer":21072339,
-                    "IncidentStatus": "Open",
-                    "IncidentType": "Vedtak Infotrygd",
-                    "IncidentSoknadType": "HJDAAN",
-                    "IncidentVedtakDato": "",
-                    "IncidentSoknad": "S",
-                    "IncidentResultat": "I",
-                    "IncidentRef": "A01",
-                    "OrdreNumber":7068818,
-                    "LineNumber":1,
-                    "ShipmentNumber":1,
-                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                    "CategoryDescription": "",
-                    "OrderedItem":149305,
-                    "CategoryNum": "122291",
-                    "User_ItemType": "Hjelpemiddel",
-                    "Quantity":1,
-                    "ShippingQuantityUom": "STK",
-                    "AccountNumber": "XXXXXXXXXXX",
-                    "EgenAnsatt": "N",
-                    "LastUpdateDate": "2021-04-05",
-                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                  "System": "DIGIHOT",
+                  "Id": 585,
+                  "IncidentNummer": 21072339,
+                  "IncidentStatus": "Open",
+                  "IncidentType": "Vedtak Infotrygd",
+                  "IncidentSoknadType": "HJDAAN",
+                  "IncidentVedtakDato": "",
+                  "IncidentSoknad": "S",
+                  "IncidentResultat": "I",
+                  "IncidentRef": "A01",
+                  "OrdreNumber": 7068818,
+                  "LineNumber": 1,
+                  "ShipmentNumber": 1,
+                  "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                  "CategoryDescription": "",
+                  "OrderedItem": 149305,
+                  "CategoryNum": "122291",
+                  "User_ItemType": "Hjelpemiddel",
+                  "Quantity": 1,
+                  "ShippingQuantityUom": "STK",
+                  "AccountNumber": "XXXXXXXXXXX",
+                  "EgenAnsatt": "N",
+                  "LastUpdateDate": "2021-04-05",
+                  "SendTilAddresse1": "1234 Oslo, bla bla bla"
                 }
                 """.trimIndent(),
             )
@@ -126,30 +131,30 @@ class ParsingTest {
             jsonToValue(
                 """
                 {
-                    "System": "DIGIHOT",
-                    "Id":585,
-                    "IncidentNummer":21072339,
-                    "IncidentStatus": "Open",
-                    "IncidentType": "Vedtak Infotrygd",
-                    "IncidentSoknadType": "HJDAAN",
-                    "IncidentVedtakDato": "",
-                    "IncidentSoknad": "S",
-                    "IncidentResultat": "I",
-                    "IncidentRef": "A01",
-                    "OrdreNumber":7068818,
-                    "LineNumber":1,
-                    "ShipmentNumber":1,
-                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                    "CategoryDescription": "",
-                    "OrderedItem": "012345",
-                    "CategoryNum": "122291",
-                    "User_ItemType": "Hjelpemiddel",
-                    "Quantity":1,
-                    "ShippingQuantityUom": "STK",
-                    "AccountNumber": "XXXXXXXXXXX",
-                    "EgenAnsatt": "Y",
-                    "LastUpdateDate": "2021-04-05",
-                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                  "System": "DIGIHOT",
+                  "Id": 585,
+                  "IncidentNummer": 21072339,
+                  "IncidentStatus": "Open",
+                  "IncidentType": "Vedtak Infotrygd",
+                  "IncidentSoknadType": "HJDAAN",
+                  "IncidentVedtakDato": "",
+                  "IncidentSoknad": "S",
+                  "IncidentResultat": "I",
+                  "IncidentRef": "A01",
+                  "OrdreNumber": 7068818,
+                  "LineNumber": 1,
+                  "ShipmentNumber": 1,
+                  "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                  "CategoryDescription": "",
+                  "OrderedItem": "012345",
+                  "CategoryNum": "122291",
+                  "User_ItemType": "Hjelpemiddel",
+                  "Quantity": 1,
+                  "ShippingQuantityUom": "STK",
+                  "AccountNumber": "XXXXXXXXXXX",
+                  "EgenAnsatt": "Y",
+                  "LastUpdateDate": "2021-04-05",
+                  "SendTilAddresse1": "1234 Oslo, bla bla bla"
                 }
                 """.trimIndent(),
             )
@@ -165,19 +170,19 @@ class ParsingTest {
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
                     <ki:Id>645</ki:Id>
-                    <ki:IncidentNummer/>
-                    <ki:IncidentStatus/>
-                    <ki:IncidentType/>
-                    <ki:IncidentSoknadType/>
-                    <ki:IncidentVedtakDato/>
-                    <ki:IncidentSoknad/>
-                    <ki:IncidentResultat/>
-                    <ki:IncidentRef/>
+                    <ki:IncidentNummer />
+                    <ki:IncidentStatus />
+                    <ki:IncidentType />
+                    <ki:IncidentSoknadType />
+                    <ki:IncidentVedtakDato />
+                    <ki:IncidentSoknad />
+                    <ki:IncidentResultat />
+                    <ki:IncidentRef />
                     <ki:OrdreNumber>0178581</ki:OrdreNumber>
                     <ki:LineNumber>6</ki:LineNumber>
                     <ki:ShipmentNumber>2</ki:ShipmentNumber>
-                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
-                    <ki:CategoryDescription/>
+                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå</ki:Description>
+                    <ki:CategoryDescription />
                     <ki:OrderedItem>012345</ki:OrderedItem>
                     <ki:CategoryNum>012345</ki:CategoryNum>
                     <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
@@ -200,30 +205,30 @@ class ParsingTest {
             jsonToValue(
                 """
                 {
-                    "System": "DIGIHOT",
-                    "Id":585,
-                    "IncidentNummer":21072339,
-                    "IncidentStatus": "Open",
-                    "IncidentType": "Vedtak Infotrygd",
-                    "IncidentSoknadType": "HJDAAN",
-                    "IncidentVedtakDato": "",
-                    "IncidentSoknad": "S",
-                    "IncidentResultat": "I",
-                    "IncidentRef": "A01",
-                    "OrdreNumber":7068818,
-                    "LineNumber":1,
-                    "ShipmentNumber":1,
-                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                    "CategoryDescription": "",
-                    "OrderedItem": "012345",
-                    "CategoryNum": "122291",
-                    "User_ItemType": "Hjelpemiddel",
-                    "Quantity":2,
-                    "ShippingQuantityUom": "STK",
-                    "AccountNumber": "XXXXXXXXXXX",
-                    "EgenAnsatt": "N",
-                    "LastUpdateDate": "2021-04-05",
-                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                  "System": "DIGIHOT",
+                  "Id": 585,
+                  "IncidentNummer": 21072339,
+                  "IncidentStatus": "Open",
+                  "IncidentType": "Vedtak Infotrygd",
+                  "IncidentSoknadType": "HJDAAN",
+                  "IncidentVedtakDato": "",
+                  "IncidentSoknad": "S",
+                  "IncidentResultat": "I",
+                  "IncidentRef": "A01",
+                  "OrdreNumber": 7068818,
+                  "LineNumber": 1,
+                  "ShipmentNumber": 1,
+                  "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                  "CategoryDescription": "",
+                  "OrderedItem": "012345",
+                  "CategoryNum": "122291",
+                  "User_ItemType": "Hjelpemiddel",
+                  "Quantity": 2,
+                  "ShippingQuantityUom": "STK",
+                  "AccountNumber": "XXXXXXXXXXX",
+                  "EgenAnsatt": "N",
+                  "LastUpdateDate": "2021-04-05",
+                  "SendTilAddresse1": "1234 Oslo, bla bla bla"
                 }
                 """.trimIndent(),
             )
@@ -239,19 +244,19 @@ class ParsingTest {
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
                     <ki:Id>123</ki:Id>
-                    <ki:IncidentNummer/>
-                    <ki:IncidentStatus/>
-                    <ki:IncidentType/>
-                    <ki:IncidentSoknadType/>
-                    <ki:IncidentVedtakDato/>
-                    <ki:IncidentSoknad/>
-                    <ki:IncidentResultat/>
-                    <ki:IncidentRef/>
+                    <ki:IncidentNummer />
+                    <ki:IncidentStatus />
+                    <ki:IncidentType />
+                    <ki:IncidentSoknadType />
+                    <ki:IncidentVedtakDato />
+                    <ki:IncidentSoknad />
+                    <ki:IncidentResultat />
+                    <ki:IncidentRef />
                     <ki:OrdreNumber>0178581</ki:OrdreNumber>
                     <ki:LineNumber>6</ki:LineNumber>
                     <ki:ShipmentNumber>2</ki:ShipmentNumber>
-                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
-                    <ki:CategoryDescription/>
+                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå</ki:Description>
+                    <ki:CategoryDescription />
                     <ki:OrderedItem>012345</ki:OrderedItem>
                     <ki:CategoryNum>012345</ki:CategoryNum>
                     <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
@@ -274,30 +279,30 @@ class ParsingTest {
             jsonToValue(
                 """
                 {
-                    "System": "DIGIHOT",
-                    "Id":234,
-                    "IncidentNummer":21072339,
-                    "IncidentStatus": "Open",
-                    "IncidentType": "Vedtak Infotrygd",
-                    "IncidentSoknadType": "HJDAAN",
-                    "IncidentVedtakDato": "",
-                    "IncidentSoknad": "S",
-                    "IncidentResultat": "I",
-                    "IncidentRef": "A01",
-                    "OrdreNumber":7068818,
-                    "LineNumber":1,
-                    "ShipmentNumber":1,
-                    "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
-                    "CategoryDescription": "",
-                    "OrderedItem": "012345",
-                    "CategoryNum": "122291",
-                    "User_ItemType": "Hjelpemiddel",
-                    "Quantity":2.999,
-                    "ShippingQuantityUom": "STK",
-                    "AccountNumber": "XXXXXXXXXXX",
-                    "EgenAnsatt": "Y",
-                    "LastUpdateDate": "2021-04-05",
-                    "SendTilAddresse1": "1234 Oslo, bla bla bla"
+                  "System": "DIGIHOT",
+                  "Id": 234,
+                  "IncidentNummer": 21072339,
+                  "IncidentStatus": "Open",
+                  "IncidentType": "Vedtak Infotrygd",
+                  "IncidentSoknadType": "HJDAAN",
+                  "IncidentVedtakDato": "",
+                  "IncidentSoknad": "S",
+                  "IncidentResultat": "I",
+                  "IncidentRef": "A01",
+                  "OrdreNumber": 7068818,
+                  "LineNumber": 1,
+                  "ShipmentNumber": 1,
+                  "Description": "Rullator 4hjul Topro Olympos M b71 h79-95 sh60 sml",
+                  "CategoryDescription": "",
+                  "OrderedItem": "012345",
+                  "CategoryNum": "122291",
+                  "User_ItemType": "Hjelpemiddel",
+                  "Quantity": 2.999,
+                  "ShippingQuantityUom": "STK",
+                  "AccountNumber": "XXXXXXXXXXX",
+                  "EgenAnsatt": "Y",
+                  "LastUpdateDate": "2021-04-05",
+                  "SendTilAddresse1": "1234 Oslo, bla bla bla"
                 }
                 """.trimIndent(),
             )
@@ -313,19 +318,19 @@ class ParsingTest {
                 <ki:StatusInfo xmlns:ki="urn:nav.no/ordre/statusinfo">
                     <ki:System>DIGIHOT</ki:System>
                     <ki:Id>565</ki:Id>
-                    <ki:IncidentNummer/>
-                    <ki:IncidentStatus/>
-                    <ki:IncidentType/>
-                    <ki:IncidentSoknadType/>
-                    <ki:IncidentVedtakDato/>
-                    <ki:IncidentSoknad/>
-                    <ki:IncidentResultat/>
-                    <ki:IncidentRef/>
+                    <ki:IncidentNummer />
+                    <ki:IncidentStatus />
+                    <ki:IncidentType />
+                    <ki:IncidentSoknadType />
+                    <ki:IncidentVedtakDato />
+                    <ki:IncidentSoknad />
+                    <ki:IncidentResultat />
+                    <ki:IncidentRef />
                     <ki:OrdreNumber>0178581</ki:OrdreNumber>
                     <ki:LineNumber>6</ki:LineNumber>
                     <ki:ShipmentNumber>2</ki:ShipmentNumber>
-                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå </ki:Description>
-                    <ki:CategoryDescription/>
+                    <ki:Description>Putevibrator FlexiBlink Life med quote: &quot; æøå</ki:Description>
+                    <ki:CategoryDescription />
                     <ki:OrderedItem>012345</ki:OrderedItem>
                     <ki:CategoryNum>012345</ki:CategoryNum>
                     <ki:User_ItemType>Hjelpemiddel</ki:User_ItemType>
