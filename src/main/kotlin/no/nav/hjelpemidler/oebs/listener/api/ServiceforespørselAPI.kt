@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -33,7 +34,8 @@ data class ServiceforespørselEndring(
     val system: String,
     val id: String,
     val sfnummer: String,
-    val saknummer: String,
+    @JsonProperty("saknummer")
+    val saksnummer: String,
     val antallKostnadslinjer: String?,
     val ordre: List<ServiceForespørselOrdre>? = null,
     val status: SFEndringType,
@@ -64,7 +66,7 @@ private suspend fun publiserMelding(
                 append(", SF-nummer: ")
                 append(endring.sfnummer)
                 append(", saksnummer: ")
-                append(endring.saknummer)
+                append(endring.saksnummer)
                 append(", status: ")
                 append(endring.status)
                 append(", ordre: ")
@@ -74,7 +76,7 @@ private suspend fun publiserMelding(
             }
         }
         context.publish(
-            endring.saknummer,
+            endring.saksnummer,
             message,
         )
     } catch (e: Exception) {

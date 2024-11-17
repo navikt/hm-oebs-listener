@@ -54,7 +54,7 @@ class TokenAuthenticationTest {
                             system = "HOTSAK",
                             id = "1",
                             sfnummer = "1",
-                            saknummer = "1",
+                            saksnummer = "1",
                             antallKostnadslinjer = "1",
                             ordre = emptyList(),
                             status = SFEndringType.OPPRETTET,
