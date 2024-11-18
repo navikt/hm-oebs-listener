@@ -31,4 +31,31 @@ data class HotsakOrdrelinje(
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val sistOppdatert: LocalDate,
     val sendtTilAdresse: String,
-) : Ordrelinje
+) : Ordrelinje {
+    constructor(oebs: OrdrelinjeOebs) : this(
+        mottakendeSystem = oebs.mottakendeSystem,
+        oebsId = oebs.oebsId,
+        serviceforespørsel = oebs.serviceforespørsel,
+        serviceforespørselstatus = oebs.serviceforespørselstatus,
+        serviceforespørseltype = oebs.serviceforespørseltype,
+        søknadstype = oebs.søknadstype,
+        vedtaksdato = oebs.vedtaksdato,
+        søknad = oebs.søknad,
+        resultat = oebs.resultat,
+        saksnummer = oebs.hotSakSaksnummer ?: "",
+        ordrenr = oebs.ordrenr,
+        ordrelinje = oebs.ordrelinje,
+        delordrelinje = oebs.delordrelinje,
+        artikkelbeskrivelse = oebs.artikkelbeskrivelse,
+        produktgruppe = oebs.produktgruppe,
+        produktgruppeNr = oebs.produktgruppeNr,
+        artikkelnr = oebs.artikkelnr,
+        hjelpemiddeltype = oebs.hjelpemiddeltype,
+        antall = oebs.antall,
+        enhet = oebs.enhet,
+        fnrBruker = oebs.fnrBruker,
+        egenAnsatt = oebs.egenAnsatt,
+        sistOppdatert = oebs.sistOppdatert,
+        sendtTilAdresse = oebs.sendtTilAdresse,
+    )
+}

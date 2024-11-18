@@ -5,6 +5,7 @@ import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
+import no.nav.hjelpemidler.oebs.listener.model.HotsakOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 
@@ -29,5 +30,5 @@ fun opprettHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs) =
     OrdrelinjeMessage(
         eventName = "hm-NyOrdrelinje-hotsak",
         fnrBruker = ordrelinje.fnrBruker,
-        data = ordrelinje.toHotsakOrdrelinje(),
+        data = HotsakOrdrelinje(ordrelinje),
     )

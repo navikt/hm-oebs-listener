@@ -3,6 +3,7 @@ package no.nav.hjelpemidler.oebs.listener.api
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
+import no.nav.hjelpemidler.oebs.listener.model.InfotrygdOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 
@@ -23,5 +24,5 @@ fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs): OrdrelinjeMessage =
     OrdrelinjeMessage(
         eventName = "hm-NyOrdrelinje",
         fnrBruker = ordrelinje.fnrBruker,
-        data = ordrelinje.toOrdrelinje(),
+        data = InfotrygdOrdrelinje(ordrelinje),
     )

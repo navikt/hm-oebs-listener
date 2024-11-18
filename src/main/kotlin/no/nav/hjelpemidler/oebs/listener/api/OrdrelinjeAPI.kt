@@ -26,7 +26,7 @@ private val log = KotlinLogging.logger {}
 
 fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
-        log.info { "incoming push" }
+        log.info { "Innkommende ordrelinje" }
         try {
             // Parse innkommende json/xml
             val ordrelinje =
@@ -38,7 +38,7 @@ fun Route.ordrelinjeAPI(context: Context) {
             }
 
             // Vi deler alle typer ordrelinjer med delbestilling (som sjekker på ordrenummer) og kommune-apiet
-            sendUvalidertOrdrelinjeTilKafka(context, ordrelinje.toRåOrdrelinje())
+            sendUvalidertOrdrelinjeTilKafka(context, RåOrdrelinje(ordrelinje))
 
             // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
             if (!erOrdrelinjeRelevantForHotsak(ordrelinje)) {
@@ -55,7 +55,7 @@ fun Route.ordrelinjeAPI(context: Context) {
                         call.respond(HttpStatusCode.OK)
                         return@post
                     }
-                    if (ordrelinje.hotSakSaksnummer?.startsWith("hmdel_") == true) {
+                    if (ordrelinje.delebestilling) {
                         log.info { "Ordrelinje fra delebestilling mottatt. Ignorer." }
                         secureLog.info { "Ignorert ordrelinje for delebestilling: $ordrelinje" }
                         return@post call.respond(HttpStatusCode.OK)

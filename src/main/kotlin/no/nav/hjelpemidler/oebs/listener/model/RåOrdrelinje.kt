@@ -32,5 +32,35 @@ data class RåOrdrelinje(
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     val sistOppdatert: LocalDate,
     val sendtTilAdresse: String,
-    var serienumre: List<String> = listOf(),
-)
+    var serienumre: List<String> = emptyList(),
+) {
+    constructor(oebs: OrdrelinjeOebs) : this(
+        mottakendeSystem = oebs.mottakendeSystem,
+        oebsId = oebs.oebsId,
+        serviceforespørsel = oebs.serviceforespørsel,
+        serviceforespørselstatus = oebs.serviceforespørselstatus,
+        serviceforespørseltype = oebs.serviceforespørseltype,
+        søknadstype = oebs.søknadstype,
+        vedtaksdato = oebs.vedtaksdato,
+        søknad = oebs.søknad,
+        hotSakSaksnummer = oebs.hotSakSaksnummer,
+        kilde = oebs.kilde,
+        resultat = oebs.resultat,
+        saksblokkOgSaksnr = oebs.saksblokkOgSaksnr,
+        ordrenr = oebs.ordrenr,
+        ordrelinje = oebs.ordrelinje,
+        delordrelinje = oebs.delordrelinje,
+        artikkelbeskrivelse = oebs.artikkelbeskrivelse,
+        produktgruppe = oebs.produktgruppe,
+        produktgruppeNr = oebs.produktgruppeNr,
+        artikkelnr = oebs.artikkelnr,
+        hjelpemiddeltype = oebs.hjelpemiddeltype,
+        antall = oebs.antall,
+        enhet = oebs.enhet,
+        fnrBruker = oebs.fnrBruker,
+        egenAnsatt = oebs.egenAnsatt,
+        sistOppdatert = oebs.sistOppdatert,
+        sendtTilAdresse = oebs.sendtTilAdresse,
+        serienumre = oebs.serienumre ?: emptyList(),
+    )
+}
