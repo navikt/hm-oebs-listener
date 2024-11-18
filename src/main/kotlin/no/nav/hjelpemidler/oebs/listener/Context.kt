@@ -1,5 +1,7 @@
 package no.nav.hjelpemidler.oebs.listener
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.nav.hjelpemidler.kafka.sendAsync
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -11,7 +13,7 @@ class Context(private val producer: Producer<String, String>) : Closeable by pro
     suspend fun <T> publish(
         key: String,
         message: T,
-    ) {
+    ) = withContext(Dispatchers.IO) {
         producer.sendAsync(
             ProducerRecord(topic, key, jsonMapper.writeValueAsString(message)),
         )
