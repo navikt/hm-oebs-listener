@@ -9,12 +9,15 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.domain.id.UUID
 import no.nav.hjelpemidler.oebs.listener.Configuration
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.Metrics
 import no.nav.hjelpemidler.oebs.listener.Ntfy
 import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.model.Message
+import java.time.LocalDateTime
+import java.util.UUID
 
 private val log = KotlinLogging.logger { }
 
@@ -127,11 +130,26 @@ data class Ordrefeilmelding(
     override fun toString(): String = "id: $id, saksnummer: $saksnummer, feilmelding: $feilmelding, system: $system, status: $status"
 }
 
-class OrdrekvitteringMottatt(val kvittering: Ordrekvittering) :
-    Message(eventName = "hm-ordrekvittering-mottatt")
+class OrdrekvitteringMottatt(
+    val kvittering: Ordrekvittering,
+    override val eventId: UUID = UUID(),
+    override val opprettet: LocalDateTime = LocalDateTime.now(),
+) : Message {
+    override val eventName: String = "hm-ordrekvittering-mottatt"
+}
 
-class OrdrekvitteringDelbestillingMottatt(val kvittering: Ordrekvittering) :
-    Message(eventName = "hm-ordrekvittering-delbestilling-mottatt")
+class OrdrekvitteringDelbestillingMottatt(
+    val kvittering: Ordrekvittering,
+    override val eventId: UUID = UUID(),
+    override val opprettet: LocalDateTime = LocalDateTime.now(),
+) : Message {
+    override val eventName: String = "hm-ordrekvittering-delbestilling-mottatt"
+}
 
-class OrdrefeilmeldingMottatt(val feilmelding: Ordrefeilmelding) :
-    Message(eventName = "hm-ordrefeilmelding-mottatt")
+class OrdrefeilmeldingMottatt(
+    val feilmelding: Ordrefeilmelding,
+    override val eventId: UUID = UUID(),
+    override val opprettet: LocalDateTime = LocalDateTime.now(),
+) : Message {
+    override val eventName: String = "hm-ordrefeilmelding-mottatt"
+}

@@ -13,8 +13,8 @@ import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
-import no.nav.hjelpemidler.oebs.listener.model.HotsakOrdrelinje
-import no.nav.hjelpemidler.oebs.listener.model.InfotrygdOrdrelinje
+import no.nav.hjelpemidler.oebs.listener.model.HotsakOrdrelinjeMessage
+import no.nav.hjelpemidler.oebs.listener.model.InfotrygdOrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
@@ -54,21 +54,13 @@ fun Route.ordrelinjeAPI(context: Context) {
                         secureLog.info { "Ignorert ordrelinje for delbestilling: '$ordrelinje'" }
                         return@post call.respond(HttpStatusCode.OK)
                     }
-                    OrdrelinjeMessage<HotsakOrdrelinje>(
-                        eventName = "hm-NyOrdrelinje-hotsak",
-                        fnrBruker = ordrelinje.fnrBruker,
-                        data = HotsakOrdrelinje(ordrelinje),
-                    )
+                    HotsakOrdrelinjeMessage(ordrelinje)
                 } else {
                     if (!infotrygdOrdrelinjeOK(ordrelinje)) {
                         log.warn { "Infotrygd-ordrelinje mottatt som ikke passerer validering. Ignorerer." }
                         return@post call.respond(HttpStatusCode.OK)
                     }
-                    OrdrelinjeMessage<InfotrygdOrdrelinje>(
-                        eventName = "hm-NyOrdrelinje",
-                        fnrBruker = ordrelinje.fnrBruker,
-                        data = InfotrygdOrdrelinje(ordrelinje),
-                    )
+                    InfotrygdOrdrelinjeMessage(ordrelinje)
                 }
 
             // Publiser resultat
@@ -137,7 +129,7 @@ private suspend fun hotsakOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
         log.warn { "Melding fra OeBS mangler saksnummer fra Hotsak" }
         ordrelinje.fnrBruker = "MASKERT"
         val message = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
-        secureLog.warn { "Vedtak HOTSAK-melding med manglende informasjon: $message" }
+        secureLog.warn { "Vedtak Hotsak-melding med manglende informasjon: '$message'" }
         Slack.post(
             text = "*${Environment.current}* - Manglende felt i Hotsak OeBS ordrelinje: ```$message```",
             channel = "#digihot-hotsak-varslinger-dev",

@@ -1,10 +1,10 @@
 package no.nav.hjelpemidler.oebs.listener.model
 
-import no.nav.hjelpemidler.domain.id.UUID
 import java.time.LocalDateTime
+import java.util.UUID
 
-@Suppress("unused")
-abstract class Message(val eventName: String) {
-    val eventId = UUID()
-    val opprettet: LocalDateTime = LocalDateTime.now()
+interface Message {
+    val eventId: UUID
+    val eventName: String
+    val opprettet: LocalDateTime
 }

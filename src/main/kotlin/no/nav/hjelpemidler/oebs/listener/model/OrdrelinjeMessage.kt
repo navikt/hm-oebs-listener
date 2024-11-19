@@ -1,18 +1,44 @@
 package no.nav.hjelpemidler.oebs.listener.model
 
-import no.nav.hjelpemidler.oebs.listener.api.ServiceforespørselEndring
+import com.fasterxml.jackson.annotation.JsonProperty
+import no.nav.hjelpemidler.domain.id.UUID
+import java.time.LocalDateTime
+import java.util.UUID
 
-class OrdrelinjeMessage<T : Ordrelinje>(
-    eventName: String,
-    val fnrBruker: String,
-    val data: T,
-) : Message(eventName)
+interface OrdrelinjeMessage<T : Ordrelinje> : Message {
+    val fnrBruker: String
+    val data: T
+}
 
-class ServiceforespørselEndringMessage(val data: ServiceforespørselEndring) :
-    Message(eventName = "hm-EndretSF-oebs-v2")
+data class HotsakOrdrelinjeMessage(
+    override val fnrBruker: String,
+    override val data: HotsakOrdrelinje,
+    override val eventId: UUID = UUID(),
+    override val opprettet: LocalDateTime = LocalDateTime.now(),
+) : OrdrelinjeMessage<HotsakOrdrelinje> {
+    override val eventName: String = "hm-NyOrdrelinje-hotsak"
 
-class UvalidertOrdrelinjeMessage(val orderLine: RåOrdrelinje) :
-    Message(eventName = "hm-uvalidert-ordrelinje") {
-    @Suppress("unused") // leses kanskje nedstrøms
+    constructor(oebs: OrdrelinjeOebs) : this(oebs.fnrBruker, HotsakOrdrelinje(oebs))
+}
+
+data class InfotrygdOrdrelinjeMessage(
+    override val fnrBruker: String,
+    override val data: InfotrygdOrdrelinje,
+    override val eventId: UUID = UUID(),
+    override val opprettet: LocalDateTime = LocalDateTime.now(),
+) : OrdrelinjeMessage<InfotrygdOrdrelinje> {
+    override val eventName: String = "hm-NyOrdrelinje"
+
+    constructor(oebs: OrdrelinjeOebs) : this(oebs.fnrBruker, InfotrygdOrdrelinje(oebs))
+}
+
+class UvalidertOrdrelinjeMessage(
+    @JsonProperty("orderLine")
+    val data: RåOrdrelinje,
+    override val eventId: UUID = UUID(),
+    override val opprettet: LocalDateTime = LocalDateTime.now(),
+) : Message {
+    override val eventName: String = "hm-uvalidert-ordrelinje"
+
     val eventCreated = opprettet
 }
