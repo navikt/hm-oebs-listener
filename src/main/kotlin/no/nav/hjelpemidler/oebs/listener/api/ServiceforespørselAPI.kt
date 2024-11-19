@@ -46,6 +46,7 @@ data class ServiceForespørselOrdre(
     val status: String,
 )
 
+@Suppress("unused")
 enum class SFEndringType {
     OPPRETTET,
     LUKKET,

@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
-import io.kotest.inspectors.shouldForOne
+import io.kotest.assertions.json.shouldContainJsonKey
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -8,8 +8,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import no.nav.hjelpemidler.oebs.listener.test.runTest
-import no.nav.hjelpemidler.oebs.listener.test.shouldHaveKey
-import no.nav.hjelpemidler.oebs.listener.test.shouldHaveValue
+import no.nav.hjelpemidler.oebs.listener.test.shouldContainRecord
 import no.nav.hjelpemidler.oebs.listener.test.validToken
 import kotlin.test.Test
 
@@ -38,11 +37,11 @@ class OrdreAPITest {
 
             response.status shouldBe HttpStatusCode.OK
 
-            kafkaHistory.shouldForOne {
-                it shouldHaveKey body.saksnummer
-                it.shouldHaveValue<OrdrekvitteringMottatt> { value ->
-                    value.kvittering shouldBe body
-                }
+            kafkaHistory.shouldContainRecord(
+                expectedKey = body.saksnummer,
+                expectedEventName = "hm-ordrekvittering-mottatt",
+            ) {
+                it.shouldContainJsonKey("kvittering")
             }
         }
 
@@ -67,11 +66,11 @@ class OrdreAPITest {
 
             response.status shouldBe HttpStatusCode.OK
 
-            kafkaHistory.shouldForOne {
-                it shouldHaveKey body.saksnummer
-                it.shouldHaveValue<OrdrefeilmeldingMottatt> { value ->
-                    value.feilmelding shouldBe body
-                }
+            kafkaHistory.shouldContainRecord(
+                expectedKey = body.saksnummer,
+                expectedEventName = "hm-ordrefeilmelding-mottatt",
+            ) {
+                it.shouldContainJsonKey("feilmelding")
             }
         }
 }

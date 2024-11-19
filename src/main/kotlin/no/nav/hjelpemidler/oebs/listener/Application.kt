@@ -57,7 +57,6 @@ fun Application.module(producer: Producer<String, String> = createKafkaProducer(
 
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(jsonMapper))
-        register(ContentType.Application.Xml, JacksonConverter(xmlMapper))
     }
 
     install(MicrometerMetrics) {
@@ -78,9 +77,9 @@ fun Application.module(producer: Producer<String, String> = createKafkaProducer(
         get("/metrics") { call.respond(Metrics.scrape()) }
 
         authenticate(authenticationName) {
+            ordreAPI(context)
             ordrelinjeAPI(context)
             serviceforespørselAPI(context)
-            ordreAPI(context)
         }
     }
 }

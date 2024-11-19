@@ -18,7 +18,6 @@ dependencies {
 
     // Jackson
     implementation(libs.bundles.jackson)
-    implementation(libs.jackson.dataformat.xml)
 
     // Ktor
     implementation(libs.ktor.serialization.jackson)
@@ -50,6 +49,7 @@ testing {
             useKotlinTest(libs.versions.kotlin.asProvider())
             dependencies {
                 implementation(libs.kotest.assertions.core)
+                implementation(libs.kotest.assertions.json)
                 implementation(libs.ktor.server.test.host)
                 implementation(libs.mockk)
             }

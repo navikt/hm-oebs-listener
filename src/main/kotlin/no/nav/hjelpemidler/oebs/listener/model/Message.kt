@@ -4,8 +4,7 @@ import no.nav.hjelpemidler.domain.id.UUID
 import java.time.LocalDateTime
 
 @Suppress("unused")
-interface Message {
-    val eventId get() = UUID()
-    val eventName: String
-    val opprettet: LocalDateTime get() = LocalDateTime.now()
+abstract class Message(val eventName: String) {
+    val eventId = UUID()
+    val opprettet: LocalDateTime = LocalDateTime.now()
 }

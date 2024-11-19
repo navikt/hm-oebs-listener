@@ -1,13 +1,10 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.github.oshai.kotlinlogging.coroutines.withLoggingContextAsync
 import io.github.oshai.kotlinlogging.withLoggingContext
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
-import io.ktor.server.request.header
-import io.ktor.server.request.receiveText
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
@@ -15,12 +12,10 @@ import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
-import no.nav.hjelpemidler.oebs.listener.jsonToValue
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.UvalidertOrdrelinjeMessage
-import no.nav.hjelpemidler.oebs.listener.xmlToValue
 
 private val log = KotlinLogging.logger {}
 
@@ -28,16 +23,13 @@ fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
         log.info { "Innkommende ordrelinje" }
         try {
-            // Parse innkommende json/xml
-            val ordrelinje =
-                parseOrdrelinje(call)
-                    ?: return@post call.respond(HttpStatusCode.BadRequest, "request body was not in a valid format")
+            val ordrelinje = call.receive<OrdrelinjeOebs>().fiksTommeSerienumre()
 
             if (ordrelinje.skipningsinstrukser?.contains("Tekniker") == true) {
                 secureLog.info { "Delbestilling ordrelinje: <$ordrelinje>" }
             }
 
-            // Vi deler alle typer ordrelinjer med delbestilling (som sjekker på ordrenummer) og kommune-apiet
+            // Vi deler alle typer ordrelinjer med delbestilling (som sjekker på ordrenummer) og kommune-API-et
             sendUvalidertOrdrelinjeTilKafka(context, RåOrdrelinje(ordrelinje))
 
             // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
@@ -51,21 +43,19 @@ fun Route.ordrelinjeAPI(context: Context) {
             val melding =
                 if (ordrelinje.opprettetFraHotsak) {
                     if (!hotsakOrdrelinjeOK(ordrelinje)) {
-                        log.info { "Hotsak ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
-                        call.respond(HttpStatusCode.OK)
-                        return@post
+                        log.info { "Hotsak ordrelinje mottatt som ikke passerer validering. Logger til Slack og ignorerer." }
+                        return@post call.respond(HttpStatusCode.OK)
                     }
-                    if (ordrelinje.delebestilling) {
-                        log.info { "Ordrelinje fra delebestilling mottatt. Ignorer." }
-                        secureLog.info { "Ignorert ordrelinje for delebestilling: $ordrelinje" }
+                    if (ordrelinje.delbestilling) {
+                        log.info { "Ordrelinje fra delbestilling mottatt. Ignorer." }
+                        secureLog.info { "Ignorert ordrelinje for delbestilling: '$ordrelinje'" }
                         return@post call.respond(HttpStatusCode.OK)
                     }
                     opprettHotsakOrdrelinje(ordrelinje)
                 } else {
                     if (!infotrygdOrdrelinjeOK(ordrelinje)) {
-                        log.warn { "Infotrygd ordrelinje mottatt som ikke passerer validering. Logger til slack og ignorerer.." }
-                        call.respond(HttpStatusCode.OK)
-                        return@post
+                        log.warn { "Infotrygd ordrelinje mottatt som ikke passerer validering. Logger til Slack og ignorerer." }
+                        return@post call.respond(HttpStatusCode.OK)
                     }
                     opprettInfotrygdOrdrelinje(ordrelinje)
                 }
@@ -75,59 +65,8 @@ fun Route.ordrelinjeAPI(context: Context) {
             call.respond(HttpStatusCode.OK)
         } catch (e: Exception) {
             log.error(e) { "Uventet feil under prosessering" }
-            call.respond(HttpStatusCode.InternalServerError)
-            return@post
+            return@post call.respond(HttpStatusCode.InternalServerError)
         }
-    }
-}
-
-private suspend fun parseOrdrelinje(call: ApplicationCall): OrdrelinjeOebs? {
-    var incomingFormatType = "JSON"
-    if (call.request.header("Content-Type").toString().contains("application/xml")) {
-        incomingFormatType = "XML"
-    }
-
-    val requestBody: String = call.receiveText()
-    if (!Environment.current.tier.isProd) {
-        withLoggingContextAsync(
-            mapOf(
-                "requestBody" to requestBody,
-            ),
-        ) {
-            secureLog.info { "Received $incomingFormatType push request from OeBS" }
-        }
-    }
-
-    // Check for valid json request
-    val ordrelinje: OrdrelinjeOebs
-    try {
-        ordrelinje =
-            if (incomingFormatType == "XML") {
-                xmlToValue<OrdrelinjeOebs>(requestBody)
-            } else {
-                jsonToValue<OrdrelinjeOebs>(requestBody)
-            }.fiksTommeSerienumre()
-
-        if (!Environment.current.tier.isProd) {
-            withLoggingContextAsync(
-                mapOf(
-                    "ordrelinje" to jsonMapper.writeValueAsString(ordrelinje),
-                ),
-            ) {
-                secureLog.info { "Parsing incoming $incomingFormatType request successful" }
-            }
-        }
-        return ordrelinje
-    } catch (e: Exception) {
-        // Deal with invalid json/xml in request
-        withLoggingContextAsync(
-            mapOf(
-                "requestBody" to requestBody,
-            ),
-        ) {
-            secureLog.error(e) { "Parsing incoming $incomingFormatType request failed with exception (responding 4xx)" }
-        }
-        return null
     }
 }
 
@@ -163,21 +102,18 @@ private fun erOrdrelinjeRelevantForHotsak(ordrelinje: OrdrelinjeOebs): Boolean {
         } else {
             log.info {
                 buildString {
-                    append("Mottok melding fra oebs med serviceforespørseltype: ")
+                    append("Mottok melding fra OeBS med serviceforespørseltype: ")
                     append(ordrelinje.serviceforespørseltype)
                     append(" og serviceforespørselstatus: ")
                     append(ordrelinje.serviceforespørselstatus)
-                    append(". Avbryter prosesseringen og returnerer")
+                    append(". Avbryter prosesseringen og returnerer.")
                 }
             }
         }
         return false
     }
 
-    if (ordrelinje.hjelpemiddeltype != "Hjelpemiddel" &&
-        ordrelinje.hjelpemiddeltype != "Individstyrt hjelpemiddel" &&
-        ordrelinje.hjelpemiddeltype != "Del"
-    ) {
+    if (!ordrelinje.relevantHjelpemiddeltype) {
         log.info { "Mottok melding fra OeBS med irrelevant hjelpemiddeltype: ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering" }
         return false
     }
@@ -188,7 +124,7 @@ private fun erOrdrelinjeRelevantForHotsak(ordrelinje: OrdrelinjeOebs): Boolean {
 private suspend fun publiserMelding(
     context: Context,
     ordrelinje: OrdrelinjeOebs,
-    melding: OrdrelinjeMessage,
+    melding: OrdrelinjeMessage<*>,
 ) {
     try {
         log.info { "Publiserer ordrelinje med oebsId: ${ordrelinje.oebsId} på Kafka i miljø: ${Environment.current}" }

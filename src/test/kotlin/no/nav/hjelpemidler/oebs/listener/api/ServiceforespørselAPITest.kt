@@ -1,20 +1,21 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
-import io.kotest.inspectors.shouldForOne
+import io.kotest.assertions.json.shouldContainJsonKey
 import io.kotest.matchers.shouldBe
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import no.nav.hjelpemidler.oebs.listener.model.ServiceforespørselEndringMessage
 import no.nav.hjelpemidler.oebs.listener.test.Fixtures
 import no.nav.hjelpemidler.oebs.listener.test.runTest
-import no.nav.hjelpemidler.oebs.listener.test.shouldHaveKey
-import no.nav.hjelpemidler.oebs.listener.test.shouldHaveValue
+import no.nav.hjelpemidler.oebs.listener.test.shouldContainRecord
 import no.nav.hjelpemidler.oebs.listener.test.validToken
 import kotlin.test.Test
 
+/**
+ * @see [no.nav.hjelpemidler.oebs.listener.api.serviceforespørselAPI]
+ */
 class ServiceforespørselAPITest {
     @Test
     fun `Sender ut SF-oppdatering på Kafka`() =
@@ -30,11 +31,11 @@ class ServiceforespørselAPITest {
 
             response.status shouldBe HttpStatusCode.OK
 
-            kafkaHistory.shouldForOne {
-                it shouldHaveKey endring.saksnummer
-                it.shouldHaveValue<ServiceforespørselEndringMessage> { value ->
-                    value.data shouldBe endring
-                }
+            kafkaHistory.shouldContainRecord(
+                expectedKey = endring.saksnummer,
+                expectedEventName = "hm-EndretSF-oebs-v2",
+            ) {
+                it.shouldContainJsonKey("data")
             }
         }
 }

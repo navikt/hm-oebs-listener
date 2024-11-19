@@ -20,7 +20,7 @@ fun infotrygdOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
     return true
 }
 
-fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs): OrdrelinjeMessage =
+fun opprettInfotrygdOrdrelinje(ordrelinje: OrdrelinjeOebs): OrdrelinjeMessage<InfotrygdOrdrelinje> =
     OrdrelinjeMessage(
         eventName = "hm-NyOrdrelinje",
         fnrBruker = ordrelinje.fnrBruker,

@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -13,8 +14,7 @@ import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.Metrics
 import no.nav.hjelpemidler.oebs.listener.Ntfy
 import no.nav.hjelpemidler.oebs.listener.Slack
-import java.time.LocalDateTime
-import java.util.UUID
+import no.nav.hjelpemidler.oebs.listener.model.Message
 
 private val log = KotlinLogging.logger { }
 
@@ -28,8 +28,8 @@ fun Route.ordreAPI(context: Context) {
 
             Metrics.ordrekvitteringCounter.increment()
 
-            if (kvittering.saksnummer.startsWith("hmdel_")) {
-                log.info { "Publiserer ordrekvittering for delebestilling: $kvittering" }
+            if (kvittering.delbestilling) {
+                log.info { "Publiserer ordrekvittering for delbestilling: $kvittering" }
                 val sakId = kvittering.saksnummer.removePrefix("hmdel_") // trenger ikke denne videre nedover
                 val status = kvittering.status.uppercase() // for enums
                 context.publish(
@@ -63,8 +63,8 @@ fun Route.ordreAPI(context: Context) {
                 "Mottok ordrefeilmelding, $feilmelding"
             }
 
-            if (feilmelding.saksnummer.startsWith("hmdel_")) {
-                log.error { "Ignorerer ordrefeilmelding for delebestilling: $feilmelding" }
+            if (feilmelding.delbestilling) {
+                log.error { "Ignorerer ordrefeilmelding for delbestilling: $feilmelding" }
                 return@post call.response.status(HttpStatusCode.OK)
             }
 
@@ -110,6 +110,8 @@ data class Ordrekvittering(
     val system: String,
     val status: String,
 ) {
+    val delbestilling: Boolean @JsonIgnore get() = saksnummer.startsWith("hmdel_")
+
     override fun toString(): String = "id: $id, saksnummer: $saksnummer, ordrenummer: $ordrenummer, system: $system, status: $status"
 }
 
@@ -120,26 +122,16 @@ data class Ordrefeilmelding(
     val system: String,
     val status: String,
 ) {
+    val delbestilling: Boolean @JsonIgnore get() = saksnummer.startsWith("hmdel_")
+
     override fun toString(): String = "id: $id, saksnummer: $saksnummer, feilmelding: $feilmelding, system: $system, status: $status"
 }
 
-data class OrdrekvitteringMottatt(
-    val eventId: UUID = UUID.randomUUID(),
-    val eventName: String = "hm-ordrekvittering-mottatt",
-    val opprettet: LocalDateTime = LocalDateTime.now(),
-    val kvittering: Ordrekvittering,
-)
+class OrdrekvitteringMottatt(val kvittering: Ordrekvittering) :
+    Message(eventName = "hm-ordrekvittering-mottatt")
 
-data class OrdrekvitteringDelbestillingMottatt(
-    val eventId: UUID = UUID.randomUUID(),
-    val eventName: String = "hm-ordrekvittering-delbestilling-mottatt",
-    val opprettet: LocalDateTime = LocalDateTime.now(),
-    val kvittering: Ordrekvittering,
-)
+class OrdrekvitteringDelbestillingMottatt(val kvittering: Ordrekvittering) :
+    Message(eventName = "hm-ordrekvittering-delbestilling-mottatt")
 
-data class OrdrefeilmeldingMottatt(
-    val eventId: UUID = UUID.randomUUID(),
-    val eventName: String = "hm-ordrefeilmelding-mottatt",
-    val opprettet: LocalDateTime = LocalDateTime.now(),
-    val feilmelding: Ordrefeilmelding,
-)
+class OrdrefeilmeldingMottatt(val feilmelding: Ordrefeilmelding) :
+    Message(eventName = "hm-ordrefeilmelding-mottatt")

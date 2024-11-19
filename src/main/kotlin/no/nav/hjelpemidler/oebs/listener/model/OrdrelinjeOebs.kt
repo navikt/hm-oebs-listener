@@ -73,9 +73,30 @@ data class OrdrelinjeOebs(
     /**
      * I OeBS får alt fra DigiHoT kilde = HOTSAK
      */
-    val opprettetFraHotsak: Boolean @JsonIgnore get() = kilde == "HOTSAK"
+    val opprettetFraHotsak: Boolean
+        @JsonIgnore get() = kilde == "HOTSAK"
 
-    val delebestilling: Boolean @JsonIgnore get() = hotSakSaksnummer?.startsWith("hmdel_") == true
+    val delbestilling: Boolean
+        @JsonIgnore get() = hotSakSaksnummer?.startsWith("hmdel_") == true
+
+    val relevantHjelpemiddeltype: Boolean
+        @JsonIgnore get() =
+            hjelpemiddeltype in
+                setOf(
+                    "Hjelpemiddel",
+                    "Individstyrt hjelpemiddel",
+                    "Del",
+                )
+
+    val gyldigHotsak: Boolean
+        @JsonIgnore get() {
+            return false
+        }
+
+    val gyldigInfotrygd: Boolean
+        @JsonIgnore get() {
+            return false
+        }
 
     fun fiksTommeSerienumre(): OrdrelinjeOebs = copy(serienumre = serienumre?.map { it.trim() }?.filter { it != "" })
 }

@@ -26,7 +26,7 @@ suspend fun hotsakOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
     return true
 }
 
-fun opprettHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs) =
+fun opprettHotsakOrdrelinje(ordrelinje: OrdrelinjeOebs): OrdrelinjeMessage<HotsakOrdrelinje> =
     OrdrelinjeMessage(
         eventName = "hm-NyOrdrelinje-hotsak",
         fnrBruker = ordrelinje.fnrBruker,
