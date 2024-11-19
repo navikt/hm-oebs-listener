@@ -61,7 +61,7 @@ fun Route.ordrelinjeAPI(context: Context) {
                     )
                 } else {
                     if (!infotrygdOrdrelinjeOK(ordrelinje)) {
-                        log.warn { "Infotrygd ordrelinje mottatt som ikke passerer validering. Ignorerer." }
+                        log.warn { "Infotrygd-ordrelinje mottatt som ikke passerer validering. Ignorerer." }
                         return@post call.respond(HttpStatusCode.OK)
                     }
                     OrdrelinjeMessage<InfotrygdOrdrelinje>(
