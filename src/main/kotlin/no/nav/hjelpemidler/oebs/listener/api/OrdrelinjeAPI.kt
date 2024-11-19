@@ -105,11 +105,11 @@ private fun erOrdrelinjeRelevant(ordrelinje: OrdrelinjeOebs): Boolean {
         } else {
             log.info {
                 buildString {
-                    append("Mottok melding fra OeBS med serviceforespørseltype: ")
+                    append("Mottok melding fra OeBS med serviceforespørseltype: '")
                     append(ordrelinje.serviceforespørseltype)
-                    append(" og serviceforespørselstatus: ")
+                    append("' og serviceforespørselstatus: '")
                     append(ordrelinje.serviceforespørselstatus)
-                    append(". Avbryter prosesseringen og returnerer.")
+                    append("'. Avbryter prosesseringen og returnerer.")
                 }
             }
         }
@@ -117,7 +117,7 @@ private fun erOrdrelinjeRelevant(ordrelinje: OrdrelinjeOebs): Boolean {
     }
 
     if (!ordrelinje.relevantHjelpemiddeltype) {
-        log.info { "Mottok melding fra OeBS med irrelevant hjelpemiddeltype: ${ordrelinje.hjelpemiddeltype}. Avbryter prosessering" }
+        log.info { "Mottok melding fra OeBS med irrelevant hjelpemiddeltype: '${ordrelinje.hjelpemiddeltype}'. Avbryter prosessering" }
         return false
     }
 
