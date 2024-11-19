@@ -17,20 +17,25 @@ object Fixtures {
             status = SFEndringType.OPPRETTET,
         )
 
+    fun lagOrdrelinjeOebsJson(block: OrdrelinjeOebsJsonBuilder.() -> Unit = {}) = OrdrelinjeOebsJsonBuilder().apply(block).invoke()
+}
+
+class OrdrelinjeOebsJsonBuilder {
+    var serviceforespørseltype: String = "Vedtak Infotrygd"
+    var vedtaksdato: String = ""
+    var saksblokkOgSaksnr: String = ""
+    var saksnummer: String = ""
+    var kilde: String = ""
+    var artikkelnr: String = "123456"
+    var serienumre: String = "[]"
+    var hjelpemiddeltype: String = "Hjelpemiddel"
+    var antall: String = "1"
+    var fnrBruker: String = "XXXXXXXXXXX"
+    var sistOppdatert: String = LocalDateTime.now().toString()
+
     @Language("JSON")
-    fun lagOrdrelinjeOebsJson(
-        serviceforespørseltype: String = "Vedtak Infotrygd",
-        vedtaksdato: String = "",
-        saksblokkOgSaksnr: String = "",
-        saksnummer: String = "",
-        kilde: String = "",
-        artikkelnr: String = "123456",
-        serienumre: String = "[]",
-        hjelpemiddeltype: String = "Hjelpemiddel",
-        antall: String = "1",
-        fnrBruker: String = "XXXXXXXXXXX",
-        sistOppdatert: String = LocalDateTime.now().toString(),
-    ) = """
+    operator fun invoke() =
+        """
         {
           "System": "DIGIHOT",
           "Id": "1000",

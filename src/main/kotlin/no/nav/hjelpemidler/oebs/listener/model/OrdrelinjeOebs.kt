@@ -70,10 +70,13 @@ data class OrdrelinjeOebs(
     @JsonProperty("SerieNummerListe")
     val serienumre: List<String>? = emptyList(),
 ) {
+    val serviceforespørseltypeVedtak: Boolean
+        @JsonIgnore get() = serviceforespørseltype == "Vedtak Infotrygd"
+
     /**
      * I OeBS får alt fra DigiHoT kilde = HOTSAK
      */
-    val opprettetFraHotsak: Boolean
+    val kildeHotsak: Boolean
         @JsonIgnore get() = kilde == "HOTSAK"
 
     val delbestilling: Boolean
@@ -90,12 +93,12 @@ data class OrdrelinjeOebs(
 
     val gyldigHotsak: Boolean
         @JsonIgnore get() {
-            return false
+            return !hotSakSaksnummer.isNullOrBlank()
         }
 
     val gyldigInfotrygd: Boolean
         @JsonIgnore get() {
-            return false
+            return !saksblokkOgSaksnr.isNullOrBlank() && vedtaksdato != null && fnrBruker.isNotBlank()
         }
 
     fun fiksTommeSerienumre(): OrdrelinjeOebs = copy(serienumre = serienumre?.map { it.trim() }?.filter { it != "" })

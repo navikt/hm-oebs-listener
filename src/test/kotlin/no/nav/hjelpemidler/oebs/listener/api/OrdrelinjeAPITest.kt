@@ -7,11 +7,10 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import no.nav.hjelpemidler.domain.person.Fødselsnummer
-import no.nav.hjelpemidler.domain.person.år
 import no.nav.hjelpemidler.oebs.listener.jsonToValue
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.test.Fixtures
+import no.nav.hjelpemidler.oebs.listener.test.OrdrelinjeOebsJsonBuilder
 import no.nav.hjelpemidler.oebs.listener.test.TestContext
 import no.nav.hjelpemidler.oebs.listener.test.runTest
 import no.nav.hjelpemidler.oebs.listener.test.shouldContainRecord
@@ -24,22 +23,31 @@ import kotlin.test.Test
  * @see [no.nav.hjelpemidler.oebs.listener.api.ordrelinjeAPI]
  */
 class OrdrelinjeAPITest {
-    private val fnrBruker = Fødselsnummer(80.år).toString()
+    @Test
+    fun `Ikke relevant ordrelinje`() =
+        runTest {
+            val ordrelinje =
+                push {
+                    serviceforespørseltype = "Behov"
+                }
+
+            ordrelinje.serviceforespørseltypeVedtak shouldBe false
+
+            kafkaHistory.shouldNotContainRecord(excludedEventName = "hm-NyOrdrelinje")
+            kafkaHistory.shouldNotContainRecord(excludedEventName = "hm-NyOrdrelinje-hotsak")
+        }
 
     @Test
     fun `Ny ordrelinje for Hotsak mottatt`() =
         runTest {
             val ordrelinje =
-                push(
-                    Fixtures.lagOrdrelinjeOebsJson(
-                        saksnummer = "1000",
-                        kilde = "HOTSAK",
-                        fnrBruker = fnrBruker,
-                    ),
-                )
+                push {
+                    saksnummer = "1000"
+                    kilde = "HOTSAK"
+                }
 
             kafkaHistory.shouldContainRecord(
-                expectedKey = fnrBruker,
+                expectedKey = ordrelinje.fnrBruker,
                 expectedEventName = "hm-NyOrdrelinje-hotsak",
             ) {
                 it.shouldContainJsonKeyValue("$.data.saksnummer", ordrelinje.hotSakSaksnummer)
@@ -50,16 +58,14 @@ class OrdrelinjeAPITest {
     fun `Ny ordrelinje for del mottatt`() =
         runTest {
             val ordrelinje =
-                push(
-                    Fixtures.lagOrdrelinjeOebsJson(
-                        saksnummer = "hmdel_1000",
-                        kilde = "HOTSAK",
-                        fnrBruker = fnrBruker,
-                    ),
-                )
+                push {
+                    saksnummer = "hmdel_1000"
+                    kilde = "HOTSAK"
+                }
 
             ordrelinje.delbestilling shouldBe true
 
+            kafkaHistory.shouldNotContainRecord(excludedEventName = "hm-NyOrdrelinje")
             kafkaHistory.shouldNotContainRecord(excludedEventName = "hm-NyOrdrelinje-hotsak")
         }
 
@@ -67,17 +73,14 @@ class OrdrelinjeAPITest {
     fun `Ny ordrelinje for Infotrygd mottatt`() =
         runTest {
             val ordrelinje =
-                push(
-                    Fixtures.lagOrdrelinjeOebsJson(
-                        vedtaksdato = LocalDate.now().toString(),
-                        saksblokkOgSaksnr = "X99",
-                        kilde = "",
-                        fnrBruker = fnrBruker,
-                    ),
-                )
+                push {
+                    vedtaksdato = LocalDate.now().toString()
+                    saksblokkOgSaksnr = "X99"
+                    kilde = ""
+                }
 
             kafkaHistory.shouldContainRecord(
-                expectedKey = fnrBruker,
+                expectedKey = ordrelinje.fnrBruker,
                 expectedEventName = "hm-NyOrdrelinje",
             ) {
                 it.shouldContainJsonKeyValue("$.data.saksblokkOgSaksnr", ordrelinje.saksblokkOgSaksnr)
@@ -85,17 +88,18 @@ class OrdrelinjeAPITest {
         }
 }
 
-private suspend fun TestContext.push(body: String): OrdrelinjeOebs {
+private suspend fun TestContext.push(block: OrdrelinjeOebsJsonBuilder.() -> Unit = {}): OrdrelinjeOebs {
+    val ordrelinjeJson = Fixtures.lagOrdrelinjeOebsJson(block)
     val response =
         client.post("/push") {
             validToken()
             contentType(ContentType.Application.Json)
-            setBody(body)
+            setBody(ordrelinjeJson)
         }
 
     response.status shouldBe HttpStatusCode.OK
 
-    val ordrelinje = jsonToValue<OrdrelinjeOebs>(body)
+    val ordrelinje = jsonToValue<OrdrelinjeOebs>(ordrelinjeJson)
 
     kafkaHistory.shouldContainRecord(
         expectedKey = ordrelinje.fnrBruker,

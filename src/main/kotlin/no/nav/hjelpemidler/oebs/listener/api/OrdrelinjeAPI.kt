@@ -11,7 +11,10 @@ import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
+import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.jsonMapper
+import no.nav.hjelpemidler.oebs.listener.model.HotsakOrdrelinje
+import no.nav.hjelpemidler.oebs.listener.model.InfotrygdOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
@@ -26,14 +29,14 @@ fun Route.ordrelinjeAPI(context: Context) {
             val ordrelinje = call.receive<OrdrelinjeOebs>().fiksTommeSerienumre()
 
             if (ordrelinje.skipningsinstrukser?.contains("Tekniker") == true) {
-                secureLog.info { "Delbestilling ordrelinje: <$ordrelinje>" }
+                secureLog.info { "Delbestilling ordrelinje: '$ordrelinje'" }
             }
 
             // Vi deler alle typer ordrelinjer med delbestilling (som sjekker på ordrenummer) og kommune-API-et
             sendUvalidertOrdrelinjeTilKafka(context, RåOrdrelinje(ordrelinje))
 
             // Avslutt tidlig hvis ordrelinjen ikke er relevant for oss
-            if (!erOrdrelinjeRelevantForHotsak(ordrelinje)) {
+            if (!erOrdrelinjeRelevant(ordrelinje)) {
                 log.info { "Irrelevant ordrelinje mottatt og ignorert" }
                 call.respond(HttpStatusCode.OK)
                 return@post
@@ -41,7 +44,7 @@ fun Route.ordrelinjeAPI(context: Context) {
 
             // Anti-corruption lag
             val melding =
-                if (ordrelinje.opprettetFraHotsak) {
+                if (ordrelinje.kildeHotsak) {
                     if (!hotsakOrdrelinjeOK(ordrelinje)) {
                         log.info { "Hotsak ordrelinje mottatt som ikke passerer validering. Logger til Slack og ignorerer." }
                         return@post call.respond(HttpStatusCode.OK)
@@ -51,13 +54,21 @@ fun Route.ordrelinjeAPI(context: Context) {
                         secureLog.info { "Ignorert ordrelinje for delbestilling: '$ordrelinje'" }
                         return@post call.respond(HttpStatusCode.OK)
                     }
-                    opprettHotsakOrdrelinje(ordrelinje)
+                    OrdrelinjeMessage<HotsakOrdrelinje>(
+                        eventName = "hm-NyOrdrelinje-hotsak",
+                        fnrBruker = ordrelinje.fnrBruker,
+                        data = HotsakOrdrelinje(ordrelinje),
+                    )
                 } else {
                     if (!infotrygdOrdrelinjeOK(ordrelinje)) {
-                        log.warn { "Infotrygd ordrelinje mottatt som ikke passerer validering. Logger til Slack og ignorerer." }
+                        log.warn { "Infotrygd ordrelinje mottatt som ikke passerer validering. Ignorerer." }
                         return@post call.respond(HttpStatusCode.OK)
                     }
-                    opprettInfotrygdOrdrelinje(ordrelinje)
+                    OrdrelinjeMessage<InfotrygdOrdrelinje>(
+                        eventName = "hm-NyOrdrelinje",
+                        fnrBruker = ordrelinje.fnrBruker,
+                        data = InfotrygdOrdrelinje(ordrelinje),
+                    )
                 }
 
             // Publiser resultat
@@ -95,8 +106,8 @@ private suspend fun sendUvalidertOrdrelinjeTilKafka(
     }
 }
 
-private fun erOrdrelinjeRelevantForHotsak(ordrelinje: OrdrelinjeOebs): Boolean {
-    if (ordrelinje.serviceforespørseltype != "Vedtak Infotrygd") {
+private fun erOrdrelinjeRelevant(ordrelinje: OrdrelinjeOebs): Boolean {
+    if (!ordrelinje.serviceforespørseltypeVedtak) {
         if (ordrelinje.serviceforespørseltype == "") {
             log.info { "Mottok melding fra OeBS som ikke er en SF. Avbryter prosesseringen og returnerer" }
         } else {
@@ -118,6 +129,34 @@ private fun erOrdrelinjeRelevantForHotsak(ordrelinje: OrdrelinjeOebs): Boolean {
         return false
     }
 
+    return true
+}
+
+private suspend fun hotsakOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
+    if (!ordrelinje.gyldigHotsak) {
+        log.warn { "Melding fra OeBS mangler saksnummer fra Hotsak" }
+        ordrelinje.fnrBruker = "MASKERT"
+        val message = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
+        secureLog.warn { "Vedtak HOTSAK-melding med manglende informasjon: $message" }
+        Slack.post(
+            text = "*${Environment.current}* - Manglende felt i Hotsak OeBS ordrelinje: ```$message```",
+            channel = "#digihot-hotsak-varslinger-dev",
+        )
+        return false
+    }
+    return true
+}
+
+private fun infotrygdOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
+    if (!ordrelinje.gyldigInfotrygd) {
+        log.warn { "Melding fra OeBS mangler saksblokkOgSaksnr, vedtaksdato eller fnrBruker!" }
+        ordrelinje.fnrBruker = "MASKERT"
+        secureLog.warn {
+            val message = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
+            "Vedtak Infotrygd-melding med manglende informasjon: '$message'"
+        }
+        return false
+    }
     return true
 }
 
