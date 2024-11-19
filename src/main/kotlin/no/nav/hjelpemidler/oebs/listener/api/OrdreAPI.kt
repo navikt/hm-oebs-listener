@@ -29,7 +29,7 @@ fun Route.ordreAPI(context: Context) {
             Metrics.ordrekvitteringCounter.increment()
 
             if (kvittering.delbestilling) {
-                log.info { "Publiserer ordrekvittering for delbestilling: $kvittering" }
+                log.info { "Publiserer ordrekvittering for delbestilling, $kvittering" }
                 val sakId = kvittering.saksnummer.removePrefix("hmdel_") // trenger ikke denne videre nedover
                 val status = kvittering.status.uppercase() // for enums
                 context.publish(

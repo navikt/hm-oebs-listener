@@ -46,11 +46,11 @@ fun Route.ordrelinjeAPI(context: Context) {
             val melding =
                 if (ordrelinje.kildeHotsak) {
                     if (!hotsakOrdrelinjeOK(ordrelinje)) {
-                        log.info { "Hotsak ordrelinje mottatt som ikke passerer validering. Logger til Slack og ignorerer." }
+                        log.info { "Hotsak-ordrelinje mottatt som ikke passerer validering. Logger til Slack og ignorerer." }
                         return@post call.respond(HttpStatusCode.OK)
                     }
                     if (ordrelinje.delbestilling) {
-                        log.info { "Ordrelinje fra delbestilling mottatt. Ignorer." }
+                        log.info { "Ordrelinje fra delbestilling mottatt. Ignorerer." }
                         secureLog.info { "Ignorert ordrelinje for delbestilling: '$ordrelinje'" }
                         return@post call.respond(HttpStatusCode.OK)
                     }
