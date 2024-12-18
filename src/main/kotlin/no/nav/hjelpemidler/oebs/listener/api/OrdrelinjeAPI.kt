@@ -3,7 +3,6 @@ package no.nav.hjelpemidler.oebs.listener.api
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -12,13 +11,13 @@ import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.Slack
-import no.nav.hjelpemidler.oebs.listener.jsonMapper
 import no.nav.hjelpemidler.oebs.listener.model.HotsakOrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.InfotrygdOrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.UvalidertOrdrelinjeMessage
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 
 private val log = KotlinLogging.logger {}
 

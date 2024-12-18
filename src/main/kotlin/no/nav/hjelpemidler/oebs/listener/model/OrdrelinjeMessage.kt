@@ -1,7 +1,6 @@
 package no.nav.hjelpemidler.oebs.listener.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import no.nav.hjelpemidler.domain.id.UUID
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -13,7 +12,7 @@ interface OrdrelinjeMessage<T : Ordrelinje> : Message {
 data class HotsakOrdrelinjeMessage(
     override val fnrBruker: String,
     override val data: HotsakOrdrelinje,
-    override val eventId: UUID = UUID(),
+    override val eventId: UUID = UUID.randomUUID(),
     override val opprettet: LocalDateTime = LocalDateTime.now(),
 ) : OrdrelinjeMessage<HotsakOrdrelinje> {
     override val eventName: String = "hm-NyOrdrelinje-hotsak"
@@ -24,7 +23,7 @@ data class HotsakOrdrelinjeMessage(
 data class InfotrygdOrdrelinjeMessage(
     override val fnrBruker: String,
     override val data: InfotrygdOrdrelinje,
-    override val eventId: UUID = UUID(),
+    override val eventId: UUID = UUID.randomUUID(),
     override val opprettet: LocalDateTime = LocalDateTime.now(),
 ) : OrdrelinjeMessage<InfotrygdOrdrelinje> {
     override val eventName: String = "hm-NyOrdrelinje"
@@ -35,7 +34,7 @@ data class InfotrygdOrdrelinjeMessage(
 class UvalidertOrdrelinjeMessage(
     @JsonProperty("orderLine")
     val data: RåOrdrelinje,
-    override val eventId: UUID = UUID(),
+    override val eventId: UUID = UUID.randomUUID(),
     override val opprettet: LocalDateTime = LocalDateTime.now(),
 ) : Message {
     override val eventName: String = "hm-uvalidert-ordrelinje"

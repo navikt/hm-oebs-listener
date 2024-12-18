@@ -3,6 +3,7 @@ package no.nav.hjelpemidler.oebs.listener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.nav.hjelpemidler.kafka.sendAsync
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import java.io.Closeable

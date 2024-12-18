@@ -7,8 +7,8 @@ import io.ktor.server.testing.testApplication
 import no.nav.hjelpemidler.http.jackson
 import no.nav.hjelpemidler.kafka.createMockProducer
 import no.nav.hjelpemidler.oebs.listener.Configuration
-import no.nav.hjelpemidler.oebs.listener.jsonMapper
 import no.nav.hjelpemidler.oebs.listener.module
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import org.apache.kafka.clients.producer.MockProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 

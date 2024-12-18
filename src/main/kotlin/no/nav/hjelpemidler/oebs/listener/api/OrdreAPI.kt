@@ -3,13 +3,11 @@ package no.nav.hjelpemidler.oebs.listener.api
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.domain.id.UUID
 import no.nav.hjelpemidler.oebs.listener.Configuration
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.Metrics
@@ -132,7 +130,7 @@ data class Ordrefeilmelding(
 
 class OrdrekvitteringMottatt(
     val kvittering: Ordrekvittering,
-    override val eventId: UUID = UUID(),
+    override val eventId: UUID = UUID.randomUUID(),
     override val opprettet: LocalDateTime = LocalDateTime.now(),
 ) : Message {
     override val eventName: String = "hm-ordrekvittering-mottatt"
@@ -140,7 +138,7 @@ class OrdrekvitteringMottatt(
 
 class OrdrekvitteringDelbestillingMottatt(
     val kvittering: Ordrekvittering,
-    override val eventId: UUID = UUID(),
+    override val eventId: UUID = UUID.randomUUID(),
     override val opprettet: LocalDateTime = LocalDateTime.now(),
 ) : Message {
     override val eventName: String = "hm-ordrekvittering-delbestilling-mottatt"
@@ -148,7 +146,7 @@ class OrdrekvitteringDelbestillingMottatt(
 
 class OrdrefeilmeldingMottatt(
     val feilmelding: Ordrefeilmelding,
-    override val eventId: UUID = UUID(),
+    override val eventId: UUID = UUID.randomUUID(),
     override val opprettet: LocalDateTime = LocalDateTime.now(),
 ) : Message {
     override val eventName: String = "hm-ordrefeilmelding-mottatt"

@@ -6,7 +6,6 @@ import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.ApplicationStopped
-import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.UserIdPrincipal
@@ -15,7 +14,7 @@ import io.ktor.server.auth.bearer
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
@@ -25,6 +24,7 @@ import no.nav.hjelpemidler.kafka.createKafkaProducer
 import no.nav.hjelpemidler.oebs.listener.api.ordreAPI
 import no.nav.hjelpemidler.oebs.listener.api.ordrelinjeAPI
 import no.nav.hjelpemidler.oebs.listener.api.serviceforespørselAPI
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import org.apache.kafka.clients.producer.Producer
 import org.slf4j.event.Level
 
@@ -64,11 +64,11 @@ fun Application.module(producer: Producer<String, String> = createKafkaProducer(
     }
 
     val context = Context(producer)
-    environment.monitor.subscribe(ApplicationStopped) { application ->
+    monitor.subscribe(ApplicationStopped) { application ->
         context.close()
         application.environment.log.info("Applikasjonen har stoppet")
-        application.environment.monitor.unsubscribe(ApplicationStarted) {}
-        application.environment.monitor.unsubscribe(ApplicationStopped) {}
+        application.monitor.unsubscribe(ApplicationStarted) {}
+        application.monitor.unsubscribe(ApplicationStopped) {}
     }
 
     routing {
