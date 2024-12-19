@@ -62,3 +62,5 @@ java {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
+
+tasks.shadowJar { mergeServiceFiles() }
