@@ -5,7 +5,7 @@ import io.kotest.inspectors.shouldForOne
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import no.nav.hjelpemidler.oebs.listener.jsonToValue
+import no.nav.hjelpemidler.serialization.jackson.jsonToValue
 import org.apache.kafka.clients.producer.ProducerRecord
 
 fun List<ProducerRecord<String, String>>.shouldContainRecord(

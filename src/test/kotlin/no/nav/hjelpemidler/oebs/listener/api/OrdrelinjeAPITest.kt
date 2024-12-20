@@ -7,7 +7,6 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import no.nav.hjelpemidler.oebs.listener.jsonToValue
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.test.Fixtures
 import no.nav.hjelpemidler.oebs.listener.test.OrdrelinjeOebsJsonBuilder
@@ -16,6 +15,7 @@ import no.nav.hjelpemidler.oebs.listener.test.runTest
 import no.nav.hjelpemidler.oebs.listener.test.shouldContainRecord
 import no.nav.hjelpemidler.oebs.listener.test.shouldNotContainRecord
 import no.nav.hjelpemidler.oebs.listener.test.validToken
+import no.nav.hjelpemidler.serialization.jackson.jsonToValue
 import java.time.LocalDate
 import kotlin.test.Test
 

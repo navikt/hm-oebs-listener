@@ -1,9 +1,9 @@
 package no.nav.hjelpemidler.oebs.listener.model
 
 import io.kotest.matchers.shouldBe
-import no.nav.hjelpemidler.oebs.listener.jsonToValue
 import no.nav.hjelpemidler.oebs.listener.test.Fixtures
 import no.nav.hjelpemidler.oebs.listener.test.OrdrelinjeOebsJsonBuilder
+import no.nav.hjelpemidler.serialization.jackson.jsonToValue
 import java.time.LocalDate
 import kotlin.test.Test
 
