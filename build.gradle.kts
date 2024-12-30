@@ -8,16 +8,10 @@ dependencies {
     implementation(libs.hotlibs.core)
     implementation(libs.hotlibs.http)
     implementation(libs.hotlibs.kafka)
-
-    // Logging
-    implementation(libs.kotlin.logging)
-    runtimeOnly(libs.bundles.logging.runtime)
+    implementation(libs.hotlibs.logging)
 
     // Metrics
     implementation(libs.micrometer.registry.prometheus)
-
-    // Jackson
-    implementation(libs.bundles.jackson)
 
     // Ktor
     implementation(libs.ktor.serialization.jackson)
@@ -48,10 +42,9 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useKotlinTest(libs.versions.kotlin.asProvider())
             dependencies {
-                implementation(libs.kotest.assertions.core)
+                implementation(libs.hotlibs.test)
                 implementation(libs.kotest.assertions.json)
                 implementation(libs.ktor.server.test.host)
-                implementation(libs.mockk)
             }
         }
     }

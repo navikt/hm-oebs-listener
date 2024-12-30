@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <logger level="${OEBS_LISTENER_LOG_LEVEL:-INFO}" name="no.nav.hjelpemidler.oebs.listener" />
+</included>

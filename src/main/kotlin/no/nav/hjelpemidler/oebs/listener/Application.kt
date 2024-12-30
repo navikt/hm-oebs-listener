@@ -4,8 +4,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.server.application.Application
-import io.ktor.server.application.ApplicationStarted
-import io.ktor.server.application.ApplicationStopped
+import io.ktor.server.application.ApplicationStopping
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.UserIdPrincipal
@@ -64,11 +63,10 @@ fun Application.module(producer: Producer<String, String> = createKafkaProducer(
     }
 
     val context = Context(producer)
-    monitor.subscribe(ApplicationStopped) { application ->
+    monitor.subscribe(ApplicationStopping) { application ->
         context.close()
         application.environment.log.info("Applikasjonen har stoppet")
-        application.monitor.unsubscribe(ApplicationStarted) {}
-        application.monitor.unsubscribe(ApplicationStopped) {}
+        application.monitor.unsubscribe(ApplicationStopping) {}
     }
 
     routing {
