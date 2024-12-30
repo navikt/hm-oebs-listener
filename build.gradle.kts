@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    implementation(platform(libs.hotlibs.platform))
     implementation(libs.hotlibs.core)
     implementation(libs.hotlibs.http)
     implementation(libs.hotlibs.kafka)
