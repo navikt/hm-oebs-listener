@@ -73,7 +73,8 @@ class OrdrelinjeOebsTest {
         result.antall shouldBe 2.99
     }
 
-    private fun lagOrdrelinje(block: OrdrelinjeOebsJsonBuilder.() -> Unit = {}): OrdrelinjeOebs {
-        return jsonToValue<OrdrelinjeOebs>(Fixtures.lagOrdrelinjeOebsJson(block))
-    }
+    private fun lagOrdrelinje(
+        block: OrdrelinjeOebsJsonBuilder.() -> Unit = {
+        },
+    ): OrdrelinjeOebs = jsonToValue<OrdrelinjeOebs>(Fixtures.lagOrdrelinjeOebsJson(block))
 }

@@ -21,7 +21,10 @@ fun runTest(test: suspend TestContext.() -> Unit) =
         context.test()
     }
 
-class TestContext(val client: HttpClient, val producer: MockProducer<String, String>) {
+class TestContext(
+    val client: HttpClient,
+    val producer: MockProducer<String, String>,
+) {
     val kafkaHistory: List<ProducerRecord<String, String>> get() = producer.history()
 }
 
