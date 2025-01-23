@@ -27,6 +27,7 @@ fun Route.ordrelinjeAPI(context: Context) {
         log.info { "Innkommende ordrelinje" }
         try {
             val innkommendeOrdrelinje = call.receiveText()
+            val ordrelinje = jsonToValue<OrdrelinjeOebs>(innkommendeOrdrelinje).fiksTommeSerienumre()
 
             // Logg innkommende ordrelinjer fra OEBS i dev i et rått-format slik at vi kan feilsøke når OEBS gjør
             // endringer som vi etterhvert skal oppdatere OrdrelinjeOebs-typen med.
@@ -34,13 +35,12 @@ fun Route.ordrelinjeAPI(context: Context) {
                 withLoggingContext(
                     mapOf(
                         "ordrelinje" to innkommendeOrdrelinje,
+                        "serienumreStatistikk" to jsonMapper.writeValueAsString(ordrelinje.serienumreStatistikk()),
                     ),
                 ) {
                     log.info { "Innkommende ordrelinje fra OEBS" }
                 }
             }
-
-            val ordrelinje = jsonToValue<OrdrelinjeOebs>(innkommendeOrdrelinje).fiksTommeSerienumre()
 
             if (ordrelinje.skipningsinstrukser?.contains("Tekniker") == true) {
                 secureLog.info { "Delbestilling ordrelinje: '$ordrelinje'" }

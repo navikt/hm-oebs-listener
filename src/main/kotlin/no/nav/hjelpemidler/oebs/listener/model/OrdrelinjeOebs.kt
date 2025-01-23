@@ -69,6 +69,11 @@ data class OrdrelinjeOebs(
     var sendtTilAdresse: String,
     @JsonProperty("SerieNummerListe")
     val serienumre: List<String>? = emptyList(),
+    // For statistikk formål
+    @JsonProperty("ForsteGangsUtlan")
+    val førsteGangsUtlån: String?, // Format: "Y, N, , N, N"
+    @JsonProperty("AntUtlan")
+    val antallUtlån: String?, // Format: "1, 2, , 3, 4"
 ) {
     val serviceforespørseltypeVedtak: Boolean
         @JsonIgnore get() = serviceforespørseltype == "Vedtak Infotrygd"
@@ -102,4 +107,36 @@ data class OrdrelinjeOebs(
         }
 
     fun fiksTommeSerienumre(): OrdrelinjeOebs = copy(serienumre = serienumre?.map { it.trim() }?.filter { it != "" })
+
+    fun serienumreStatistikk(): List<AntallUtlån> {
+        if (serienumre.isNullOrEmpty()) return listOf()
+        val foersteGangsUtlan =
+            førsteGangsUtlån?.split(",")?.map {
+                when (it.trim()) {
+                    "Y" -> true
+                    "N" -> false
+                    else -> null
+                }
+            }
+        val antallUtlan = antallUtlån?.split(",")?.map { it.trim().toIntOrNull() }
+        if ((foersteGangsUtlan != null && serienumre.count() != foersteGangsUtlan.count()) ||
+            (antallUtlan != null && antallUtlan.count() != serienumre.count())
+        ) {
+            // Uventet antall foersteGangUtlan eller antallUtlan, må være lik antall serienumre (eller null)
+            return listOf()
+        }
+        return serienumre.mapIndexed { idx, serieNr ->
+            AntallUtlån(
+                serieNr = serieNr,
+                foersteGangsUtlan = foersteGangsUtlan?.getOrNull(idx),
+                antallUtlan = antallUtlan?.getOrNull(idx),
+            )
+        }
+    }
 }
+
+data class AntallUtlån(
+    val serieNr: String,
+    val foersteGangsUtlan: Boolean?,
+    val antallUtlan: Int?,
+)

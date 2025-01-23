@@ -32,6 +32,8 @@ class OrdrelinjeOebsJsonBuilder {
     var antall: String = "1"
     var fnrBruker: String = "XXXXXXXXXXX"
     var sistOppdatert: String = LocalDateTime.now().toString()
+    var førsteGangsUtlån: String? = null
+    var antallUtlån: String? = null
 
     @Language("JSON")
     operator fun invoke() =
@@ -64,7 +66,9 @@ class OrdrelinjeOebsJsonBuilder {
           "AccountNumber": "$fnrBruker",
           "EgenAnsatt": "N",
           "LastUpdateDate": "$sistOppdatert",
-          "Description": ""
+          "Description": "",
+          "ForsteGangsUtlan": "$førsteGangsUtlån",
+          "AntUtlan": "$antallUtlån"
         }
         """.trimIndent()
 }

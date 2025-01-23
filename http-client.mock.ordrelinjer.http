@@ -6,7 +6,7 @@ Authorization: Bearer {{oebstoken}}
 
 {
   "System": "DIGIHOT",
-  "Id": 203,
+  "Id": 205,
   "IncidentNummer": 1,
   "IncidentStatus": "Closed",
   "IncidentType": "Vedtak Infotrygd",
