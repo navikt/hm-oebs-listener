@@ -3,7 +3,7 @@ package no.nav.hjelpemidler.oebs.listener.api
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receive
+import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
@@ -18,6 +18,7 @@ import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.UvalidertOrdrelinjeMessage
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
+import no.nav.hjelpemidler.serialization.jackson.jsonToValue
 
 private val log = KotlinLogging.logger {}
 
@@ -25,7 +26,21 @@ fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
         log.info { "Innkommende ordrelinje" }
         try {
-            val ordrelinje = call.receive<OrdrelinjeOebs>().fiksTommeSerienumre()
+            val innkommendeOrdrelinje = call.receiveText()
+
+            // Logg innkommende ordrelinjer fra OEBS i dev i et rått-format slik at vi kan feilsøke når OEBS gjør
+            // endringer som vi etterhvert skal oppdatere OrdrelinjeOebs-typen med.
+            if (Environment.current.isDev) {
+                withLoggingContext(
+                    mapOf(
+                        "ordrelinje" to innkommendeOrdrelinje,
+                    ),
+                ) {
+                    log.info { "Innkommende ordrelinje fra OEBS" }
+                }
+            }
+
+            val ordrelinje = jsonToValue<OrdrelinjeOebs>(innkommendeOrdrelinje).fiksTommeSerienumre()
 
             if (ordrelinje.skipningsinstrukser?.contains("Tekniker") == true) {
                 secureLog.info { "Delbestilling ordrelinje: '$ordrelinje'" }
