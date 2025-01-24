@@ -82,13 +82,13 @@ class OrdrelinjeOebsTest {
                 antallUtlån = """2, 1, """
             }
 
-        result.serienumreStatistikk()[0].foersteGangsUtlan shouldBe false
-        result.serienumreStatistikk()[1].foersteGangsUtlan shouldBe true
-        result.serienumreStatistikk()[2].foersteGangsUtlan shouldBe null
+        result.serienumreStatistikk()[0].førsteGangsUtlån shouldBe false
+        result.serienumreStatistikk()[1].førsteGangsUtlån shouldBe true
+        result.serienumreStatistikk()[2].førsteGangsUtlån shouldBe null
 
-        result.serienumreStatistikk()[0].antallUtlan shouldBe 2
-        result.serienumreStatistikk()[1].antallUtlan shouldBe 1
-        result.serienumreStatistikk()[2].antallUtlan shouldBe null
+        result.serienumreStatistikk()[0].antallUtlån shouldBe 2
+        result.serienumreStatistikk()[1].antallUtlån shouldBe 1
+        result.serienumreStatistikk()[2].antallUtlån shouldBe null
     }
 
     @Test
@@ -99,8 +99,8 @@ class OrdrelinjeOebsTest {
                 førsteGangsUtlån = ""
             }
 
-        result.serienumreStatistikk()[0].foersteGangsUtlan shouldBe null
-        result.serienumreStatistikk()[0].antallUtlan shouldBe null
+        result.serienumreStatistikk()[0].førsteGangsUtlån shouldBe null
+        result.serienumreStatistikk()[0].antallUtlån shouldBe null
     }
 
     @Test
@@ -112,11 +112,11 @@ class OrdrelinjeOebsTest {
                 antallUtlån = ", 1"
             }
 
-        result.serienumreStatistikk()[0].foersteGangsUtlan shouldBe null
-        result.serienumreStatistikk()[1].foersteGangsUtlan shouldBe true
+        result.serienumreStatistikk()[0].førsteGangsUtlån shouldBe null
+        result.serienumreStatistikk()[1].førsteGangsUtlån shouldBe true
 
-        result.serienumreStatistikk()[0].antallUtlan shouldBe null
-        result.serienumreStatistikk()[1].antallUtlan shouldBe 1
+        result.serienumreStatistikk()[0].antallUtlån shouldBe null
+        result.serienumreStatistikk()[1].antallUtlån shouldBe 1
     }
 
     private fun lagOrdrelinje(

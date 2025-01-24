@@ -110,7 +110,7 @@ data class OrdrelinjeOebs(
 
     fun serienumreStatistikk(): List<AntallUtlån> {
         if (serienumre.isNullOrEmpty()) return listOf()
-        val foersteGangsUtlan =
+        val førsteGangsUtlån =
             førsteGangsUtlån?.split(",")?.map {
                 when (it.trim()) {
                     "Y" -> true
@@ -118,18 +118,18 @@ data class OrdrelinjeOebs(
                     else -> null
                 }
             }
-        val antallUtlan = antallUtlån?.split(",")?.map { it.trim().toIntOrNull() }
-        if ((foersteGangsUtlan != null && serienumre.count() != foersteGangsUtlan.count()) ||
-            (antallUtlan != null && antallUtlan.count() != serienumre.count())
+        val antallUtlån = antallUtlån?.split(",")?.map { it.trim().toIntOrNull() }
+        if ((førsteGangsUtlån != null && serienumre.count() != førsteGangsUtlån.count()) ||
+            (antallUtlån != null && antallUtlån.count() != serienumre.count())
         ) {
-            // Uventet antall foersteGangUtlan eller antallUtlan, må være lik antall serienumre (eller null)
+            // Uventet antall førsteGangsUtlån eller antallUtlån, må være lik antall serienumre (eller null)
             return listOf()
         }
         return serienumre.mapIndexed { idx, serieNr ->
             AntallUtlån(
                 serieNr = serieNr,
-                foersteGangsUtlan = foersteGangsUtlan?.getOrNull(idx),
-                antallUtlan = antallUtlan?.getOrNull(idx),
+                førsteGangsUtlån = førsteGangsUtlån?.getOrNull(idx),
+                antallUtlån = antallUtlån?.getOrNull(idx),
             )
         }
     }
@@ -137,6 +137,6 @@ data class OrdrelinjeOebs(
 
 data class AntallUtlån(
     val serieNr: String,
-    val foersteGangsUtlan: Boolean?,
-    val antallUtlan: Int?,
+    val førsteGangsUtlån: Boolean?,
+    val antallUtlån: Int?,
 )
