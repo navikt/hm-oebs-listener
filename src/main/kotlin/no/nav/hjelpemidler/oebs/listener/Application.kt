@@ -48,9 +48,8 @@ fun Application.module(producer: Producer<String, String> = createKafkaProducer(
 
     install(CallLogging) {
         disableDefaultColors()
-        level = Level.INFO
+        level = Level.DEBUG
         filter {
-            it.request.path() in setOf("/sf")
             it.request.path() !in setOf("/isalive", "/isready", "/metrics")
         }
     }
