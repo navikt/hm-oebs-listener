@@ -39,7 +39,7 @@ spec:
         - host: hooks.slack.com
   env:
     - name: OEBS_LISTENER_LOG_LEVEL
-      value: INFO
+      value: DEBUG
     - name: NTFY_URL
       value: https://ntfy.sh
     - name: NTFY_TOPIC
