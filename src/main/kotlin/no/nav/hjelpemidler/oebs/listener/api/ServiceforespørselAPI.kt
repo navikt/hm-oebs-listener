@@ -11,6 +11,7 @@ import io.ktor.server.routing.post
 import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.model.ServiceforespørselEndringMessage
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 
 private val log = KotlinLogging.logger {}
 
@@ -40,6 +41,32 @@ data class ServiceforespørselEndring(
     val ordre: List<ServiceForespørselOrdre>? = null,
     val status: SFEndringType,
 )
+
+fun main(args: Array<String>) {
+    val json =
+        """
+    "{
+"system": "HOTSAK",
+"id": "244764",
+"sfnummer": "25289909",
+"saknummer": "305428",
+"antallKostnadslinjer": "2",
+"shippingInstruct": "Stolen stilles inn til SB:44cm, SD: 44cm, legg:46 og rygg 60 cm",
+"ordre":   [
+  {
+     "ordrenummer": "9519698",
+     "status":      "Registrert"
+  }
+ ],
+"status": "Lukket"
+ }"
+        
+        """.trimIndent()
+
+    val objectMapper = jsonMapper
+    val serviceforespørselEndring = objectMapper.readValue(json, ServiceforespørselEndring::class.java)
+    println(serviceforespørselEndring)
+}
 
 data class ServiceForespørselOrdre(
     val ordrenummer: String,
