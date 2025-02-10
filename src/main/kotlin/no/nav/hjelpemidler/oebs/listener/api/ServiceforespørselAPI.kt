@@ -18,6 +18,8 @@ fun Route.serviceforespørselAPI(context: Context) {
     post("/sf") {
         log.info { "Innkommende SF-oppdatering" }
         try {
+            val endringRaw = call.receive<Map<String, String>>()
+            log.info { "Rå serviceforespørsel $endringRaw" }
             val endring = call.receive<ServiceforespørselEndring>()
             val message = ServiceforespørselEndringMessage(endring)
             publiserMelding(context, endring, message)
