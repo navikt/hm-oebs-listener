@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -10,6 +10,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.logging.secureLog
+import no.nav.hjelpemidler.oebs.listener.ApplicationJacksonObjectMapperProvider
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.model.ServiceforespørselEndringMessage
 
@@ -21,7 +22,9 @@ fun Route.serviceforespørselAPI(context: Context) {
         try {
             val requestBody = call.receiveText()
             log.info { "Request body i SF oppdatering: $requestBody" }
-            val endring = jacksonObjectMapper().readValue(requestBody, ServiceforespørselEndring::class.java)
+
+            val endring = ApplicationJacksonObjectMapperProvider().invoke().readValue<ServiceforespørselEndring>(requestBody)
+            // val endring = ApplicationJacksonObjectMapperProvider().invoke().readValue(requestBody, ServiceforespørselEndring::class.java)
             log.info { "Endring: $endring" }
             // val endring = call.receive<ServiceforespørselEndring>()
             val message = ServiceforespørselEndringMessage(endring)
