@@ -5,6 +5,7 @@ import no.nav.hjelpemidler.oebs.listener.test.Fixtures
 import no.nav.hjelpemidler.oebs.listener.test.OrdrelinjeOebsJsonBuilder
 import no.nav.hjelpemidler.serialization.jackson.jsonToValue
 import java.time.LocalDate
+import java.time.Month
 import kotlin.test.Test
 
 class OrdrelinjeOebsTest {
@@ -74,17 +75,22 @@ class OrdrelinjeOebsTest {
     }
 
     @Test
-    fun `Parse FørsteGangsUtlån and AntallUtlån`() {
+    fun `Parse FørsteGangsUtlån, FørsteTransaksjonsDato and AntallUtlån`() {
         val result =
             lagOrdrelinje {
                 serienumre = """["1", "2", "3"]"""
                 førsteGangsUtlån = """N, Y, """
+                førsteTransaksjonsDato = """01-JAN-25, , 04-OKT-25"""
                 antallUtlån = """2, 1, """
             }
 
         result.serienumreStatistikk()[0].førsteGangsUtlån shouldBe false
         result.serienumreStatistikk()[1].førsteGangsUtlån shouldBe true
         result.serienumreStatistikk()[2].førsteGangsUtlån shouldBe null
+
+        result.serienumreStatistikk()[0].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.JANUARY, 1)
+        result.serienumreStatistikk()[1].førsteTransaksjonsDato shouldBe null
+        result.serienumreStatistikk()[2].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.OCTOBER, 4)
 
         result.serienumreStatistikk()[0].antallUtlån shouldBe 2
         result.serienumreStatistikk()[1].antallUtlån shouldBe 1
@@ -97,9 +103,11 @@ class OrdrelinjeOebsTest {
             lagOrdrelinje {
                 serienumre = """["1"]"""
                 førsteGangsUtlån = ""
+                førsteTransaksjonsDato = ""
             }
 
         result.serienumreStatistikk()[0].førsteGangsUtlån shouldBe null
+        result.serienumreStatistikk()[0].førsteTransaksjonsDato shouldBe null
         result.serienumreStatistikk()[0].antallUtlån shouldBe null
     }
 
@@ -109,11 +117,15 @@ class OrdrelinjeOebsTest {
             lagOrdrelinje {
                 serienumre = """["1", "2"]"""
                 førsteGangsUtlån = ", Y"
+                førsteTransaksjonsDato = ", 20-MAR-25"
                 antallUtlån = ", 1"
             }
 
         result.serienumreStatistikk()[0].førsteGangsUtlån shouldBe null
         result.serienumreStatistikk()[1].førsteGangsUtlån shouldBe true
+
+        result.serienumreStatistikk()[0].førsteTransaksjonsDato shouldBe null
+        result.serienumreStatistikk()[1].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.MARCH, 20)
 
         result.serienumreStatistikk()[0].antallUtlån shouldBe null
         result.serienumreStatistikk()[1].antallUtlån shouldBe 1

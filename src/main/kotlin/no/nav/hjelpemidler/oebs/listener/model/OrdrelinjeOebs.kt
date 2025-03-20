@@ -4,7 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+private val log = KotlinLogging.logger { }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class OrdrelinjeOebs(
@@ -72,6 +77,8 @@ data class OrdrelinjeOebs(
     // For statistikk formål
     @JsonProperty("ForsteGangsUtlan")
     val førsteGangsUtlån: String?, // Format: "Y, N, , N, N"
+    @JsonProperty("ForsteTransDato")
+    val førsteTransaksjonsDato: String?, // Format: "04-MAR-25, , 04-MAR-25"
     @JsonProperty("AntUtlan")
     val antallUtlån: String?, // Format: "1, 2, , 3, 4"
 ) {
@@ -110,6 +117,7 @@ data class OrdrelinjeOebs(
 
     fun serienumreStatistikk(): List<AntallUtlån> {
         if (serienumre.isNullOrEmpty()) return listOf()
+
         val førsteGangsUtlån =
             førsteGangsUtlån?.split(",")?.map {
                 when (it.trim()) {
@@ -118,17 +126,44 @@ data class OrdrelinjeOebs(
                     else -> null
                 }
             }
+
+        val førsteTransaksjonsDatoFormat =
+            DateTimeFormatter.ofPattern(
+                "dd-LLL-uu",
+                Locale.of("nb", "NO"),
+            ) // Format: "04-MAR-25, , 04-MAR-25"
+        val førsteTransaksjonsDato =
+            førsteTransaksjonsDato?.split(",")?.map { part ->
+                val date = part.trim()
+                if (date.count() == 9) {
+                    runCatching {
+                        LocalDate.parse(
+                            // Fiks format fra "JAN" til "Jan", "MAR" til "Mar"
+                            date.lowercase(), // .let { it.replaceRange(3, 4, it.substring(3, 4).uppercase()) }.replace("-", " "),
+                            førsteTransaksjonsDatoFormat,
+                        )
+                    }.onFailure { e ->
+                        log.error(e) { "Feilet i å tolke datoen: $date" }
+                    }.getOrNull()
+                } else {
+                    null
+                }
+            }
+
         val antallUtlån = antallUtlån?.split(",")?.map { it.trim().toIntOrNull() }
+
         if ((førsteGangsUtlån != null && serienumre.count() != førsteGangsUtlån.count()) ||
             (antallUtlån != null && antallUtlån.count() != serienumre.count())
         ) {
             // Uventet antall førsteGangsUtlån eller antallUtlån, må være lik antall serienumre (eller null)
             return listOf()
         }
+
         return serienumre.mapIndexed { idx, serieNr ->
             AntallUtlån(
                 serieNr = serieNr,
                 førsteGangsUtlån = førsteGangsUtlån?.getOrNull(idx),
+                førsteTransaksjonsDato = førsteTransaksjonsDato?.getOrNull(idx),
                 antallUtlån = antallUtlån?.getOrNull(idx),
             )
         }
@@ -138,5 +173,6 @@ data class OrdrelinjeOebs(
 data class AntallUtlån(
     val serieNr: String,
     val førsteGangsUtlån: Boolean?,
+    val førsteTransaksjonsDato: LocalDate?,
     val antallUtlån: Int?,
 )
