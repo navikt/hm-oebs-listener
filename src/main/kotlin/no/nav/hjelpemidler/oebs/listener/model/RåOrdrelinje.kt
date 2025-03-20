@@ -33,6 +33,7 @@ data class RåOrdrelinje(
     val sistOppdatert: LocalDate,
     val sendtTilAdresse: String,
     var serienumre: List<String> = emptyList(),
+    val utlånsstatistikk: List<Utlånsstatistikk> = emptyList(),
 ) {
     constructor(oebs: OrdrelinjeOebs) : this(
         mottakendeSystem = oebs.mottakendeSystem,
@@ -62,5 +63,6 @@ data class RåOrdrelinje(
         sistOppdatert = oebs.sistOppdatert,
         sendtTilAdresse = oebs.sendtTilAdresse,
         serienumre = oebs.serienumre ?: emptyList(),
+        utlånsstatistikk = oebs.utlånsstatistikk(),
     )
 }

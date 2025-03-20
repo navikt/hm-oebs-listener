@@ -76,7 +76,7 @@ data class OrdrelinjeOebs(
     val serienumre: List<String>? = emptyList(),
     // For statistikk formål
     @JsonProperty("ForsteGangsUtlan")
-    val førsteGangsUtlån: String?, // Format: "Y, N, , N, N"
+    val førstegangsUtlån: String?, // Format: "Y, N, , N, N"
     @JsonProperty("ForsteTransDato")
     val førsteTransaksjonsDato: String?, // Format: "04-MAR-25, , 04-MAR-25"
     @JsonProperty("AntUtlan")
@@ -115,11 +115,11 @@ data class OrdrelinjeOebs(
 
     fun fiksTommeSerienumre(): OrdrelinjeOebs = copy(serienumre = serienumre?.map { it.trim() }?.filter { it != "" })
 
-    fun serienumreStatistikk(): List<AntallUtlån> {
+    fun utlånsstatistikk(): List<Utlånsstatistikk> {
         if (serienumre.isNullOrEmpty()) return listOf()
 
-        val førsteGangsUtlån =
-            førsteGangsUtlån?.split(",")?.map {
+        val førstegangsUtlån =
+            førstegangsUtlån?.split(",")?.map {
                 when (it.trim()) {
                     "Y" -> true
                     "N" -> false
@@ -152,17 +152,17 @@ data class OrdrelinjeOebs(
 
         val antallUtlån = antallUtlån?.split(",")?.map { it.trim().toIntOrNull() }
 
-        if ((førsteGangsUtlån != null && serienumre.count() != førsteGangsUtlån.count()) ||
+        if ((førstegangsUtlån != null && serienumre.count() != førstegangsUtlån.count()) ||
             (antallUtlån != null && antallUtlån.count() != serienumre.count())
         ) {
-            // Uventet antall førsteGangsUtlån eller antallUtlån, må være lik antall serienumre (eller null)
+            // Uventet antall førstegangsUtlån eller antallUtlån, må være lik antall serienumre (eller null)
             return listOf()
         }
 
         return serienumre.mapIndexed { idx, serieNr ->
-            AntallUtlån(
+            Utlånsstatistikk(
                 serieNr = serieNr,
-                førsteGangsUtlån = førsteGangsUtlån?.getOrNull(idx),
+                førstegangsUtlån = førstegangsUtlån?.getOrNull(idx),
                 førsteTransaksjonsDato = førsteTransaksjonsDato?.getOrNull(idx),
                 antallUtlån = antallUtlån?.getOrNull(idx),
             )
@@ -170,9 +170,9 @@ data class OrdrelinjeOebs(
     }
 }
 
-data class AntallUtlån(
+data class Utlånsstatistikk(
     val serieNr: String,
-    val førsteGangsUtlån: Boolean?,
+    val førstegangsUtlån: Boolean?,
     val førsteTransaksjonsDato: LocalDate?,
     val antallUtlån: Int?,
 )

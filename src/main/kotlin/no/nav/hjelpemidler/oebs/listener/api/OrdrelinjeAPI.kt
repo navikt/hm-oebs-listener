@@ -35,7 +35,7 @@ fun Route.ordrelinjeAPI(context: Context) {
                 withLoggingContext(
                     mapOf(
                         "ordrelinje" to innkommendeOrdrelinje,
-                        "serienumreStatistikk" to jsonMapper.writeValueAsString(ordrelinje.serienumreStatistikk()),
+                        "utlånsstatistikk" to jsonMapper.writeValueAsString(ordrelinje.utlånsstatistikk()),
                     ),
                 ) {
                     log.info { "Innkommende ordrelinje fra OEBS" }
