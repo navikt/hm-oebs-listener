@@ -153,9 +153,12 @@ data class OrdrelinjeOebs(
         val antallUtlån = antallUtlån?.split(",")?.map { it.trim().toIntOrNull() }
 
         if ((førstegangsUtlån != null && serienumre.count() != førstegangsUtlån.count()) ||
+            (førsteTransaksjonsDato != null && førsteTransaksjonsDato.count() != serienumre.count()) ||
             (antallUtlån != null && antallUtlån.count() != serienumre.count())
         ) {
-            // Uventet antall førstegangsUtlån eller antallUtlån, må være lik antall serienumre (eller null)
+            log.warn {
+                "Uventet antall førstegangsUtlån, førsteTransaksjonsDato eller antallUtlån, må være lik antall serienumre (eller null)"
+            }
             return listOf()
         }
 
