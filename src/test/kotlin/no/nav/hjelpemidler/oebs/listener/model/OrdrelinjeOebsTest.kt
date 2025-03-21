@@ -82,19 +82,19 @@ class OrdrelinjeOebsTest {
                 førsteGangsUtlån = """N, Y, """
                 førsteTransaksjonsDato = """01-JAN-25, , 04-OKT-25"""
                 antallUtlån = """2, 1, """
-            }
+            }.utlånsstatistikk()
 
-        result.utlånsstatistikk()[0].førstegangsUtlån shouldBe false
-        result.utlånsstatistikk()[1].førstegangsUtlån shouldBe true
-        result.utlånsstatistikk()[2].førstegangsUtlån shouldBe null
+        result[0].førstegangsUtlån shouldBe false
+        result[1].førstegangsUtlån shouldBe true
+        result[2].førstegangsUtlån shouldBe null
 
-        result.utlånsstatistikk()[0].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.JANUARY, 1)
-        result.utlånsstatistikk()[1].førsteTransaksjonsDato shouldBe null
-        result.utlånsstatistikk()[2].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.OCTOBER, 4)
+        result[0].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.JANUARY, 1)
+        result[1].førsteTransaksjonsDato shouldBe null
+        result[2].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.OCTOBER, 4)
 
-        result.utlånsstatistikk()[0].antallUtlån shouldBe 2
-        result.utlånsstatistikk()[1].antallUtlån shouldBe 1
-        result.utlånsstatistikk()[2].antallUtlån shouldBe null
+        result[0].antallUtlån shouldBe 2
+        result[1].antallUtlån shouldBe 1
+        result[2].antallUtlån shouldBe null
     }
 
     @Test
@@ -104,11 +104,11 @@ class OrdrelinjeOebsTest {
                 serienumre = """["1"]"""
                 førsteGangsUtlån = ""
                 førsteTransaksjonsDato = ""
-            }
+            }.utlånsstatistikk()
 
-        result.utlånsstatistikk()[0].førstegangsUtlån shouldBe null
-        result.utlånsstatistikk()[0].førsteTransaksjonsDato shouldBe null
-        result.utlånsstatistikk()[0].antallUtlån shouldBe null
+        result[0].førstegangsUtlån shouldBe null
+        result[0].førsteTransaksjonsDato shouldBe null
+        result[0].antallUtlån shouldBe null
     }
 
     @Test
@@ -119,16 +119,16 @@ class OrdrelinjeOebsTest {
                 førsteGangsUtlån = ", Y"
                 førsteTransaksjonsDato = ", 20-MAR-25"
                 antallUtlån = ", 1"
-            }
+            }.utlånsstatistikk()
 
-        result.utlånsstatistikk()[0].førstegangsUtlån shouldBe null
-        result.utlånsstatistikk()[1].førstegangsUtlån shouldBe true
+        result[0].førstegangsUtlån shouldBe null
+        result[1].førstegangsUtlån shouldBe true
 
-        result.utlånsstatistikk()[0].førsteTransaksjonsDato shouldBe null
-        result.utlånsstatistikk()[1].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.MARCH, 20)
+        result[0].førsteTransaksjonsDato shouldBe null
+        result[1].førsteTransaksjonsDato shouldBe LocalDate.of(2025, Month.MARCH, 20)
 
-        result.utlånsstatistikk()[0].antallUtlån shouldBe null
-        result.utlånsstatistikk()[1].antallUtlån shouldBe 1
+        result[0].antallUtlån shouldBe null
+        result[1].antallUtlån shouldBe 1
     }
 
     private fun lagOrdrelinje(
