@@ -135,19 +135,16 @@ data class OrdrelinjeOebs(
         val førsteTransaksjonsDato =
             førsteTransaksjonsDato?.split(",")?.map { part ->
                 val date = part.trim()
-                if (date.count() == 9) {
-                    runCatching {
-                        LocalDate.parse(
-                            // Fiks format fra "JAN" til "Jan", "MAR" til "Mar"
-                            date.lowercase(), // .let { it.replaceRange(3, 4, it.substring(3, 4).uppercase()) }.replace("-", " "),
-                            førsteTransaksjonsDatoFormat,
-                        )
-                    }.onFailure { e ->
-                        log.error(e) { "Feilet i å tolke datoen: $date" }
-                    }.getOrNull()
-                } else {
-                    null
-                }
+                if (date == "") return@map null
+                runCatching {
+                    LocalDate.parse(
+                        // Fiks format fra "JAN" til "Jan", "MAR" til "Mar"
+                        date.lowercase(), // .let { it.replaceRange(3, 4, it.substring(3, 4).uppercase()) }.replace("-", " "),
+                        førsteTransaksjonsDatoFormat,
+                    )
+                }.onFailure { e ->
+                    log.error(e) { "Feilet i å tolke datoen: $date" }
+                }.getOrNull()
             }
 
         val antallUtlån = antallUtlån?.split(",")?.map { it.trim().toIntOrNull() }
