@@ -80,7 +80,7 @@ class OrdrelinjeOebsTest {
             lagOrdrelinje {
                 serienumre = """["1", "2", "3"]"""
                 førsteGangsUtlån = """N, Y, """
-                førsteTransaksjonsDato = """01-JAN-25, , 04-OKT-25"""
+                førsteTransaksjonsDato = """01-JAN-25, , 04-OCT-25"""
                 antallUtlån = """2, 1, """
             }.utlånsstatistikk()
 

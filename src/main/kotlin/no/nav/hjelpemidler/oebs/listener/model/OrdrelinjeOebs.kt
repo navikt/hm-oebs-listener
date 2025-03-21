@@ -130,7 +130,7 @@ data class OrdrelinjeOebs(
         val førsteTransaksjonsDatoFormat =
             DateTimeFormatter.ofPattern(
                 "dd-LLL-uu",
-                Locale.of("nb", "NO"),
+                Locale.US,
             ) // Format: "04-MAR-25, , 04-MAR-25"
         val førsteTransaksjonsDato =
             førsteTransaksjonsDato?.split(",")?.map { part ->
@@ -139,7 +139,7 @@ data class OrdrelinjeOebs(
                 runCatching {
                     LocalDate.parse(
                         // Fiks format fra "JAN" til "Jan", "MAR" til "Mar"
-                        date.lowercase(), // .let { it.replaceRange(3, 4, it.substring(3, 4).uppercase()) }.replace("-", " "),
+                        date.lowercase().let { it.replaceRange(3, 4, it.substring(3, 4).uppercase()) },
                         førsteTransaksjonsDatoFormat,
                     )
                 }.onFailure { e ->
