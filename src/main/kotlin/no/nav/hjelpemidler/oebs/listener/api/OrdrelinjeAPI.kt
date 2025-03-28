@@ -29,6 +29,12 @@ fun Route.ordrelinjeAPI(context: Context) {
             val innkommendeOrdrelinje = call.receiveText()
             val ordrelinje = jsonToValue<OrdrelinjeOebs>(innkommendeOrdrelinje).fiksTommeSerienumre()
 
+            if (ordrelinje.mottakendeSystem.trim() != "DIGIHOT") {
+                log.warn { "System \"${ordrelinje.mottakendeSystem}\" ikke støttet enda, stopper prosessering her!" }
+                call.respond(HttpStatusCode.OK)
+                return@post
+            }
+
             // Logg innkommende ordrelinjer fra OEBS i dev i et rått-format slik at vi kan feilsøke når OEBS gjør
             // endringer som vi etterhvert skal oppdatere OrdrelinjeOebs-typen med.
             if (Environment.current.isDev) {
