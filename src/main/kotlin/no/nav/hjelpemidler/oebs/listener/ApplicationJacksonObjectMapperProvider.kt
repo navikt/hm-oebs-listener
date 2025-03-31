@@ -16,7 +16,7 @@ class ApplicationJacksonObjectMapperProvider : JacksonObjectMapperProvider {
         defaultJsonMapper {
             enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS).configure(
                 JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION,
-                true
+                true,
             )
         }
 }
