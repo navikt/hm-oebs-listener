@@ -33,10 +33,11 @@ spec:
     - https://hm-oebs-listener.intern.dev.nav.no
   accessPolicy:
     outbound:
-      external:
-        - host: hooks.slack.com
+      rules:
         - application: logging
           namespace: nais-system
+      external:
+        - host: hooks.slack.com
   env:
     - name: OEBS_LISTENER_LOG_LEVEL
       value: DEBUG
