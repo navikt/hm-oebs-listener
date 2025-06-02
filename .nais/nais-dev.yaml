@@ -31,12 +31,12 @@ spec:
   port: 8080
   ingresses:
     - https://hm-oebs-listener.intern.dev.nav.no
-  secureLogs:
-    enabled: true
   accessPolicy:
     outbound:
       external:
         - host: hooks.slack.com
+        - application: logging
+          namespace: nais-system
   env:
     - name: OEBS_LISTENER_LOG_LEVEL
       value: DEBUG

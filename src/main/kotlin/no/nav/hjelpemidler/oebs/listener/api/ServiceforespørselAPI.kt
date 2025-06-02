@@ -7,7 +7,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
-import no.nav.hjelpemidler.logging.secureLog
+import no.nav.hjelpemidler.logging.teamError
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.model.ServiceforespørselEndringMessage
 
@@ -80,7 +80,7 @@ private suspend fun publiserMelding(
             message,
         )
     } catch (e: Exception) {
-        secureLog.error(e) { "Sending på Kafka feilet" }
+        log.teamError(e) { "Sending på Kafka feilet" }
         error("Noe gikk feil ved publisering av melding")
     }
 }

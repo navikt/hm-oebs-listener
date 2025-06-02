@@ -8,7 +8,9 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.logging.secureLog
+import no.nav.hjelpemidler.logging.teamError
+import no.nav.hjelpemidler.logging.teamInfo
+import no.nav.hjelpemidler.logging.teamWarn
 import no.nav.hjelpemidler.oebs.listener.Context
 import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.model.HotsakOrdrelinjeMessage
@@ -49,7 +51,7 @@ fun Route.ordrelinjeAPI(context: Context) {
             }
 
             if (ordrelinje.skipningsinstrukser?.contains("Tekniker") == true) {
-                secureLog.info { "Delbestilling ordrelinje: '$ordrelinje'" }
+                log.teamInfo { "Delbestilling ordrelinje: '$ordrelinje'" }
             }
 
             // Vi deler alle typer ordrelinjer med delbestilling (som sjekker på ordrenummer) og kommune-API-et
@@ -71,7 +73,7 @@ fun Route.ordrelinjeAPI(context: Context) {
                     }
                     if (ordrelinje.delbestilling) {
                         log.info { "Ordrelinje fra delbestilling mottatt. Ignorerer." }
-                        secureLog.info { "Ignorert ordrelinje for delbestilling: '$ordrelinje'" }
+                        log.teamInfo { "Ignorert ordrelinje for delbestilling: '$ordrelinje'" }
                         return@post call.respond(HttpStatusCode.OK)
                     }
                     HotsakOrdrelinjeMessage(ordrelinje)
@@ -113,7 +115,7 @@ private suspend fun sendUvalidertOrdrelinjeTilKafka(
             UvalidertOrdrelinjeMessage(ordrelinje),
         )
     } catch (e: Exception) {
-        secureLog.error(e) { "Sending av uvalidert ordrelinje på Kafka feilet" }
+        log.teamError(e) { "Sending av uvalidert ordrelinje på Kafka feilet" }
         error("Noe gikk feil ved publisering av melding")
     }
 }
@@ -149,7 +151,7 @@ private suspend fun hotsakOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
         log.warn { "Melding fra OeBS mangler saksnummer fra Hotsak" }
         ordrelinje.fnrBruker = "MASKERT"
         val message = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
-        secureLog.warn { "Vedtak Hotsak-melding med manglende informasjon: '$message'" }
+        log.teamWarn { "Vedtak Hotsak-melding med manglende informasjon: '$message'" }
         Slack.post(
             text = "*${Environment.current}* - Manglende felt i Hotsak OeBS ordrelinje: ```$message```",
             channel = "#digihot-hotsak-varslinger-dev",
@@ -163,7 +165,7 @@ private fun infotrygdOrdrelinjeOK(ordrelinje: OrdrelinjeOebs): Boolean {
     if (!ordrelinje.gyldigInfotrygd) {
         log.warn { "Melding fra OeBS mangler saksblokkOgSaksnr, vedtaksdato eller fnrBruker!" }
         ordrelinje.fnrBruker = "MASKERT"
-        secureLog.warn {
+        log.teamWarn {
             val message = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ordrelinje)
             "Vedtak Infotrygd-melding med manglende informasjon: '$message'"
         }
@@ -191,10 +193,10 @@ private suspend fun publiserMelding(
                 "ordrelinje" to jsonMapper.writeValueAsString(ordrelinje),
             ),
         ) {
-            secureLog.info { "Ordrelinje med oebsId: ${ordrelinje.oebsId} mottatt og sendt på Kafka" }
+            log.teamInfo { "Ordrelinje med oebsId: ${ordrelinje.oebsId} mottatt og sendt på Kafka" }
         }
     } catch (e: Exception) {
-        secureLog.error(e) { "Sending på Kafka feilet" }
+        log.teamError(e) { "Sending på Kafka feilet" }
         error("Noe gikk feil ved publisering av melding")
     }
 }
