@@ -1,9 +1,11 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
+import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
@@ -14,6 +16,7 @@ import no.nav.hjelpemidler.oebs.listener.Metrics
 import no.nav.hjelpemidler.oebs.listener.Ntfy
 import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.model.Message
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -22,7 +25,14 @@ private val log = KotlinLogging.logger { }
 fun Route.ordreAPI(context: Context) {
     post("/ordrekvittering") {
         try {
-            val kvittering = call.receive<Ordrekvittering>()
+            val rawJson = call.receiveText()
+            val kvittering =
+                runCatching { jsonMapper.readValue<Ordrekvittering>(rawJson) }
+                    .onFailure { e ->
+                        if (Environment.current.isDev) {
+                            log.error(e) { "Exception when parsing Ordrekvittering: $rawJson" }
+                        }
+                    }.getOrThrow()
             log.info {
                 "Mottok ordrekvittering, $kvittering"
             }
