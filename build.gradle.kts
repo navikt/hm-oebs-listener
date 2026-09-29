@@ -15,7 +15,7 @@ dependencies {
     implementation(libs.micrometer.registry.prometheus)
 
     // Ktor
-    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.ktor.serialization.jackson3)
     implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.content.negotiation)

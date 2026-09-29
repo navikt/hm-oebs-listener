@@ -1,7 +1,6 @@
 package no.nav.hjelpemidler.oebs.listener.api
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
@@ -17,6 +16,7 @@ import no.nav.hjelpemidler.oebs.listener.Ntfy
 import no.nav.hjelpemidler.oebs.listener.Slack
 import no.nav.hjelpemidler.oebs.listener.model.Message
 import no.nav.hjelpemidler.serialization.jackson.jsonMapper
+import tools.jackson.module.kotlin.readValue
 import java.time.LocalDateTime
 import java.util.UUID
 

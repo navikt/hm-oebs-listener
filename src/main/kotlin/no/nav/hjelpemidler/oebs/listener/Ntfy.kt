@@ -26,7 +26,10 @@ object Ntfy {
                     setBody(notification.copy(tags = notification.tags + setOf(Environment.current.toString())))
                 }
             when (response.status) {
-                HttpStatusCode.OK -> Unit
+                HttpStatusCode.OK -> {
+                    Unit
+                }
+
                 else -> {
                     val body = response.body<Map<String, Any?>>()
                     log.warn { "Feil under publisering til ntfy: $body" }
