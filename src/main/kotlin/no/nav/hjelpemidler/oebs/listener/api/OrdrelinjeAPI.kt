@@ -19,25 +19,17 @@ import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeMessage
 import no.nav.hjelpemidler.oebs.listener.model.OrdrelinjeOebs
 import no.nav.hjelpemidler.oebs.listener.model.RåOrdrelinje
 import no.nav.hjelpemidler.oebs.listener.model.UvalidertOrdrelinjeMessage
-import no.nav.hjelpemidler.serialization.jackson.defaultJsonMapper
-import tools.jackson.databind.DeserializationFeature
-import tools.jackson.module.kotlin.readValue
+import no.nav.hjelpemidler.serialization.jackson.jsonMapper
+import no.nav.hjelpemidler.serialization.jackson.jsonToValue
 
 private val log = KotlinLogging.logger {}
-
-val jsonMapper =
-    defaultJsonMapper {
-        // Vi mottar flere av feltene som String, hvor vi tolker de som f.eks. Int. Her har vi tidligere lent oss
-        // på at Jackson2 automatisk konverterte disse til default-verdier for de primitive typene.
-        disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-    }
 
 fun Route.ordrelinjeAPI(context: Context) {
     post("/push") {
         log.info { "Innkommende ordrelinje" }
         try {
             val innkommendeOrdrelinje = call.receiveText()
-            val ordrelinje = jsonMapper.readValue<OrdrelinjeOebs>(innkommendeOrdrelinje).fiksTommeSerienumre()
+            val ordrelinje = jsonToValue<OrdrelinjeOebs>(innkommendeOrdrelinje).fiksTommeSerienumre()
 
             if (ordrelinje.mottakendeSystem.trim() != "DIGIHOT") {
                 log.warn { "System \"${ordrelinje.mottakendeSystem}\" ikke støttet enda, stopper prosessering her!" }
