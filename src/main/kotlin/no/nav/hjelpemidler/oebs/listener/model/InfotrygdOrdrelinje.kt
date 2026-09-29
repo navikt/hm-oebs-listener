@@ -6,7 +6,7 @@ import java.time.LocalDate
 data class InfotrygdOrdrelinje(
     val mottakendeSystem: String,
     val oebsId: Int,
-    val serviceforespørsel: Int,
+    val serviceforespørsel: Int?,
     val serviceforespørselstatus: String,
     val serviceforespørseltype: String,
     val søknadstype: String,

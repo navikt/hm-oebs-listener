@@ -18,7 +18,7 @@ data class OrdrelinjeOebs(
     @JsonProperty("Id")
     val oebsId: Int,
     @JsonProperty("IncidentNummer")
-    val serviceforespørsel: Int,
+    val serviceforespørsel: Int?,
     @JsonProperty("IncidentStatus")
     val serviceforespørselstatus: String,
     @JsonProperty("IncidentType")
